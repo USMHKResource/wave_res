@@ -1,0 +1,13 @@
+name: wave_res
+
+channels:
+  - anaconda
+
+dependencies:
+  - python=2.7
+  - matplotlib
+  - numpy
+  - netcdf4
+  - ipython=4.2
+  - tqdm
+  - pathlib2
