@@ -9,7 +9,11 @@ srcdir = Path(os.path.abspath('../wave_ra/pnnl/'))
 
 tmpdir = Path(os.path.abspath('../wave_ra/tmp/'))
 
-if (this_machine.startswith('lkilcher-') and
+if this_machine.startswith('lkilcher-26339s'):
+    srcdir = Path(os.path.expanduser('~/tmp/wave_ra/pnnl/'))
+    tmpdir = Path(os.path.expanduser('~/tmp/wave_ra/tmp/'))
+
+elif (this_machine.startswith('lkilcher-') and
         this_machine.endswith('nrel.gov')):
     srcdir = Path('/Volumes/lkilcher/wave_ra/pnnl/')
     tmpdir = Path('/Volumes/lkilcher/wave_ra/tmp/')
