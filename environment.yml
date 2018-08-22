@@ -11,3 +11,4 @@ dependencies:
   - ipython=4.2
   - tqdm
   - pathlib2
+  - scipy=1.1
