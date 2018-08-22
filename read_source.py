@@ -71,13 +71,6 @@ def _check_file(fd):
     fd.seek(0, 2)  # go to the end
     end = fd.tell()
     n_blocks = end // b
-    # print('Table start line: {: 10d}\n'
-    #       'Number of terms:  {: 10d}\n'
-    #       'Lines per block:  {: 10d}\n'
-    #       'Bytes per block:  {: 10d}\n'
-    #       'Total bytes:      {: 10d}\n'
-    #       'Total blocks:     {: 10d}\n'
-    #       .format(table_start, len(terms), c, b, end, n_blocks))
     n_freq = c - table_start - 2
     fd.seek(0, 0)
     return n_blocks, n_freq, terms, units
@@ -147,9 +140,8 @@ def write2ncdf(fname, data):
 
 
 def read_and_write(fname):
-    bname = fname.name.rstrip('.src')
     out = read_1d_source(fname)
-    write2ncdf(str(p.tmpdir.joinpath(bname + '.nc')), out)
+    write2ncdf(str(fname).rstrip('.src') + '.nc', out)
     return fname
 
 
@@ -159,17 +151,11 @@ if __name__ == '__main__':
     """
 
     fnames = list(p.srcdir.glob('2009/src/ww3.*.1d.src'))
-    #print(fnames)
 
-    pl = Pool(4)
-    res = pl.map(read_and_write, fnames[142:])
-    print(res)
+    # # Use a multiprocessing pool
+    # pl = Pool(4)
+    # res = pl.map(read_and_write, fnames)
 
-    # for fname in fnames[140:]:
-    #     read_and_write(fname)
-
-    # #fname = p.srcdir + '/2009/src/ww3.ak.20090519.1d.src'
-    # fname = p.srcdir + '/2009/src/ww3.ak.20090520.1d.src'
-    # bname = fname.rsplit('/', 1)[-1].rstrip('.src')
-    # out = read_1d_source(fname)
-    # write2ncdf(p.tmpdir + bname + '.nc', out)
+    # Or just use one process...
+    for fname in fnames:
+        read_and_write(fname)
