@@ -4,6 +4,7 @@ import wavespeed.wave_dispersion as wavespd
 import gis
 import numpy as np
 import matplotlib.pyplot as plt
+import pyDictH5
 plt.ion()
 
 months = np.arange(np.datetime64('2009-01'), np.datetime64('2010-01'))
@@ -57,7 +58,7 @@ def calc_wef(region, month, contour='ALL'):
         tmp = np.nonzero(conid == contour)[0][[0, -1]]
         con_inds = slice(tmp[0], tmp[1] + 1)
 
-    data = {}
+    data = pyDictH5.data()
     data['spec'] = v['efth'][:, con_inds].data.mean(0)
 
     # For some reason lat/lon are also fn's of time, but there is no
@@ -75,6 +76,7 @@ def calc_wef(region, month, contour='ALL'):
     df = np.diff(data['fbins'])
     data['wef'] = (wavespd.rho * wavespd.gravity *
                    (data['spec'] * cg[:, :, None] * df[None, :, None]).sum(1))
+    data['conid'] = conid
     return data
 
 def integrate_wef(lonlat, wef, direction):
@@ -98,7 +100,35 @@ def integrate_wef(lonlat, wef, direction):
 
 if __name__ == '__main__':
 
-    dnow = calc_wef('wc', '2009-01', 'EEZ')
-    calc = integrate_wef(np.stack((dnow['lon'], dnow['lat'])), dnow['wef'], dnow['direction'])
+    tot = {}
+    dat = {}
+    for m in months:
+        m_ = m.astype('O')
+        tempname = (p.tmpdir / 'ww3.{region}.{year}{month:02d}_wef.nc'
+                    .format(region=region, year=m_.year, month=m_.month))
+        print('Processing file {}'.format(tempname.name))
+        if tempname.is_file():
+            dat[m] = dnow = pyDictH5.load(str(tempname))
+        else:
+            dat[m] = dnow = calc_wef('wc', m, 'ALL')
+            dnow.to_hdf5(str(tempname))
+        tot[m] = calc = integrate_wef(np.stack((dnow['lon'], dnow['lat'])), dnow['wef'], dnow['direction'])
 
 
+    final = {}
+    Nh = []
+    for k in tot[tot.keys()[0]]:
+        final[k] = []
+    for ky in tot:
+        d = dat[ky]
+        t = tot[ky]
+        Nh.append(d['Nhour'])
+        for k in t:
+            final[k].append(t[k])
+
+    Nh = np.array(Nh)
+    final_sum = {}
+    for k in final:
+        final[k] = np.array(final[k])
+        final_sum[k] = (final[k] * Nh).sum() / Nh.sum()
+        print("The '{}' resource is: {: 5.1f} GW".format(k, final_sum[k] / 1e9))
