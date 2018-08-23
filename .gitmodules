@@ -1,0 +1,3 @@
+[submodule "py_sphere_Voronoi"]
+	path = py_sphere_Voronoi
+	url = https://github.com/tylerjereddy/py_sphere_Voronoi
