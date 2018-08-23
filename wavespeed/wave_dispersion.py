@@ -12,6 +12,7 @@ All frequencies, f, are in Hz, and wavenumbers, k are in rad/m. Depth is in mete
 """
 
 gravity = 9.81
+rho = 1020
 
 thisdir = os.path.dirname(os.path.abspath(__file__)) + '/'
 
