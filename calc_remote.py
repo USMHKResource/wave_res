@@ -13,7 +13,20 @@ def _concatenate_id(array):
     return np.array(out)
 
 
-def calc_wef(region, month, contour='ALL'):
+def load_source(region, month):
+    if isinstance(month, basestring):
+        month = np.datetime64(month).astype("O")
+    elif isinstance(month, np.datetime64):
+        month = month.astype('O')
+    dat = Dataset(
+        p.srcdir /
+        '{year:04d}/eez/ww3.{region}.{year:04d}{month:02d}_spec.nc'
+        .format(year=month.year, region=region, month=month.month),
+        'r')
+    return dat
+
+
+def calc_wef(indat, contour='ALL'):
     """Load data and calculate the average wave energy flux for a
     given region and month.
 
@@ -46,15 +59,6 @@ def calc_wef(region, month, contour='ALL'):
         # This is to handle integers
         contour = '{:03d}'.format(contour)
     contour = contour.upper()
-    if isinstance(month, basestring):
-        month = np.datetime64(month).astype("O")
-    elif isinstance(month, np.datetime64):
-        month = month.astype('O')
-    indat = Dataset(
-        p.srcdir /
-        '{year:04d}/eez/ww3.{region}.{year:04d}{month:02d}_spec.nc'
-        .format(year=month.year, region=region, month=month.month),
-        'r')
     v = indat.variables
     conid = _concatenate_id(v['station_name'][:, 2:5].data)
     if contour == 'ALL':
@@ -65,7 +69,6 @@ def calc_wef(region, month, contour='ALL'):
 
     data = pyDictH5.data()
     data['spec'] = v['efth'][:, con_inds].data.mean(0)
-
     # For some reason lat/lon are also fn's of time, but there is no
     # additional info there.
     data['lon'] = v['longitude'][0, con_inds].data
@@ -176,7 +179,8 @@ if __name__ == '__main__':
         if tempname.is_file():
             dat[m] = dnow = pyDictH5.load(str(tempname))
         else:
-            dat[m] = dnow = calc_wef('wc', m, 'ALL')
+            ncdat = load_source('wc', m)
+            dat[m] = dnow = calc_wef(ncdat, 'ALL')
             dnow.to_hdf5(str(tempname))
         tot[m] = calc = integrate_wef(
             dnow['lon'][con_inds], dnow['lat'][con_inds],
