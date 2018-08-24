@@ -11,9 +11,11 @@ sphere = crs.Globe(ellipse='sphere')
 # https://github.com/OSGeo/proj.4/blob/master/src/pj_ellps.c
 Re = 6370997.0
 
+proj0 = crs.AlbersEqualArea(-149.76, 61,
+                            standard_parallels=[40, 63],
+                            globe=sphere)
 proj = crs.AlbersEqualArea(-149.76, 61,
-                           standard_parallels=[40, 63],
-                           globe=sphere)
+                            standard_parallels=[40, 63])
 
 triang = np.array([[-150.88, 58.6],
                    [-148.45, 57.73],
@@ -47,7 +49,7 @@ ax.coastlines()
 ax.plot(_tri[0], _tri[1], 'r-')
 ax.plot(_tri[0, 0], _tri[1, 0], 'b.')
 ax.plot(_tri[0, :2], _tri[1, :2], 'b-')
-params = proj.proj4_params
+params = proj0.proj4_params
 ax.plot(params['lon_0'], params['lat_0'], 'r+', ms=20, mew=4)
 ax.axhline(params['lat_1'], linestyle='--', color='k')
 ax.axhline(params['lat_2'], linestyle='--', color='k')
@@ -56,12 +58,18 @@ ax.set_xlim([-180, -130])
 
 A = calc_excess(triang) * Re ** 2
 
-xy = proj.transform_points(pc, triang[0], triang[1]).T[:2]
+xy0 = proj0.transform_points(pc, triang[0], triang[1]).T[:2]
+Ap0 = calc_tri_area(xy0)
 
+xy = proj.transform_points(pc, triang[0], triang[1]).T[:2]
 Ap = calc_tri_area(xy)
 
-print("\nThe spherical area is:           {: 8.3f} km^2\n"
-      "The projected cartesian area is: {: 8.3f} km^2\n"
-      "The difference is:               {: 8.5f} %"
-      .format(A / 1e6, Ap / 1e6, ((A - Ap) / A) * 100)
+print("\n"
+      "The spherical area is:           {: 8.3f} km^2\n"
+      "The projected spherical area is: {: 8.3f} km^2 ({:.3f} %)\n"
+      "The projected WGS84 area is:     {: 8.3f} km^2 ({:.3f} %)\n"
+      .format(A / 1e6,
+              Ap0 / 1e6, ((A - Ap0) / A) * 100,
+              Ap / 1e6, ((A - Ap) / A) * 100,
+      )
 )
