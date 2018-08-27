@@ -57,16 +57,16 @@ def calc_wef(indat):
     v = indat.variables
 
     data = pyDictH5.data()
-    data['spec'] = v['efth'][:, con_inds].data.mean(0)
+    data['spec'] = v['efth'][:].data.mean(0)
     # For some reason lat/lon are also fn's of time, but there is no
     # additional info there.
-    data['lon'] = v['longitude'][0, con_inds].data
-    data['lat'] = v['latitude'][0, con_inds].data
+    data['lon'] = v['longitude'][0].data
+    data['lat'] = v['latitude'][0].data
     data['f'] = v['frequency'][:].data
     data['fbins'] = np.hstack((v['frequency1'][:].data,
                                [v['frequency2'][-1].data]))
     data['direction'] = v['direction'][:].data
-    data['depth'] = v['dpt'][0, con_inds].data
+    data['depth'] = v['dpt'][0].data
     # These should all be hours, but this makes sure...
     dt = np.float32((v['time'][1] - v['time'][0]) * 24)
     data['Nhour'] = len(v['time']) * dt
