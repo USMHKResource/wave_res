@@ -17,7 +17,9 @@ The `read_source.py` file reads 1-D source-term files (text files ending with `.
 Calculating Remote Resource
 =========
 
-The `calc_remote.py` file calculates the remote resource from the `{year}/eez/ww3.{region}.{year}{month}_spec.nc` data files.
+`calc_remote.py` is a command-line tool for calculating the remote resource for each region. Take a look at the docstring for that script for more info. The `run_calc_remote.py` is a script for using the functions in `calc_remote.py` in a Python script (rather than as a command-line tool).
+
+These tools calculates the remote resource based on the data in the `{year}/eez/ww3.{region}.{year}{month}_spec.nc` data files. They create *temporary* files (in `paths.tmpdir`) that dramatically improve the speed of doing this calculation after the first time (for each region).
 
 Calculating Local Resource
 ===========

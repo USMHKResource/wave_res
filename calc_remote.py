@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 import paths as p
 from netCDF4 import Dataset
 import wavespeed.wave_dispersion as wavespd
@@ -148,28 +150,30 @@ def integrate_wef(lon, lat, wef, direction):
     return out
 
 
-if __name__ == '__main__':
-
-    months = np.arange(np.datetime64('2009-01'), np.datetime64('2010-01'))
-    region = 'wc'
-    # This is the outer-boundary of the EEZ (not including the Canada
-    # + Mexico borders)
-    con_inds = slice(34, 148)
-
-    tot = {}
+def process_and_load(region, months, overwrite=False):
+    """Process large data files, compute wave energy flux, and store
+    small temporary data files."""
     dat = {}
-    for m in months:
-        m_ = m.astype('O')
+    for mo in months:
+        m_ = mo.astype('O')
         tempname = (p.tmpdir / 'ww3.{region}.{year}{month:02d}_wef.nc'
                     .format(region=region, year=m_.year, month=m_.month))
-        print('Processing file {}'.format(tempname.name))
-        if tempname.is_file():
-            dat[m] = dnow = pyDictH5.load(str(tempname))
+        if tempname.is_file() and not overwrite:
+            dat[mo] = dnow = pyDictH5.load(str(tempname))
         else:
-            ncdat = load_source('wc', m)
-            dat[m] = dnow = calc_wef(ncdat, 'ALL')
+            print('Processing file {}'.format(tempname.name))
+            ncdat = load(region, mo)
+            dat[mo] = dnow = calc_wef(ncdat)
             dnow.to_hdf5(str(tempname))
-        tot[m] = calc = integrate_wef(
+    return dat
+
+
+def calc_total(dat, con_inds, show_total=True):
+
+    tot = {}
+    for mo in dat:
+        dnow = dat[mo]
+        tot[mo] = integrate_wef(
             dnow['lon'][con_inds], dnow['lat'][con_inds],
             dnow['wef'][con_inds], dnow['direction'])
 
@@ -177,9 +181,9 @@ if __name__ == '__main__':
     Nh = []
     for k in tot[tot.keys()[0]]:
         final[k] = []
-    for ky in tot:
-        d = dat[ky]
-        t = tot[ky]
+    for mo in tot:
+        d = dat[mo]
+        t = tot[mo]
         Nh.append(d['Nhour'])
         for k in t:
             final[k].append(t[k])
@@ -189,5 +193,62 @@ if __name__ == '__main__':
     for k in final:
         final[k] = np.array(final[k])
         final_sum[k] = (final[k] * Nh).sum() / Nh.sum()
-        print("The '{}' resource is: {: 5.1f} GW"
-              .format(k, final_sum[k] / 1e9))
+    return final_sum
+
+
+def print_total(total, region, con):
+    print("The total '{}-{}' resource is:".format(region, con))
+    for k in total:
+        print("    '{}': {: 5.1f} GW"
+              .format(k, total[k] / 1e9))
+
+
+if __name__ == '__main__':
+    import argparse
+    import base as b
+
+    parser = argparse.ArgumentParser(
+        description="Calculate the remote wave resource.")
+    parser.add_argument(
+        'region', type=str,
+        choices=b.regions)
+    parser.add_argument(
+        'month_start', type=str, nargs='?',
+        default='2009-01',
+        help="The starting month (in 'year-mo' format)"
+    )
+    parser.add_argument(
+        'month_end', type=str, nargs='?',
+        default='2010-01',
+        help="The end month (in 'year-mo' format)"
+    )
+    parser.add_argument(
+        '--contour', type=str,
+        default='EEZ',
+        choices=b.conids,
+        help="The contour along-which to perform the integral. "
+        "This is only needed when not doing '--process-only'."
+    )
+    parser.add_argument(
+        '--process-only', action='store_true',
+        help="Only process and store temporary files, "
+        "don't calculate the integral."
+    )
+    parser.add_argument(
+        '--overwrite', action='store_true',
+        help="Re-process and overwrite existing temporary files.")
+
+    args = parser.parse_args()
+
+    months = np.arange(np.datetime64(args.month_start),
+                       np.datetime64(args.month_end))
+
+    dat = process_and_load(args.region, months, args.overwrite)
+
+    if args.process_only:
+        exit()
+
+    con_inds = b.con_defs[args.region][args.contour]
+
+    total = calc_total(dat, con_inds)
+    print_total(total, args.region, args.contour)
