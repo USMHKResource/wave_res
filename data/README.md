@@ -1,1 +1,1 @@
-The `{region}.freq_bins.txt` files are created from the `'fbins'` item in the dict that is output from `calc_remote.calc_wef`. I wasn't sure that all the models had the same frequency resolution, so one of these needs to be created for each region (or confirm that they are all the same).
+The data files in this folder are created with the `setup_data.py` script.

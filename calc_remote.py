@@ -13,7 +13,7 @@ def _concatenate_id(array):
     return np.array(out)
 
 
-def load_source(region, month):
+def load(region, month):
     if isinstance(month, basestring):
         month = np.datetime64(month).astype("O")
     elif isinstance(month, np.datetime64):
@@ -40,9 +40,9 @@ def calc_wef(indat, contour='ALL'):
 
     Returns
     =======
-    data : dict
-       A dictionary containing the wave energy flux data. This
-       includes:
+    data : `pyDictH5.data` object
+       A dictionary-like object containing the wave energy flux
+       data. This includes:
          spec (NxFxM) [m^2/Hz/rad]: The wave energy directional spectrum.
          lon (N) (deg): longitude of data.
          lat (N) (deg): latitude of data.

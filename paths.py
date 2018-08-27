@@ -9,6 +9,8 @@ srcdir = Path(os.path.abspath('../wave_ra/pnnl/'))
 
 tmpdir = Path(os.path.abspath('./tmpdata/'))
 
+projdir = Path(os.path.abspath(__file__)).parent
+
 if this_machine.startswith('lkilcher-26339s'):
     srcdir = Path(os.path.expanduser('~/tmp/wave_ra/pnnl/'))
 

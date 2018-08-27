@@ -6,6 +6,7 @@ import area_integral as aint
 from scipy.spatial import Delaunay
 from wavespeed.wave_dispersion import rho, gravity
 import pyDictH5
+import base
 
 # Wave Flux Units
 # ########
@@ -39,8 +40,7 @@ def integrate_source(region, dates,
                             'Sice', 'Stot']):
 
     prj = proj.proj[region]
-    df = np.diff(np.loadtxt('./data/{region}.freq_bins.txt'
-                            .format(region=region)))
+    df = np.diff(base.freqbins[region])
     # Load the first dataset to compute the grid
     dat = load_source(region, dates[0])
     xy = prj.transform_points(
