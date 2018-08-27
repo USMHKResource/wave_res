@@ -26,17 +26,14 @@ def load(region, month):
     return dat
 
 
-def calc_wef(indat, contour='ALL'):
+def calc_wef(indat):
     """Load data and calculate the average wave energy flux for a
     given region and month.
 
     Parameters
     ==========
-    region : string {ak, at, hi, prusvi, wc}
-
-    month : numpy.datetime64, string (e.g., '2009-05'), or datetime object
-
-    contour : string or integer {'ALL' (default), 'EEZ', 10, 20, 30, ... 190}
+    indat : a netCDF4.Dataset
+       The dataset containing the data to be processed.
 
     Returns
     =======
@@ -55,17 +52,7 @@ def calc_wef(indat, contour='ALL'):
 
     """
 
-    if not isinstance(contour, basestring):
-        # This is to handle integers
-        contour = '{:03d}'.format(contour)
-    contour = contour.upper()
     v = indat.variables
-    conid = _concatenate_id(v['station_name'][:, 2:5].data)
-    if contour == 'ALL':
-        con_inds = slice(None)
-    else:
-        tmp = np.nonzero(conid == contour)[0][[0, -1]]
-        con_inds = slice(tmp[0], tmp[1] + 1)
 
     data = pyDictH5.data()
     data['spec'] = v['efth'][:, con_inds].data.mean(0)
@@ -85,7 +72,7 @@ def calc_wef(indat, contour='ALL'):
     df = np.diff(data['fbins'])
     data['wef'] = (wavespd.rho * wavespd.gravity *
                    (data['spec'] * cg[:, :, None] * df[None, :, None]).sum(1))
-    data['conid'] = conid
+    data['conid'] = _concatenate_id(v['station_name'][:, 2:5].data)
     return data
 
 
