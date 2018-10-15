@@ -6,7 +6,7 @@ conids = ['EEZ'] + ['{:03d}'.format(n) for n in range(10, 200, 10)]
 
 with open(str(p.projdir / 'data/Contour_Ranges.pkl'), 'r') as fl:
     con_defs = _pkl.load(fl)
-with open(str(p.projdir / 'data/GridLonlat.pkl'), 'r') as fl:
+with open(str(p.projdir / 'data/GridLonLat.pkl'), 'r') as fl:
     gridlonlat = _pkl.load(fl)
 with open(str(p.projdir / 'data/FreqBins.pkl'), 'r') as fl:
     freqbins = _pkl.load(fl)

@@ -18,8 +18,8 @@ def create_info():
         freqbins[region] = np.hstack((v['frequency1'][:].data,
                                       [v['frequency2'][-1].data]))
         # The first dim in lon/lat is time, and it doesn't change.
-        gridlonlat[region] = np.vstack((v['longitude'][0, :],
-                                        v['latitude'][0, :]))
+        gridlonlat[region] = np.vstack((v['longitude'][0, :].data,
+                                        v['latitude'][0, :].data))
         dat.close()
         for id in base.conids:
             tmp = np.nonzero(cid == id)[0][[0, -1]]
@@ -29,7 +29,7 @@ def create_info():
         pkl.dump(con_defs, fl)
     with open(str(p.projdir / 'data/FreqBins.pkl'), 'w') as fl:
         pkl.dump(freqbins, fl)
-    with open(str(p.projdir / 'data/GridLonlat.pkl'), 'w') as fl:
+    with open(str(p.projdir / 'data/GridLonLat.pkl'), 'w') as fl:
         pkl.dump(gridlonlat, fl)
 
 
