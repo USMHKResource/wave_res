@@ -17,3 +17,18 @@ proj['at'] = crs.AlbersEqualArea(
 )
 proj['at'].lonlim = [-98, -65.]
 proj['at'].latlim = [23, 45.]
+
+proj['prusvi'] = crs.AlbersEqualArea(
+    central_longitude=-66.125, central_latitude=18.472,  # Punta Del Morro
+    standard_parallels=[18, 20]
+)
+proj['prusvi'].lonlim = [-70, -64.]
+proj['prusvi'].latlim = [14, 22.]
+
+
+proj['ak'] = crs.AlbersEqualArea(
+    central_longitude=-150.966, central_latitude=59.196,  # Gore Point
+    standard_parallels=[56, 60]
+)
+proj['ak'].lonlim = [-190, -135]
+proj['ak'].latlim = [48, 69]
