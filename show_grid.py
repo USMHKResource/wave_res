@@ -11,7 +11,7 @@ land = cfeature.NaturalEarthFeature('physical', 'land', scale,
                                     edgecolor='face', facecolor=cfeature.COLORS['land'])
 
    
-def plot_lines(rinf, **kwargs):
+def plot_lines(rinf, ax, **kwargs):
     eez_kw = kwargs.pop('eez_kw', {})
     kwargs.update(transform=proj.pc)
     for cid in rinf.con_defs:
@@ -36,9 +36,9 @@ def show_atlantic():
     ax.add_feature(cfeature.STATES.with_scale(scale))
     ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
 
-    plot_lines(rinfec, color='m',
+    plot_lines(rinfec, ax, color='m',
                eez_kw=dict(lw=3))
-    plot_lines(rinfgm, color='c',
+    plot_lines(rinfgm, ax, color='c',
                eez_kw=dict(lw=3))
 
 
@@ -47,33 +47,34 @@ def show_prusvi():
     region = 'prusvi'
     rinf = base.RegionInfo(region)
     prj = proj.proj[region]
-    fignum = 10
+    fignum = 11
     fig = plt.figure(fignum)
     fig.clf()
     ax = plt.axes(projection=prj)
-    land._kwargs['facecolor'] = [0.5, 0.5, 0.5]
+
+    ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
+
+    land2 = cfeature.NaturalEarthFeature('physical', 'land', '10m',
+                                         edgecolor='face', facecolor=cfeature.COLORS['land'])
+    land2._kwargs['facecolor'] = [0.5, 0.5, 0.5]
+    #ax.add_feature(land2)
+    # ax.add_feature(cfeature.STATES.with_scale(scale))
+
+    plot_lines(rinf, ax, color='m',
+               eez_kw=dict(lw=3))
+
+
+def show_ak(old_con=False):
+    region = 'ak'
+    rinf = base.RegionInfo(region, use_old_con_defs=old_con)
+    prj = proj.proj[region]
+    fignum = 12
+    fig = plt.figure(fignum)
+    fig.clf()
+    ax = plt.axes(projection=prj)
     ax.add_feature(land)
     ax.add_feature(cfeature.STATES.with_scale(scale))
     ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
 
-    plot_lines(rinf, color='m',
+    plot_lines(rinf, ax, color='m', 
                eez_kw=dict(lw=3))
-
-    
-region = 'ak'
-rinf = base.RegionInfo(region)
-prj = proj.proj[region]
-fignum = 10
-fig = plt.figure(fignum)
-fig.clf()
-ax = plt.axes(projection=prj)
-ax.add_feature(land)
-ax.add_feature(cfeature.STATES.with_scale(scale))
-ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
-
-lon = rinf.gridlonlat[0]
-lon[lon > 0] -= 360
-
-plot_lines(rinf, color='m',
-           eez_kw=dict(lw=3))
-

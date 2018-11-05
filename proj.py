@@ -22,7 +22,7 @@ proj['prusvi'] = crs.AlbersEqualArea(
     central_longitude=-66.125, central_latitude=18.472,  # Punta Del Morro
     standard_parallels=[18, 20]
 )
-proj['prusvi'].lonlim = [-70, -64.]
+proj['prusvi'].lonlim = [-70, -63.]
 proj['prusvi'].latlim = [14, 22.]
 
 

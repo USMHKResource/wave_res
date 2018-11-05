@@ -13,8 +13,10 @@ source_regions = list(set([sr for sr in regions.iteritems()]))
 conids = ['EEZ'] + ['{:03d}'.format(n) for n in range(10, 200, 10)]
 
 
-with open(str(p.projdir / 'data/Contour_Ranges.pkl'), 'r') as fl:
+with open(str(p.projdir / 'data/Contour_Ranges2.pkl'), 'r') as fl:
     con_defs = _pkl.load(fl)
+with open(str(p.projdir / 'data/Contour_Ranges.pkl'), 'r') as fl:
+    con_defs_old = _pkl.load(fl)
 with open(str(p.projdir / 'data/GridLonLat.pkl'), 'r') as fl:
     gridlonlat = _pkl.load(fl)
 with open(str(p.projdir / 'data/FreqBins.pkl'), 'r') as fl:
@@ -32,7 +34,7 @@ con_defs['ak']['eez'] = [slice(48, 392), slice(439, 541)]
 class RegionInfo(object):
     """A class for region info.
     """
-    def __init__(self, region):
+    def __init__(self, region, use_old_con_defs=False):
         # 'region' must be in regions.
         if region not in regions:
             raise Exception("Invalid region '{}', please choose from ".format(region) +
@@ -40,7 +42,10 @@ class RegionInfo(object):
         self.source_region = regions[region]
         self.region = region
         self.gridlonlat = gridlonlat[self.source_region]
-        self.con_defs = con_defs[region]
+        if use_old_con_defs:
+            self.con_defs = con_defs_old[region]
+        else:
+            self.con_defs = con_defs[region]
         self.freqbins = freqbins[self.source_region]
 
     def get_lonlat(self, conid):
@@ -48,6 +53,8 @@ class RegionInfo(object):
         if isinstance(self.con_defs[conid], list):
             out = []
             for slc in self.con_defs[conid]:
+                if slc.step == 1j:
+                    slc = range(slc.start, slc.stop) + [slc.start]
                 out.append(self.gridlonlat[:, slc])
         else:
             out = [self.gridlonlat[:, self.con_defs[conid]], ]
