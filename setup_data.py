@@ -25,6 +25,9 @@ def create_info():
             tmp = np.nonzero(cid == id)[0][[0, -1]]
             con_defs[region][id] = slice(tmp[0], tmp[1] + 1)
 
+        if region == 'ak':
+            ll[0][ll[0] > 0] -= 360
+
         # Split the 'at' grid into 'ec' and 'gm' subgrids
         if region == 'at':
             con_defs['ec'] = {}
