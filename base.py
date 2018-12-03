@@ -1,5 +1,6 @@
 import cPickle as _pkl
 import paths as p
+import numpy as np
 
 regions = {'wc': 'wc',
            'ec': 'at', 'gm': 'at', 'at': 'at',
@@ -31,6 +32,21 @@ con_defs['gm']['eez'] = slice(227, 282)
 con_defs['prusvi']['eez'] = slice(0, 7)
 con_defs['ak']['eez'] = [slice(48, 392), slice(439, 541)]
 
+# These are from GGM's def of HI EEZ (it's a bit wonky b/c the HI EEZ
+# includes the other islands in the HI chain (e.g., Midway)).
+con_defs['hi']['eez'] = [np.r_[np.arange(0,67,1),
+                               np.array([3081, 2907, 2736, 2567, 2400, 2236,
+                                         2075, 1607, 1456, 1221, 1077, 1078,
+                                         1079, 1080, 1081, 1082, 1083, 1084,
+                                         1085, 1086, 1087, 1088, 1090, 1091,
+                                         950,  949,  948,  947,  946, 1068,
+                                         1069, 1070, 1071, 1072, 1073, 1074,
+                                         1075, 1076, 1220, 1455, 1760, 1916,
+                                         2074, 2566, 2735, 3080]),
+                               np.arange(340,453,1),
+                               np.array([0])],
+                         ]
+
 class RegionInfo(object):
     """A class for region info.
     """
@@ -53,7 +69,7 @@ class RegionInfo(object):
         if isinstance(self.con_defs[conid], list):
             out = []
             for slc in self.con_defs[conid]:
-                if slc.step == 1j:
+                if isinstance(slc, slice) and slc.step == 1j:
                     slc = range(slc.start, slc.stop) + [slc.start]
                 out.append(self.gridlonlat[:, slc])
         else:
