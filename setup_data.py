@@ -96,3 +96,4 @@ def fix_gaps():
 
 if __name__ == '__main__':
     create_info()
+    fix_gaps()

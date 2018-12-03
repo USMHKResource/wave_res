@@ -15,6 +15,4 @@ if this_machine.startswith('lkilcher-26339s') or \
    this_machine.startswith('lkilcher-32045s'):
     srcdir = Path(os.path.expanduser('~/tmp/wave_ra/pnnl/'))
 
-# elif (this_machine.startswith('lkilcher-32045s') and
-#         this_machine.endswith('nrel.gov')):
-#     srcdir = Path('/Volumes/lkilcher/wave_ra/pnnl/')
+srcdir = Path('/Volumes/lkilcher/wave_ra/pnnl/')

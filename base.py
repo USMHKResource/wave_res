@@ -9,7 +9,7 @@ regions = {'wc': 'wc',
            'prusvi': 'prusvi'}
 
 # Use set() to get unique values.
-source_regions = list(set([sr for sr in regions.iteritems()]))
+source_regions = list(set([sr for sr in regions.itervalues()]))
 
 conids = ['EEZ'] + ['{:03d}'.format(n) for n in range(10, 200, 10)]
 
