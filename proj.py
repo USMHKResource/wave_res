@@ -37,5 +37,5 @@ proj['hi'] = crs.AlbersEqualArea(
     central_longitude=-157.80, central_latitude=21.25,  # Diamond head (Oahu)
     standard_parallels=[20, 22]
 )
-proj['hi'].lonlim = [-166, -150.]
-proj['hi'].latlim = [15, 27.]
+proj['hi'].lonlim = [-182, -150.]
+proj['hi'].latlim = [15, 33.]

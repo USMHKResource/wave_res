@@ -54,11 +54,8 @@ def show_prusvi():
 
     ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
 
-    land2 = cfeature.NaturalEarthFeature('physical', 'land', '10m',
-                                         edgecolor='face', facecolor=cfeature.COLORS['land'])
-    land2._kwargs['facecolor'] = [0.5, 0.5, 0.5]
-    #ax.add_feature(land2)
-    # ax.add_feature(cfeature.STATES.with_scale(scale))
+    ax.add_feature(land)
+    ax.add_feature(cfeature.STATES.with_scale(scale))
 
     plot_lines(rinf, ax, color='m',
                eez_kw=dict(lw=3))
@@ -89,8 +86,8 @@ def show_hi(old_con=False):
     fig = plt.figure(fignum)
     fig.clf()
     ax = plt.axes(projection=prj)
-    # ax.add_feature(land)
-    # ax.add_feature(cfeature.STATES.with_scale(scale))
+    ax.add_feature(land)
+    ax.add_feature(cfeature.STATES.with_scale(scale))
     ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
 
     plot_lines(rinf, ax, color='m', 
