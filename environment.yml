@@ -1,6 +1,7 @@
 name: wave_res
 
 channels:
+  - conda-forge
   - anaconda
 
 dependencies:
@@ -14,6 +15,6 @@ dependencies:
   - scipy=1.1
   - h5py
   - shapely
-  - cartopy
+  - cartopy=0.17
   - pip:
      - "git+https://github.com/lkilcher/pyDictH5.git@v0.2.1#egg=pyDictH5"
