@@ -77,6 +77,22 @@ def show_ak(old_con=False):
                eez_kw=dict(lw=3))
 
 
+def show_wc(old_con=False):
+    region = 'wc'
+    rinf = base.RegionInfo(region, use_old_con_defs=old_con)
+    prj = proj.proj[region]
+    fignum = 12
+    fig = plt.figure(fignum)
+    fig.clf()
+    ax = plt.axes(projection=prj)
+    ax.add_feature(land)
+    ax.add_feature(cfeature.STATES.with_scale(scale))
+    ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
+
+    plot_lines(rinf, ax, color='m', 
+               eez_kw=dict(lw=3))
+
+
 
 def show_hi(old_con=False):
     region = 'hi'
