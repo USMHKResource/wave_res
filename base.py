@@ -1,6 +1,7 @@
 import cPickle as _pkl
 import paths as p
 import numpy as np
+import proj
 
 regions = {'wc': 'wc',
            'ec': 'at', 'gm': 'at', 'at': 'at',
@@ -22,6 +23,8 @@ with open(str(p.projdir / 'data/GridLonLat.pkl'), 'r') as fl:
     gridlonlat = _pkl.load(fl)
 with open(str(p.projdir / 'data/FreqBins.pkl'), 'r') as fl:
     freqbins = _pkl.load(fl)
+with open(str(p.projdir / 'data/LandData.pkl'), 'r') as fl:
+    land_data = _pkl.load(fl)
         
 # This is the outer-boundary of the EEZ (not including the Canada
 # + Mexico borders)
@@ -47,9 +50,12 @@ con_defs['hi']['eez'] = [np.r_[np.arange(0,67,1),
                                np.array([0])],
                          ]
 
+
 class RegionInfo(object):
     """A class for region info.
     """
+    mainland = None
+    islands = None
     def __init__(self, region, use_old_con_defs=False):
         # 'region' must be in regions.
         if region not in regions:
@@ -63,6 +69,10 @@ class RegionInfo(object):
         else:
             self.con_defs = con_defs[region]
         self.freqbins = freqbins[self.source_region]
+        if region in proj.proj:
+            self.proj = proj.proj[region]
+        if region in land_data:
+            self.mainland, self.islands = land_data[region]
 
     def get_lonlat(self, conid):
         """conid must be in '010', '020', ... '200', or 'EEZ' """
