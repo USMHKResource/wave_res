@@ -18,7 +18,7 @@ def plot_lines(rinf, ax, **kwargs):
         tmp = kwargs.copy()
         if cid == 'eez':
             tmp.update(eez_kw)
-        for ll in rinf.get_lonlat(cid):
+        for ll in rinf.get_contour(cid):
             ax.plot(ll[0], ll[1], **tmp)
 
 

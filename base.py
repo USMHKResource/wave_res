@@ -74,7 +74,7 @@ class RegionInfo(object):
         if region in land_data:
             self.mainland, self.islands = land_data[region]
 
-    def get_lonlat(self, conid):
+    def get_contour(self, conid):
         """conid must be in '010', '020', ... '200', or 'EEZ' """
         if isinstance(self.con_defs[conid], list):
             out = []

@@ -49,9 +49,9 @@ ax.plot(bounds[0], bounds[1], 'r-', transform=proj.pc)
 
 ax.plot(pgy.boundary.xy[0], pgy.boundary.xy[1], 'b-')
 
-brd = rinf.get_lonlat('borders')[0]
+brd = rinf.get_contour('borders')[0]
 brd = rinf.proj.transform_points(proj.pc, brd[0], brd[1]).T[:2]
-con = rinf.get_lonlat('190')[0]
+con = rinf.get_contour('190')[0]
 con = rinf.proj.transform_points(proj.pc, con[0], con[1]).T[:2]
 
 tmp = line_intersection(con[:2, :2], brd)

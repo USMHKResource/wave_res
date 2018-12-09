@@ -26,7 +26,7 @@ def plot_lines(rinf, ax, **kwargs):
         tmp = kwargs.copy()
         if cid == 'eez':
             tmp.update(eez_kw)
-        for ll in rinf.get_lonlat(cid):
+        for ll in rinf.get_contour(cid):
             ax.plot(ll[0], ll[1], **tmp)
 
 
@@ -146,7 +146,7 @@ def get_land_wc():
                            eez_kw=dict(lw=3), alpha=0.5)
 
     # First grab the EEZ boundary (including borders)
-    lleez = rinf.get_lonlat('EEZ')[0]
+    lleez = rinf.get_contour('EEZ')[0]
 
     # Now grab the coastline data
     coastline = get_coastline_data(prj.lonlim, prj.latlim, )
@@ -177,7 +177,7 @@ def get_land_hi():
                            eez_kw=dict(lw=3), alpha=0.5)
 
     # First grab the EEZ boundary (including borders)
-    lleez = rinf.get_lonlat('eez')[0]
+    lleez = rinf.get_contour('eez')[0]
 
     # Now grab the coastline data
     coastline = get_coastline_data(prj.lonlim, prj.latlim, )
@@ -206,7 +206,7 @@ def get_land_ak():
                            eez_kw=dict(lw=3), alpha=0.5)
 
     # First grab the EEZ boundary (including borders)
-    lleez = rinf.get_lonlat('EEZ')[0]
+    lleez = rinf.get_contour('EEZ')[0]
     # Now grab the coastline data
     lonlim = np.array(prj.lonlim)
     lonlim[1] += 5
@@ -242,7 +242,7 @@ def get_land_at():
                            eez_kw=dict(lw=3), alpha=0.5)
 
     # First grab the EEZ boundary (including borders)
-    lleez = rinf.get_lonlat('EEZ')[0]
+    lleez = rinf.get_contour('EEZ')[0]
     # Now grab the coastline data
     coastline = get_coastline_data(prj.lonlim, prj.latlim, )
 
@@ -282,7 +282,7 @@ def get_land_prusvi():
                            eez_kw=dict(lw=3), alpha=0.5)
 
     # First grab the EEZ boundary (including borders)
-    lleez = rinf.get_lonlat('EEZ')[0]
+    lleez = rinf.get_contour('EEZ')[0]
 
     # Now grab the coastline data
     coastline = get_coastline_data(prj.lonlim, prj.latlim, )

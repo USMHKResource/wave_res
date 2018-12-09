@@ -67,7 +67,7 @@ def fix_gaps():
             if id == 'eez':
                 # These are created explicitly, and might have breaks already inserted.
                 continue
-            for ll in inf.get_lonlat(id):
+            for ll in inf.get_contour(id):
                 # Calculate the distance betweeen points
                 r = np.abs(gis.diffll(ll)[0])
                 # Find the distances greater than r_max
