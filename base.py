@@ -28,16 +28,19 @@ with open(str(p.projdir / 'data/LandData.pkl'), 'r') as fl:
         
 # This is the outer-boundary of the EEZ (not including the Canada
 # + Mexico borders)
-con_defs['wc']['eez'] = slice(34, 148)
+con_defs['wc']['eez'] = range(34, 148)
+con_defs['wc']['borders'] = [range(0, 35), range(147, 176)]
 
-con_defs['ec']['eez'] = slice(32, 147)
-con_defs['gm']['eez'] = slice(227, 282)
-con_defs['prusvi']['eez'] = slice(0, 7)
-con_defs['ak']['eez'] = [slice(48, 392), slice(439, 541)]
+con_defs['ec']['eez'] = range(32, 147)
+con_defs['gm']['eez'] = range(227, 282)
+con_defs['prusvi']['eez'] = range(0, 7)
+con_defs['prusvi']['borders'] = np.hstack([range(7, 117), [0]])
+con_defs['ak']['eez'] = [range(48, 392), range(439, 541)]
+con_defs['ak']['borders'] = [range(0, 49), range(391, 440), range(540, 616)]
 
 # These are from GGM's def of HI EEZ (it's a bit wonky b/c the HI EEZ
 # includes the other islands in the HI chain (e.g., Midway)).
-con_defs['hi']['eez'] = [np.r_[np.arange(0,67,1),
+con_defs['hi']['eez'] = [np.r_[range(0,67,1),
                                np.array([3081, 2907, 2736, 2567, 2400, 2236,
                                          2075, 1607, 1456, 1221, 1077, 1078,
                                          1079, 1080, 1081, 1082, 1083, 1084,
@@ -46,8 +49,8 @@ con_defs['hi']['eez'] = [np.r_[np.arange(0,67,1),
                                          1069, 1070, 1071, 1072, 1073, 1074,
                                          1075, 1076, 1220, 1455, 1760, 1916,
                                          2074, 2566, 2735, 3080]),
-                               np.arange(340,453,1),
-                               np.array([0])],
+                               range(340,453,1),
+                               np.array([0])].tolist(),
                          ]
 
 

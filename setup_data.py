@@ -55,39 +55,45 @@ def create_info():
         pkl.dump(gridlonlat, fl)
 
 
+def check_loop(inf, s, r_max):
+    r_ends = np.abs(gis.diffll(
+        inf.gridlonlat[:, [s[0], s[-1]]])[0])
+    if r_ends < r_max:
+        s = s + [s[0]]
+    return s
+
+
 def fix_gaps():
 
     r_max = 40000
 
     new_con_defs = {}
     for reg in base.regions:
-        inf = base.RegionInfo(reg, use_old_con_defs=True)
-        cdefs = deepcopy(inf.con_defs)
-        for id in inf.con_defs.keys():
+        rinf = base.RegionInfo(reg, use_old_con_defs=True)
+        cdefs = deepcopy(rinf.con_defs)
+        for id in rinf.con_defs.keys():
             if id == 'eez':
                 # These are created explicitly, and might have breaks already inserted.
                 continue
-            for ll in inf.get_contour(id):
+            for ll in rinf.get_contour(id):
                 # Calculate the distance betweeen points
                 r = np.abs(gis.diffll(ll)[0])
                 # Find the distances greater than r_max
                 inds = np.nonzero(r > r_max)[0]
                 if len(inds) == 0 and isinstance(cdefs[id], slice):
-                    cdefs[id] = [cdefs[id], ]
+                    cdefs[id] = [np.mgrid[cdefs[id]].tolist(), ]
                 else:
                     tmp = []
                     last = start = cdefs[id].start
                     for i in inds:
-                        r_ends = np.abs(gis.diffll(
-                            inf.gridlonlat[:, [last, start + i]])[0])
-                        if r_ends < r_max:
-                            step = 1j
-                        else:
-                            step = 1
-                        slc_now = slice(last, start + i + 1, step)
-                        tmp.append(slc_now)
+                        tmp.append(check_loop(rinf,
+                                              range(last, start + i + 1),
+                                              2 * r_max))
                         last = start + i + 1
-                    tmp.append(slice(last, cdefs[id].stop, step))
+                    tmp.append(
+                        check_loop(rinf,
+                                   range(last, cdefs[id].stop),
+                                   2 * r_max))
                     cdefs[id] = tmp
         new_con_defs[reg] = cdefs
     with open(str(p.projdir / 'data/Contour_Ranges2.pkl'), 'w') as fl:
