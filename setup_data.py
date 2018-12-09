@@ -97,3 +97,8 @@ def fix_gaps():
 if __name__ == '__main__':
     create_info()
     fix_gaps()
+
+    import extract_land
+    land_data = extract_land.run_all()
+    with open(str(p.projdir / 'data/LandData.pkl'), 'w') as fl:
+        pkl.dump(land_data, fl)
