@@ -54,8 +54,12 @@ con_defs['hi']['eez'] = [np.r_[np.arange(0,67,1),
 class RegionInfo(object):
     """A class for region info.
     """
+
     mainland = None
     islands = None
+    
+    _proj_pc = proj.pc
+
     def __init__(self, region, use_old_con_defs=False):
         # 'region' must be in regions.
         if region not in regions:
@@ -71,8 +75,7 @@ class RegionInfo(object):
         self.freqbins = freqbins[self.source_region]
         if region in proj.proj:
             self.proj = proj.proj[region]
-            self.gridxy = self.proj.transform_points(
-                proj.pc, self.gridlonlat[0], self.gridlonlat[1]).T[:2]
+            self.gridxy = self.transform(self.gridlonlat)
         if region in land_data:
             self.mainland, self.islands = land_data[region]
 
@@ -91,3 +94,15 @@ class RegionInfo(object):
         else:
             out = [data[:, self.con_defs[conid]], ]
         return out
+
+    def transform(self, points, inverse=False):
+        """Transform points from lonlat to xy coordinates, 
+        or the reverse (if inverse==True).
+        """
+        if inverse:
+            pout = proj.pc
+            pin = self.proj
+        else:
+            pout = self.proj
+            pin = proj.pc
+        return pout.transform_points(pin, points[0], points[1]).T[:2]
