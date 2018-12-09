@@ -71,17 +71,23 @@ class RegionInfo(object):
         self.freqbins = freqbins[self.source_region]
         if region in proj.proj:
             self.proj = proj.proj[region]
+            self.gridxy = self.proj.transform_points(
+                proj.pc, self.gridlonlat[0], self.gridlonlat[1]).T[:2]
         if region in land_data:
             self.mainland, self.islands = land_data[region]
 
-    def get_contour(self, conid):
+    def get_contour(self, conid, xy=False):
         """conid must be in '010', '020', ... '200', or 'EEZ' """
+        if xy:
+            data = self.gridxy
+        else:
+            data = self.gridlonlat
         if isinstance(self.con_defs[conid], list):
             out = []
             for slc in self.con_defs[conid]:
                 if isinstance(slc, slice) and slc.step == 1j:
                     slc = range(slc.start, slc.stop) + [slc.start]
-                out.append(self.gridlonlat[:, slc])
+                out.append(data[:, slc])
         else:
-            out = [self.gridlonlat[:, self.con_defs[conid]], ]
+            out = [data[:, self.con_defs[conid]], ]
         return out
