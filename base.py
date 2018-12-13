@@ -25,16 +25,21 @@ with open(str(p.projdir / 'data/FreqBins.pkl'), 'r') as fl:
     freqbins = _pkl.load(fl)
 with open(str(p.projdir / 'data/LandData.pkl'), 'r') as fl:
     land_data = _pkl.load(fl)
+with open(str(p.projdir / 'data/Boundaries.pkl'), 'r') as fl:
+    bounds = _pkl.load(fl)
         
 # This is the outer-boundary of the EEZ (not including the Canada
 # + Mexico borders)
 con_defs['wc']['eez'] = range(34, 148)
 con_defs['wc']['borders'] = [range(0, 35), range(147, 176)]
 
+con_defs['at']['eez'] = [range(32, 147), range(227, 282)]
+con_defs['at']['borders'] = [range(0, 33), range(133, 228), range(282, 303)]
+
 con_defs['ec']['eez'] = range(32, 147)
 con_defs['gm']['eez'] = range(227, 282)
 con_defs['prusvi']['eez'] = range(0, 7)
-con_defs['prusvi']['borders'] = np.hstack([range(7, 117), [0]])
+con_defs['prusvi']['borders'] = [range(7, 117) + [0], ]
 con_defs['ak']['eez'] = [range(48, 392), range(439, 541)]
 con_defs['ak']['borders'] = [range(0, 49), range(391, 440), range(540, 616)]
 
@@ -52,6 +57,14 @@ con_defs['hi']['eez'] = [np.r_[range(0,67,1),
                                range(340,453,1),
                                np.array([0])].tolist(),
                          ]
+con_defs['hi']['borders'] = [np.array([3081, 2907, 2736, 2567, 2400, 2236,
+                                       2075, 1607, 1456, 1221, 1077, 1078,
+                                       1079, 1080, 1081, 1082, 1083, 1084,
+                                       1085, 1086, 1087, 1088, 1090, 1091,
+                                       950,  949,  948,  947,  946, 1068,
+                                       1069, 1070, 1071, 1072, 1073, 1074,
+                                       1075, 1076, 1220, 1455, 1760, 1916,
+                                       2074, 2566, 2735, 3080]),]
 
 
 class RegionInfo(object):
@@ -91,8 +104,6 @@ class RegionInfo(object):
         if isinstance(self.con_defs[conid], list):
             out = []
             for slc in self.con_defs[conid]:
-                if isinstance(slc, slice) and slc.step == 1j:
-                    slc = range(slc.start, slc.stop) + [slc.start]
                 out.append(data[:, slc])
         else:
             out = [data[:, self.con_defs[conid]], ]

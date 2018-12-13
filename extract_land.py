@@ -3,8 +3,6 @@ This script grabs the coastline data from the NaturalEarth dataset that overlap 
 """
 
 from __future__ import division 
-import matplotlib as mpl
-mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 plt.ion()
 import proj

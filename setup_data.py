@@ -104,7 +104,14 @@ if __name__ == '__main__':
     create_info()
     fix_gaps()
 
+    # This extracts the land data that is relavent for each data point
     import extract_land
     land_data = extract_land.run_all()
     with open(str(p.projdir / 'data/LandData.pkl'), 'w') as fl:
         pkl.dump(land_data, fl)
+
+    # This sets boundaries (polygons) of each contour.
+    import boundaries
+    bounds = boundaries.run_all()
+    with open(str(p.projdir / 'data/Boundaries.pkl'), 'w') as fl:
+        pkl.dump(bounds, fl)
