@@ -1,3 +1,36 @@
+"""
+This module calculates the 'clipping paths' (boundaries) for each
+distance (range path) from the coast. These boundaries can be combined
+with the land boundaries (extracted by the ``extract_land.py`` script)
+to create complete clipping paths. These clipping paths are used to
+clip triangles in the area integration.
+
+Each function ``polyinds_<region>`` defined below returns a list of
+lists. The first list (in the outer list) is always the 'main
+boundary', and subsequent ones are additional (island) boundaries.
+The island boundaries are always loops around islands that do not
+intersect the 'main boundary'.
+
+The 'main boundary' for each range path is created by finding the
+points on the 'borders' paths (defined in ``base.py``) that are
+closest to the endpoints of each range path. The indices for the
+segment of the 'border' between land and that point is then joined
+with the indices for that range path, and these are returned to define
+the main boundary. If the boundary is a loop, the first index in this
+list is the same as the last. If the boundary intersects land (the
+mainland), then the first and last indices are different. The mainland
+is intended to be joined to this data in later processing.
+
+Each function is essentially hard-coded to join range paths with the
+borders in the correct order. If you want to add a new grid, or if the
+definitions of the underlying grids change you'll need to carefully
+create the boundaries for that grid. The minimal automation involved
+is in finding the point along the border that is nearest the endpoint
+of each range path.
+
+"""
+
+
 import matplotlib.pyplot as plt
 plt.ion()
 from base import RegionInfo
@@ -30,43 +63,64 @@ def mindist(pt, line):
 
 
 def polyinds_wc():
-
+    """The west coast boundary definitions are the simplest because
+    there are no islands, and exactly two borders (at each end) that
+    intersect all range paths.
+    """
     out = {}
 
     rinf = RegionInfo('wc')
     fig, ax = setup_figure(rinf, 1000 + 30)
 
+    # loop over range paths
     for rng in np.arange(10, 200, 10):
         ky = '{:03d}'.format(rng)
 
         xy = rinf.get_contour(ky, xy=True)[0]
 
+        # Initialize the list of indices for this range.
         poly_inds = []
 
         border_ind = 0
         bxy = rinf.get_contour('borders', xy=True)[border_ind]
         binds = rinf.con_defs['borders'][border_ind]
+        # Find the border (bxy) point nearest the start of the range
+        # path (xy)
         id0 = mindist(xy[:, 0], bxy)[0]
+        # Now add the indices of the indices of the border
         poly_inds.append(binds[:id0 + 1])
+        # Then the range path indices
         poly_inds.append(rinf.con_defs[ky][0])
 
         border_ind = 1
         bxy = rinf.get_contour('borders', xy=True)[border_ind]
         binds = rinf.con_defs['borders'][border_ind]
+        # Find this border (bxy) point nearest the end of the range
+        # path (xy)
         ide = mindist(xy[:, -1], bxy)[0]
+        # append the border indices
         poly_inds.append(binds[ide:])
 
+        # Stack the all together.
         pinds = np.hstack(poly_inds).tolist()
         boundary = np.hstack([
             rinf.gridxy[:, pinds],
             rinf.transform(rinf.mainland)])
         ax.plot(boundary[0], boundary[1], 'r-')
 
-        out[ky] = pinds
+        # The output is a dict (range) of lists of lists for each range.
+        # But, the west coast is simple, so there are no island boundaries.
+        out[ky] = [pinds, ]
+    # The 'EEZ' range path IS the boundary for 'eez' and 'EEZ'.
+    out['EEZ'] = out['eez'] = [rinf.con_defs['EEZ'][0], ]
     return out
 
 
 def polyinds_ak():
+    """The Alaska boundary definitions have many 'island' boundaries
+    and three 'borders', so there is some hardcoding to treat
+    different ranges differently.
+    """
     out = {}
     rinf = RegionInfo('ak')
     fig, ax = setup_figure(rinf, 1000 + 31)
@@ -79,7 +133,6 @@ def polyinds_ak():
 
         poly_inds = []
 
-        # link_seg_with_border(rinf, ky, 0, 0, 2)
         border_ind = 0
         bxy = rinf.get_contour('borders', xy=True)[border_ind]
         binds = rinf.con_defs['borders'][border_ind]
@@ -87,7 +140,9 @@ def polyinds_ak():
         poly_inds.append(binds[:id0 + 1])
         poly_inds.append(rinf.con_defs[ky][seg_i])
 
+        # ranges >= 80 start+end on borders 0 and 2.
         if rng > 81:
+            # ranges > 80 intersect the middle (1) border.
             border_ind = 1
             binds = rinf.con_defs['borders'][border_ind]
             bxy = rinf.get_contour('borders', xy=True)[border_ind]
@@ -112,10 +167,14 @@ def polyinds_ak():
             rinf.transform(rinf.mainland)])
         ax.plot(boundary[0], boundary[1], 'r-')
 
+        # Collect island boundaries.
         other = rinf.con_defs[ky][seg_i + 1:]
         for itmp, slc in enumerate(other):
+            # Add the first index to the end
             slc = other[itmp] = slc + [slc[0]]
+            # Plot islands in blue
             ax.plot(rinf.gridxy[0, slc], rinf.gridxy[1, slc], 'b-')
+        # Add the islands to main boundary
         out[ky] = [pinds, ] + other
     out['EEZ'] = out['eez'] = [rinf.con_defs['EEZ'][0], ]
     boundary = rinf.gridxy[:, out['EEZ'][0]]
@@ -125,6 +184,8 @@ def polyinds_ak():
 
 
 def polyinds_at():
+    """The Atlantic boundary definitions have some tricky borders.
+    """
     out = {}
     rinf = RegionInfo('at')
     fig, ax = setup_figure(rinf, 1000 + 39)
@@ -145,7 +206,6 @@ def polyinds_at():
 
         poly_inds = []
 
-        # link_seg_with_border(rinf, ky, 0, 0, 2)
         border_ind = 0
         bxy = rinf.get_contour('borders', xy=True)[border_ind]
         binds = rinf.con_defs['borders'][border_ind]
@@ -167,6 +227,8 @@ def polyinds_at():
             poly_inds.append(rinf.con_defs[ky][seg_i])
 
         if rng == 190:
+            # hardcode this boundary because the 'border' definitions
+            # are a bit strange in the gulf.
             poly_inds[2] = range(133, 259)
 
         border_ind = 2
@@ -194,6 +256,11 @@ def polyinds_at():
 
 
 def polyinds_prusvi():
+    """The Puerto Rico US Virgin Islands boundary definitions do not
+    inersect land (all are loops).
+    many 'island' boundaries and three 'borders', so there is some
+    hardcoding to treat different ranges differently.
+    """
     out = {}
     rinf = RegionInfo('prusvi')
     fig, ax = setup_figure(rinf, 1000 + 32)
@@ -207,7 +274,6 @@ def polyinds_prusvi():
         ax.plot(xy[0, 0], xy[1, 0], 'r+')
 
         poly_inds = []
-        # link_seg_with_border(rinf, ky, 0, 0, 2)
         border_ind = 0
         bxy = rinf.get_contour('borders', xy=True)[border_ind]
         ax.plot(bxy[0, 0], bxy[1, 0], 'b+')
@@ -216,6 +282,7 @@ def polyinds_prusvi():
         poly_inds.append(rinf.con_defs[ky][seg_i])
 
         if rng < 171:
+            # This joins the next segment
             seg_i += 1
             xy = rinf.get_contour(ky, xy=True)[seg_i]
             ax.plot(xy[0, 0], xy[1, 0], 'rx')
@@ -224,6 +291,9 @@ def polyinds_prusvi():
             poly_inds.append(rinf.con_defs[ky][seg_i])
 
         if rng != 10:
+            # The first range loops all the way around.
+            # The rest need fall into this `if` and are joined with the
+            # first border.
             id0, d = mindist(xy[:, -1], bxy)
             seg_i = 0
             xy = rinf.get_contour(ky, xy=True)[seg_i]
@@ -269,7 +339,6 @@ if False:
         ax.plot(xy[0, 0], xy[1, 0], 'r+')
 
         poly_inds = []
-        # link_seg_with_border(rinf, ky, 0, 0, 2)
         border_ind = 0
         bxy = rinf.get_contour('borders', xy=True)[border_ind]
         ax.plot(bxy[0, 0], bxy[1, 0], 'b+')
@@ -315,7 +384,7 @@ if False:
 
 
 def run_all():
-
+    plt.ioff()
     poly_defs = {}
 
     poly_defs['wc'] = polyinds_wc()
@@ -325,4 +394,5 @@ def run_all():
     ##### IMPORTANT ####
     # HI is not yet included in the poly defs b/c it's boundaries are wonky.
 
+    plt.ion()
     return poly_defs
