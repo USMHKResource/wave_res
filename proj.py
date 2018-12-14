@@ -18,6 +18,20 @@ proj['at'] = crs.AlbersEqualArea(
 proj['at'].lonlim = [-98, -65.]
 proj['at'].latlim = [23, 45.]
 
+proj['ec'] = crs.AlbersEqualArea(
+    central_longitude=-75.52, central_latitude=35.22,  # ~Cape Hatteras
+    standard_parallels=[25, 44]
+)
+proj['ec'].lonlim = [-84, -65]
+proj['ec'].latlim = [23, 45]
+
+proj['gm'] = crs.AlbersEqualArea(
+    central_longitude=-97.15, central_latitude=25.96,  # ~Gulf end of US-Mexico border
+    standard_parallels=[25, 44]
+)
+proj['gm'].lonlim = [-98, -78]
+proj['gm'].latlim = [23, 32]
+
 proj['prusvi'] = crs.AlbersEqualArea(
     central_longitude=-66.125, central_latitude=18.472,  # Punta Del Morro
     standard_parallels=[18, 20]
