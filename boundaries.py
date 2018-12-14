@@ -255,6 +255,119 @@ def polyinds_at():
     return out
 
 
+def polyinds_gm():
+    """The Gulf boundary definitions have some tricky borders.
+    """
+    out = {}
+    rinf = RegionInfo('gm')
+    fig, ax = setup_figure(rinf, 1000 + 39)
+    rinf.con_defs
+
+    for inds in rinf.con_defs['borders']:
+        x, y = rinf.gridxy[:, inds]
+        ax.plot(x, y, 'm-', lw=3, zorder=10)
+    inds = rinf.con_defs['EEZ'][0]
+    x, y = rinf.gridxy[:, inds]
+    ax.plot(x, y, 'k-', lw=1, zorder=12)
+
+    for rng in np.arange(10, 200, 10):
+        ky = '{:03d}'.format(rng)
+
+        seg_i = 0
+        xy = rinf.get_contour(ky, xy=True)[seg_i]
+
+        poly_inds = []
+
+        border_ind = 0
+        bxy = rinf.get_contour('borders', xy=True)[border_ind]
+        binds = rinf.con_defs['borders'][border_ind]
+        id0, d = mindist(xy[:, 0], bxy)
+        poly_inds.append(binds[:id0 + 1])
+        poly_inds.append(rinf.con_defs[ky][seg_i])
+
+        if rng == 190:
+            # hardcode this boundary because the 'border' definitions
+            # are a bit strange in the gulf.
+            poly_inds[0] += range(228, 259)
+
+        border_ind = 1
+        bxy = rinf.get_contour('borders', xy=True)[border_ind]
+        binds = rinf.con_defs['borders'][border_ind]
+        ide, d = mindist(xy[:, -1], bxy)
+        poly_inds.append(binds[ide:])
+
+        pinds = np.hstack(poly_inds).tolist()
+        boundary = np.hstack([
+            rinf.gridxy[:, pinds],
+            rinf.transform(rinf.mainland)])
+        ax.plot(boundary[0], boundary[1], 'r-')
+
+        other = rinf.con_defs[ky][seg_i + 1:]
+        for itmp, slc in enumerate(other):
+            slc = other[itmp] = slc + [slc[0]]
+            ax.plot(rinf.gridxy[0, slc], rinf.gridxy[1, slc], 'b-')
+        out[ky] = [pinds, ] + other
+    out['EEZ'] = out['eez'] = [rinf.con_defs['EEZ'][0], ]
+    boundary = rinf.gridxy[:, out['EEZ'][0]]
+    ax.plot(boundary[0], boundary[1], '-', color='y', alpha=0.5, lw=7)
+
+    return out
+
+
+def polyinds_ec():
+    """The east coast borders are as simple as the west coast.
+    """
+    out = {}
+    rinf = RegionInfo('ec')
+    fig, ax = setup_figure(rinf, 1000 + 39)
+    rinf.con_defs
+
+    for inds in rinf.con_defs['borders']:
+        x, y = rinf.gridxy[:, inds]
+        ax.plot(x, y, 'm-', lw=3, zorder=10)
+    inds = rinf.con_defs['EEZ'][0]
+    x, y = rinf.gridxy[:, inds]
+    ax.plot(x, y, 'k-', lw=1, zorder=12)
+
+    for rng in np.arange(10, 200, 10):
+        ky = '{:03d}'.format(rng)
+
+        seg_i = 0
+        xy = rinf.get_contour(ky, xy=True)[seg_i]
+
+        poly_inds = []
+
+        border_ind = 0
+        bxy = rinf.get_contour('borders', xy=True)[border_ind]
+        binds = rinf.con_defs['borders'][border_ind]
+        id0, d = mindist(xy[:, 0], bxy)
+        poly_inds.append(binds[:id0 + 1])
+        poly_inds.append(rinf.con_defs[ky][seg_i])
+
+        border_ind = 1
+        bxy = rinf.get_contour('borders', xy=True)[border_ind]
+        binds = rinf.con_defs['borders'][border_ind]
+        ide, d = mindist(xy[:, -1], bxy)
+        poly_inds.append(binds[ide:])
+
+        pinds = np.hstack(poly_inds).tolist()
+        boundary = np.hstack([
+            rinf.gridxy[:, pinds],
+            rinf.transform(rinf.mainland)])
+        ax.plot(boundary[0], boundary[1], 'r-')
+
+        other = rinf.con_defs[ky][seg_i + 1:]
+        for itmp, slc in enumerate(other):
+            slc = other[itmp] = slc + [slc[0]]
+            ax.plot(rinf.gridxy[0, slc], rinf.gridxy[1, slc], 'b-')
+        out[ky] = [pinds, ] + other
+    out['EEZ'] = out['eez'] = [rinf.con_defs['EEZ'][0], ]
+    boundary = rinf.gridxy[:, out['EEZ'][0]]
+    ax.plot(boundary[0], boundary[1], '-', color='y', alpha=0.5, lw=7)
+
+    return out
+
+
 def polyinds_prusvi():
     """The Puerto Rico US Virgin Islands boundary definitions do not
     inersect land (all are loops).
@@ -389,10 +502,12 @@ def run_all():
 
     poly_defs['wc'] = polyinds_wc()
     poly_defs['ak'] = polyinds_ak()
-    poly_defs['prusvi'] = polyinds_prusvi()
     poly_defs['at'] = polyinds_at()
+    poly_defs['gm'] = polyinds_gm()
+    poly_defs['ec'] = polyinds_ec()
+    poly_defs['prusvi'] = polyinds_prusvi()
     ##### IMPORTANT ####
     # HI is not yet included in the poly defs b/c it's boundaries are wonky.
-
+    plt.close('all')
     plt.ion()
     return poly_defs

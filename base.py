@@ -81,7 +81,8 @@ class RegionInfo(object):
     def __init__(self, region, use_old_con_defs=False):
         # 'region' must be in regions.
         if region not in regions:
-            raise Exception("Invalid region '{}', please choose from ".format(region) +
+            raise Exception("Invalid region '{}', please choose from "
+                            .format(region) +
                             ("{}, " * len(regions)).format(*regions)[:-2] + '.')
         self.source_region = regions[region]
         self.region = region
