@@ -248,6 +248,86 @@ def get_land_at():
     mainland = get_mainland(lleez, coastline[0], prj)
     # crop out some large bays
     for ll0, ll1 in [
+            [(-89.16, 29.38), (-88.70, 30.33)], # Miss. River Delta (LA)
+            [(-75.95, 37.14), (-76.00, 36.92)], # Chesapeake
+            [(-75.53, 35.82), (-76.35, 34.94)], # NC coast
+    ]:
+        i0 = argnearest(np.array(ll0),mainland)
+        i1 = argnearest(np.array(ll1),mainland)
+        if i0 > i1:
+            tmp = i0;i0 = i1;i1 = tmp
+        mainland = np.hstack((mainland[:, :i0], mainland[:, i1:]))
+
+    # Construct the boundary
+    boundary_ll = np.hstack((lleez, mainland))
+    # ... and plot it
+    ax.plot(boundary_ll[0], boundary_ll[1], 'r-', transform=proj.pc)
+
+    # Now grab and plot the islands
+    islands = get_islands(boundary_ll, coastline, prj)
+    for isl in islands:
+        ax.plot(isl[0], isl[1], transform=proj.pc, color='b')
+
+    return mainland, islands
+
+
+def get_land_gm():
+
+    rinf = RegionInfo('gm', use_old_con_defs=False)
+    prj = proj.proj[rinf.region]
+
+    fig, ax = setup_figure(rinf, 35,
+                           color='m',
+                           eez_kw=dict(lw=3), alpha=0.5)
+
+    # First grab the EEZ boundary (including borders)
+    lleez = rinf.get_contour('EEZ')[0]
+    # Now grab the coastline data
+    coastline = get_coastline_data(prj.lonlim, prj.latlim, )
+
+    # Now pick-out the segment of mainland that matches it
+    mainland = get_mainland(lleez, coastline[0], prj)
+    # crop out some large bays
+    for ll0, ll1 in [
+            [(-89.16, 29.38), (-88.70, 30.33)], # Miss. River Delta (LA)
+    ]:
+        i0 = argnearest(np.array(ll0),mainland)
+        i1 = argnearest(np.array(ll1),mainland)
+        if i0 > i1:
+            tmp = i0;i0 = i1;i1 = tmp
+        mainland = np.hstack((mainland[:, :i0], mainland[:, i1:]))
+
+    # Construct the boundary
+    boundary_ll = np.hstack((lleez, mainland))
+    # ... and plot it
+    ax.plot(boundary_ll[0], boundary_ll[1], 'r-', transform=proj.pc)
+
+    # Now grab and plot the islands
+    islands = get_islands(boundary_ll, coastline, prj)
+    for isl in islands:
+        ax.plot(isl[0], isl[1], transform=proj.pc, color='b')
+
+    return mainland, islands
+
+
+def get_land_ec():
+
+    rinf = RegionInfo('ec', use_old_con_defs=False)
+    prj = proj.proj[rinf.region]
+
+    fig, ax = setup_figure(rinf, 36,
+                           color='m',
+                           eez_kw=dict(lw=3), alpha=0.5)
+
+    # First grab the EEZ boundary (including borders)
+    lleez = rinf.get_contour('EEZ')[0]
+    # Now grab the coastline data
+    coastline = get_coastline_data(prj.lonlim, prj.latlim, )
+
+    # Now pick-out the segment of mainland that matches it
+    mainland = get_mainland(lleez, coastline[0], prj)
+    # crop out some large bays
+    for ll0, ll1 in [
             [(-75.95, 37.14), (-76.00, 36.92)], # Chesapeake
             [(-75.53, 35.82), (-76.35, 34.94)], # NC coast
     ]:
@@ -275,7 +355,7 @@ def get_land_prusvi():
     rinf = RegionInfo('prusvi', use_old_con_defs=False)
     prj = proj.proj[rinf.region]
 
-    fig, ax = setup_figure(rinf, 35,
+    fig, ax = setup_figure(rinf, 37,
                            color='m',
                            eez_kw=dict(lw=3), alpha=0.5)
 
@@ -307,6 +387,8 @@ def run_all():
     land_data['hi'] = get_land_hi()
     land_data['ak'] = get_land_ak()
     land_data['at'] = get_land_at()
+    land_data['gm'] = get_land_gm()
+    land_data['ec'] = get_land_ec()
     land_data['prusvi'] = get_land_prusvi()
 
     return land_data

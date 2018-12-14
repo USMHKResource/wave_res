@@ -37,7 +37,9 @@ con_defs['at']['eez'] = [range(32, 147), range(227, 282)]
 con_defs['at']['borders'] = [range(0, 33), range(133, 228), range(282, 303)]
 
 con_defs['ec']['eez'] = range(32, 147)
+con_defs['ec']['borders'] = [range(0, 33), range(133, 191) + [849, 499]]
 con_defs['gm']['eez'] = range(227, 282)
+con_defs['gm']['borders'] = [[499, 849] + range(190, 228), range(282, 303)]
 con_defs['prusvi']['eez'] = range(0, 7)
 con_defs['prusvi']['borders'] = [range(7, 117) + [0], ]
 con_defs['ak']['eez'] = [range(48, 392), range(439, 541)]
