@@ -1,6 +1,14 @@
 from cartopy import crs
+import cartopy.feature as cfeature
+
+scale = '50m'
+land = cfeature.NaturalEarthFeature('physical', 'land', scale,
+                                    edgecolor='face',
+                                    facecolor=cfeature.COLORS['land'])
+states = cfeature.STATES.with_scale(scale)
 
 pc = crs.PlateCarree()
+
 
 proj = {}
 proj['wc'] = crs.AlbersEqualArea(

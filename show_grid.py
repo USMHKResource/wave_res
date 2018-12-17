@@ -1,16 +1,9 @@
 import matplotlib.pyplot as plt
-plt.ion()
 import proj
-import cartopy.feature as cfeature
 import base
-reload(proj)
-reload(base)
+plt.ion()
 
-scale = '50m'
-land = cfeature.NaturalEarthFeature('physical', 'land', scale,
-                                    edgecolor='face', facecolor=cfeature.COLORS['land'])
 
-   
 def plot_lines(rinf, ax, **kwargs):
     eez_kw = kwargs.pop('eez_kw', {})
     kwargs.update(transform=proj.pc)
@@ -32,8 +25,8 @@ def show_atlantic():
     fig = plt.figure(fignum)
     fig.clf()
     ax = plt.axes(projection=prj)
-    ax.add_feature(land)
-    ax.add_feature(cfeature.STATES.with_scale(scale))
+    ax.add_feature(proj.land)
+    ax.add_feature(proj.states)
     ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
 
     plot_lines(rinfec, ax, color='m',
@@ -54,8 +47,8 @@ def show_prusvi():
 
     ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
 
-    ax.add_feature(land)
-    ax.add_feature(cfeature.STATES.with_scale(scale))
+    ax.add_feature(proj.land)
+    ax.add_feature(proj.states)
 
     plot_lines(rinf, ax, color='m',
                eez_kw=dict(lw=3))
@@ -69,8 +62,8 @@ def show_ak(old_con=False):
     fig = plt.figure(fignum)
     fig.clf()
     ax = plt.axes(projection=prj)
-    ax.add_feature(land)
-    ax.add_feature(cfeature.STATES.with_scale(scale))
+    ax.add_feature(proj.land)
+    ax.add_feature(proj.states)
     ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
 
     plot_lines(rinf, ax, color='m', 
@@ -85,8 +78,8 @@ def show_wc(old_con=False):
     fig = plt.figure(fignum)
     fig.clf()
     ax = plt.axes(projection=prj)
-    ax.add_feature(land)
-    ax.add_feature(cfeature.STATES.with_scale(scale))
+    ax.add_feature(proj.land)
+    ax.add_feature(proj.states)
     ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
 
     plot_lines(rinf, ax, color='m', 
@@ -102,8 +95,8 @@ def show_hi(old_con=False):
     fig = plt.figure(fignum)
     fig.clf()
     ax = plt.axes(projection=prj)
-    ax.add_feature(land)
-    ax.add_feature(cfeature.STATES.with_scale(scale))
+    ax.add_feature(proj.land)
+    ax.add_feature(proj.states)
     ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
 
     plot_lines(rinf, ax, color='m', 

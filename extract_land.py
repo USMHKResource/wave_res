@@ -6,16 +6,12 @@ from __future__ import division
 import matplotlib.pyplot as plt
 plt.ion()
 import proj
-import cartopy.feature as cfeature
 from base import RegionInfo
 import shapely.geometry as sg
 import numpy as np
 
 
-scale = '50m'
-land = cfeature.NaturalEarthFeature('physical', 'land', scale,
-                                    edgecolor='face', facecolor=cfeature.COLORS['land'])
-
+land = proj.land
 
 def plot_lines(rinf, ax, **kwargs):
     eez_kw = kwargs.pop('eez_kw', {})
@@ -128,7 +124,7 @@ def setup_figure(rinf, fignum, **kwargs):
     fig.clf()
     ax = plt.axes(projection=prj)
     feat = ax.add_feature(land)
-    ax.add_feature(cfeature.STATES.with_scale(scale))
+    ax.add_feature(proj.states)
     ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
     plot_lines(rinf, ax, **kwargs)
     return fig, ax
