@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import proj
 import base
-plt.ion()
 
 
 def plot_lines(rinf, ax, **kwargs):

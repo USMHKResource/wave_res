@@ -8,6 +8,11 @@ from copy import deepcopy
 
 
 def create_info():
+    """
+    This function extracts the grid data from the directional wave
+    spectra data files. It extracts: lat/lon, frequency, and defines
+    the contour_range indices.
+    """
     con_defs = {}
     freqbins = {}
     gridlonlat = {}
@@ -64,7 +69,16 @@ def check_loop(inf, s, r_max):
 
 
 def fix_gaps():
+    """This function fixes the contour definitions (indices) to insert
+    breaks where a contour should not continue, and creates loops
+    where they should be.
 
+    This is done by looking at the distance between points.
+    - When the distance between adjacent points on a contour is
+      greater than r_max, than we assume it is a new contour.
+    - When the distance between endpoints of a contour are closer
+      together than 2*r_max, than we assume it is a loop.
+    """
     r_max = 40000
 
     new_con_defs = {}
@@ -101,7 +115,9 @@ def fix_gaps():
 
 
 if __name__ == '__main__':
+    # Create Grid data
     create_info()
+    # Insert breaks and loops
     fix_gaps()
 
     # This extracts the land data that is relavent for each data point
