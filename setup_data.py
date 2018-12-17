@@ -131,3 +131,9 @@ if __name__ == '__main__':
     bounds = boundaries.run_all()
     with open(str(p.projdir / 'data/Boundaries.pkl'), 'w') as fl:
         pkl.dump(bounds, fl)
+
+    # This finds the triangles inside of each border
+    import create_triangles as tri
+    tri_defs = tri.run_all()
+    with open(str(p.projdir / 'data/Triangles.pkl'), 'w') as fl:
+        pkl.dump(tri_defs, fl)

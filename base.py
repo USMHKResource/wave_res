@@ -97,7 +97,17 @@ class RegionInfo(object):
             self.gridxy = self.transform(self.gridlonlat)
         if region in land_data:
             self.mainland, self.islands = land_data[region]
+        if region in bounds:
+            self.bounds = bounds[region]
 
+    @property
+    def allxy(self, ):
+        allxy = [self.gridxy, ]
+        allxy.append(self.transform(self.mainland))
+        for isl in self.islands:
+            allxy.append(self.transform(isl))
+        return np.hstack(allxy)
+            
     def get_contour(self, conid, xy=False):
         """conid must be in '010', '020', ... '200', or 'EEZ' """
         if xy:
