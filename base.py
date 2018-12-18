@@ -27,7 +27,9 @@ with open(str(p.projdir / 'data/LandData.pkl'), 'r') as fl:
     land_data = _pkl.load(fl)
 with open(str(p.projdir / 'data/Boundaries.pkl'), 'r') as fl:
     bounds = _pkl.load(fl)
-        
+with open(str(p.projdir / 'data/DiffTriangles.pkl'), 'r') as fl:
+    tri_defs = _pkl.load(fl)
+
 # This is the outer-boundary of the EEZ (not including the Canada
 # + Mexico borders)
 con_defs['wc']['eez'] = range(34, 148)
@@ -99,6 +101,8 @@ class RegionInfo(object):
             self.mainland, self.islands = land_data[region]
         if region in bounds:
             self.bounds = bounds[region]
+        if region in tri_defs:
+            self.tri_inds = tri_defs[region]
 
     @property
     def allxy(self, ):

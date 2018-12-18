@@ -66,12 +66,21 @@ def plot_tri(tri, ax=None, **kwargs):
 
 
 def tri_diff(tri1, tri2):
-    out = copy(tri1)
-    v1 = {tuple(v) for v in tri1.vertices}
-    v2 = {tuple(v) for v in tri2.vertices}
+    if isinstance(tri1, Delaunay):
+        out = copy(tri1)
+        tri1 = tri1.vertices
+    else:
+        out = False
+    if isinstance(tri2, Delaunay):
+        tri2 = tri2.vertices
+    v1 = {tuple(v) for v in tri1}
+    v2 = {tuple(v) for v in tri2}
     vo = np.array(list(v1 - v2))
-    out.vertices = vo
-    out.simplices = vo
+    if out:
+        out.vertices = vo
+        out.simplices = vo
+    else:
+        out = vo
     return out
 
 
@@ -140,6 +149,7 @@ def calc_triangles(region, fignum=False):
                      ax=ax)
             trilast = copy(tri_clip)
     print('Done.')
+    triout['eez'] = triout['EEZ']
     if fignum is not False:
         fig.savefig('fig/RegionDef-{}-01.png'.format(region), dpi=300)
     return triout
@@ -155,12 +165,40 @@ def run_all(plot=False):
         tri_defs[region] = calc_triangles(region, fignum)
     return tri_defs
 
+
+def run_diff_tri_dict(tri_dict):
+
+    # tri_dict_diff
+    tdd = {}
+    for rgn in tri_dict:
+        tdd[rgn] = {}
+        tdd[rgn]['010'] = lastrgn = tri_dict[rgn]['010']
+        for r in range(20, 201, 10):
+            rky = '{:03d}'.format(r)
+            if r == 200:
+                rky = 'EEZ'
+            td_now = tri_dict[rgn][rky]
+            tdd[rgn][rky] = tri_diff(td_now, lastrgn)
+            lastrgn = td_now
+        # Set '200' and 'eez' defs to match 'EEZ'
+        tdd[rgn]['eez'] = tdd[rgn]['200'] = tdd[rgn]['EEZ']
+    return tdd
+
 if __name__ == '__main__':
 
     # calc_triangles('ak', 1500)
 
     import cPickle as pkl
     import paths as p
-    tri_defs = run_all()
-    with open(str(p.projdir / 'data/Triangles.pkl'), 'w') as fl:
-        pkl.dump(tri_defs, fl)
+    import gzip
+
+    # tri_defs = run_all()
+    # with open(str(p.projdir / 'data/Triangles.pkl'), 'w') as fl:
+    #     pkl.dump(tri_defs, fl)
+    with gzip.open(str(p.projdir / 'data/Triangles.pkl.gz'), 'r') as fl:
+        tri_defs = pkl.load(fl)
+    
+    tri_defs_diff = run_diff_tri_dict(tri_defs)
+
+    with gzip.open(str(p.projdir / 'data/DiffTriangles.pkl.gz'), 'w') as fl:
+        pkl.dump(tri_defs_diff, fl)
