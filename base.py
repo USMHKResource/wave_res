@@ -103,7 +103,8 @@ class RegionInfo(object):
     @property
     def allxy(self, ):
         allxy = [self.gridxy, ]
-        allxy.append(self.transform(self.mainland))
+        if self.mainland is not None:
+            allxy.append(self.transform(self.mainland))
         for isl in self.islands:
             allxy.append(self.transform(isl))
         return np.hstack(allxy)
