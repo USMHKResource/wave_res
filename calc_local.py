@@ -42,7 +42,7 @@ def integrate_source(region, dates,
     rinf = base.RegionInfo(region)
     xy = rinf.allxy.T
     df = np.diff(base.freqbins[region])
-    src = np.zeros(xy.shape[1], dtype=np.float32)
+    src = np.zeros(xy.shape[0], dtype=np.float32)
     n_grid = rinf.gridxy.shape[1]
 
     # # Load the first dataset to compute the grid
