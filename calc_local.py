@@ -40,7 +40,7 @@ def integrate_source(region, dates,
                             'Sice', 'Stot']):
 
     rinf = base.RegionInfo(region)
-    xy = rinf.allxy
+    xy = rinf.allxy.T
     df = np.diff(base.freqbins[region])
     src = np.zeros(xy.shape[1], dtype=np.float32)
     n_grid = rinf.gridxy.shape[1]
@@ -63,7 +63,7 @@ def integrate_source(region, dates,
 
     out['range'] = np.arange(10, 201, 10)
 
-    out['area'] = np.zeros_like(out['range'])
+    out['area'] = np.zeros(len(out['range']), dtype=np.float32)
     for irng, rng in enumerate(range(10, 201, 10)):
         rky = '{:03d}'.format(rng)
         verts = rinf.tri_inds[rky]
