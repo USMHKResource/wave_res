@@ -39,23 +39,37 @@ def integrate_source(region, dates,
                      terms=['Sin', 'Snl', 'Sds', 'Sbt',
                             'Sice', 'Stot']):
 
-    prj = proj.proj[region]
+    rinf = base.RegionInfo(region)
+    xy = rinf.allxy
     df = np.diff(base.freqbins[region])
-    # Load the first dataset to compute the grid
-    dat = load_source(region, dates[0])
-    xy = prj.transform_points(
-        proj.pc,
-        dat.variables['lon'][:],
-        dat.variables['lat'][:])[:, :2]
-    verts = Delaunay(xy).vertices
-    dat.close()
+    src = np.zeros(xy.shape[1], dtype=np.float32)
+    n_grid = rinf.gridxy.shape[1]
+
+    # # Load the first dataset to compute the grid
+    # dat = load_source(region, dates[0])
+    # xy = prj.transform_points(
+    #     proj.pc,
+    #     dat.variables['lon'][:],
+    #     dat.variables['lat'][:])[:, :2]
+    # verts = Delaunay(xy).vertices
+    # dat.close()
 
     # Initialize the output
     out = pyDictH5.data()
     out['time'] = dates
     for ky in terms:
-        out[ky] = np.zeros(len(dates),
+        out[ky] = np.zeros((len(dates), 20),
                            dtype=np.float32)
+
+    out['range'] = np.arange(10, 201, 10)
+
+    out['area'] = np.zeros_like(out['range'])
+    for irng, rng in enumerate(range(10, 201, 10)):
+        rky = '{:03d}'.format(rng)
+        verts = rinf.tri_inds[rky]
+        # Now integrate
+        _, area = aint.sumtriangles(xy, np.zeros_like(xy), verts)
+        out['area'][irng] = area
 
     # Load data and perform integral
     for idt, dt in enumerate(dates):
@@ -63,11 +77,14 @@ def integrate_source(region, dates,
         dat = load_source(region, dt)
         for ky in terms:
             # average time + integrate frequency
-            src = (dat.variables[ky][:].mean(0) *
-                   df[None, :]).sum(-1)
-            # Now integrate area
-            zsum, _ = aint.sumtriangles(xy, src, verts)
-            out[ky][idt] = zsum
+            src[:n_grid] = (dat.variables[ky][:].mean(0) *
+                            df[None, :]).sum(-1)
+            for irng, rng in enumerate(range(10, 201, 10)):
+                rky = '{:03d}'.format(rng)
+                verts = rinf.tri_inds[rky]
+                # Now integrate
+                zsum, _ = aint.sumtriangles(xy, src, verts)
+                out[ky][idt, irng] = zsum
         dat.close()
 
     # Return units of Watts
@@ -103,4 +120,4 @@ if __name__ == '__main__':
     print(" averaged from {} to {}".format(dates[0], dates[-1]))
     print("------------------------")
     for ky in terms:
-        print("   {} : {: 8.2f} GW".format(ky, Psrc[ky].mean() / 1e9))
+        print("   {} : {: 8.2f} GW".format(ky, Psrc[ky].sum(-1).mean() / 1e9))
