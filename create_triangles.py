@@ -84,36 +84,17 @@ def tri_diff(tri1, tri2):
     return out
 
 
-def calc_triangles(region, fignum=False):
+def calc_triangles(region):
     """Calculate the vertices (a.k.a. simplices) indices for `region`.
-
-    If fignum is specified (not False), this function will plot the
-    triangles for each range as a different color.
     """
 
     print("Calculating triangles for '{}' region...".format(region.upper()))
     # Get the relavent data for this region.
     rinf = RegionInfo(region)
-    prj = rinf.proj
     tri = Delaunay(rinf.allxy.T)
 
     # Return a dictionary of 'simplices' indexes to the 'allxy' points
     triout = {}
-
-    if fignum is not False:
-        # Setup the figure.
-        fig = plt.figure(fignum)
-        fig.clf()
-        ax = plt.axes(projection=prj)
-        ax.add_feature(proj.land)
-        ax.add_feature(proj.states)
-        ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
-
-        plot_tri(tri,
-                 color='0.7', alpha=0.2,
-                 ax=ax)
-
-        clrs = plt.get_cmap('tab20')
 
     for rng in range(10, 201, 10):
         print("  {} nm".format(rng))
@@ -127,21 +108,9 @@ def calc_triangles(region, fignum=False):
         # clip the triangles
         tri_clip = clip_tri(clip, tri)
         triout[rky] = tri_clip.simplices
-        if fignum is not False:
-            # Find which triangles weren't plotted in the previous
-            # loop.
-            if rng == 10:
-                tmp = tri_clip
-            else:
-                tmp = tri_diff(tri_clip, trilast)
-            plot_tri(tmp,
-                     color=clrs((rng - 5) / 200.),
-                     ax=ax)
-            trilast = copy(tri_clip)
+        trilast = copy(tri_clip)
     print('Done.')
-    triout['eez'] = triout['EEZ']
-    if fignum is not False:
-        fig.savefig('fig/RegionDef-{}-01.png'.format(region), dpi=300)
+    triout['200'] = triout['eez'] = triout['EEZ']
     return triout
 
 
@@ -174,9 +143,43 @@ def run_diff_tri_dict(tri_dict):
         tdd[rgn]['eez'] = tdd[rgn]['200'] = tdd[rgn]['EEZ']
     return tdd
 
+
+def show_grid(region, fignum):
+
+    rinf = RegionInfo(region)
+    prj = rinf.proj
+    tri = Delaunay(rinf.allxy.T)
+
+    # Setup the figure.
+    fig = plt.figure(fignum)
+    fig.clf()
+    ax = plt.axes(projection=prj)
+    ax.add_feature(proj.land)
+    ax.add_feature(proj.states)
+    ax.set_extent((prj.lonlim + prj.latlim), crs=proj.pc)
+
+    plot_tri(tri,
+             color='0.7', alpha=0.2,
+             ax=ax)
+
+    clrs = plt.get_cmap('tab20')
+
+    for irng, rng in enumerate(range(10, 201, 10)):
+        rky = '{:03d}'.format(rng)
+        if rky == '200':
+            rky = 'EEZ'
+        tmp = copy(tri)
+        inds = rinf.tri_inds[rky]
+        tmp.vertices = inds
+        tmp.simplices = inds
+        plot_tri(tmp,
+                 color=clrs((rng - 5) / 200.),
+                 ax=ax)
+    return fig, ax
+
+
 if __name__ == '__main__':
 
-    # calc_triangles('ak', 1500)
-
-
-
+    for idreg, region in enumerate(['wc', 'ec', 'gm', 'at', 'ak', 'prusvi']):
+        fig, ax = show_grid(region, 2000 + idreg)
+        fig.savefig('fig/RegionDef-{}-01.png'.format(region), dpi=300)
