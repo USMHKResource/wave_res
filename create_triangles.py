@@ -84,16 +84,6 @@ def tri_diff(tri1, tri2):
     return out
 
 
-# def tri_diff2(tri1, tri2):
-#     out = copy(tri1)
-#     tri_index = np.zeros(tri1.vertices.shape[0], 'bool')
-#     for row in tri2.vertices:
-#         tri_index |= (tri1.vertices == row).all(1)
-#     out.vertices = out.vertices[~tri_index]
-#     out.simplices = out.simplices[~tri_index]
-#     return out
-
-
 def calc_triangles(region, fignum=False):
     """Calculate the vertices (a.k.a. simplices) indices for `region`.
 
@@ -188,17 +178,5 @@ if __name__ == '__main__':
 
     # calc_triangles('ak', 1500)
 
-    import cPickle as pkl
-    import paths as p
-    import gzip
 
-    # tri_defs = run_all()
-    # with open(str(p.projdir / 'data/Triangles.pkl'), 'w') as fl:
-    #     pkl.dump(tri_defs, fl)
-    with gzip.open(str(p.projdir / 'data/Triangles.pkl.gz'), 'r') as fl:
-        tri_defs = pkl.load(fl)
-    
-    tri_defs_diff = run_diff_tri_dict(tri_defs)
 
-    with gzip.open(str(p.projdir / 'data/DiffTriangles.pkl.gz'), 'w') as fl:
-        pkl.dump(tri_defs_diff, fl)

@@ -5,6 +5,7 @@ import paths as p
 import cPickle as pkl
 import gis
 from copy import deepcopy
+import gzip
 
 
 def create_info():
@@ -135,6 +136,9 @@ if __name__ == '__main__':
     # This finds the triangles inside of each border
     import create_triangles as tri
     tri_defs = tri.run_all()
+    # # This stores the full Triangle.pkl.gz file.
+    # with gzip.open(str(p.projdir / 'data/Triangles.pkl.gz'), 'w') as fl:
+    #     pkl.dump(tri_defs, fl)
     tri_defs_diff = tri.run_diff_tri_dict(tri_defs)
-    with open(str(p.projdir / 'data/DiffTriangles.pkl'), 'w') as fl:
+    with gzip.open(str(p.projdir / 'data/DiffTriangles.pkl.gz'), 'w') as fl:
         pkl.dump(tri_defs_diff, fl)

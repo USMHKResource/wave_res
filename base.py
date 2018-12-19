@@ -2,6 +2,7 @@ import cPickle as _pkl
 import paths as p
 import numpy as np
 import proj
+import gzip
 
 regions = {'wc': 'wc',
            'ec': 'at', 'gm': 'at', 'at': 'at',
@@ -27,7 +28,7 @@ with open(str(p.projdir / 'data/LandData.pkl'), 'r') as fl:
     land_data = _pkl.load(fl)
 with open(str(p.projdir / 'data/Boundaries.pkl'), 'r') as fl:
     bounds = _pkl.load(fl)
-with open(str(p.projdir / 'data/DiffTriangles.pkl'), 'r') as fl:
+with gzip.open(str(p.projdir / 'data/DiffTriangles.pkl.gz'), 'r') as fl:
     tri_defs = _pkl.load(fl)
 
 # This is the outer-boundary of the EEZ (not including the Canada
