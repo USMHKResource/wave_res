@@ -1,8 +1,6 @@
-import cPickle as _pkl
-import paths as p
 import numpy as np
 import proj
-import gzip
+import grid_data as gdat
 
 regions = {'wc': 'wc',
            'ec': 'at', 'gm': 'at', 'at': 'at',
@@ -15,22 +13,7 @@ source_regions = list(set([sr for sr in regions.itervalues()]))
 
 conids = ['EEZ'] + ['{:03d}'.format(n) for n in range(10, 200, 10)]
 
-
-with open(str(p.projdir / 'data/Contour_Ranges2.pkl'), 'r') as fl:
-    con_defs = _pkl.load(fl)
-with open(str(p.projdir / 'data/Contour_Ranges.pkl'), 'r') as fl:
-    con_defs_old = _pkl.load(fl)
-with open(str(p.projdir / 'data/GridLonLat.pkl'), 'r') as fl:
-    gridlonlat = _pkl.load(fl)
-with open(str(p.projdir / 'data/FreqBins.pkl'), 'r') as fl:
-    freqbins = _pkl.load(fl)
-with open(str(p.projdir / 'data/LandData.pkl'), 'r') as fl:
-    land_data = _pkl.load(fl)
-with open(str(p.projdir / 'data/Boundaries.pkl'), 'r') as fl:
-    bounds = _pkl.load(fl)
-with gzip.open(str(p.projdir / 'data/DiffTriangles.pkl.gz'), 'r') as fl:
-    tri_defs = _pkl.load(fl)
-
+con_defs = gdat.con_defs
 # This is the outer-boundary of the EEZ (not including the Canada
 # + Mexico borders)
 con_defs['wc']['eez'] = range(34, 148)
@@ -78,7 +61,7 @@ class RegionInfo(object):
 
     mainland = None
     islands = None
-    
+
     _proj_pc = proj.pc
 
     def __init__(self, region, use_old_con_defs=False):
@@ -89,31 +72,33 @@ class RegionInfo(object):
                             ("{}, " * len(regions)).format(*regions)[:-2] + '.')
         self.source_region = regions[region]
         self.region = region
-        self.gridlonlat = gridlonlat[self.source_region]
+        self.gridlonlat = gdat.gridlonlat[self.source_region]
         if use_old_con_defs:
-            self.con_defs = con_defs_old[region]
+            self.con_defs = gdat.con_defs_old[region]
         else:
             self.con_defs = con_defs[region]
-        self.freqbins = freqbins[self.source_region]
+        self.freqbins = gdat.freqbins[self.source_region]
         if region in proj.proj:
             self.proj = proj.proj[region]
             self.gridxy = self.transform(self.gridlonlat)
-        if region in land_data:
-            self.mainland, self.islands = land_data[region]
-        if region in bounds:
-            self.bounds = bounds[region]
-        if region in tri_defs:
-            self.tri_inds = tri_defs[region]
+        if region in gdat.land_data:
+            self.mainland, self.islands = gdat.land_data[region]
+        if region in gdat.bounds:
+            self.bounds = gdat.bounds[region]
+        if region in gdat.tri_defs:
+            self.tri_inds = gdat.tri_defs[region]
 
     @property
     def allxy(self, ):
+        """This is the spatial grid including land (in projection coordinates).
+        """
         allxy = [self.gridxy, ]
         if self.mainland is not None:
             allxy.append(self.transform(self.mainland))
         for isl in self.islands:
             allxy.append(self.transform(isl))
         return np.hstack(allxy)
-            
+
     def get_contour(self, conid, xy=False):
         """conid must be in '010', '020', ... '200', or 'EEZ' """
         if xy:

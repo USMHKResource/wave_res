@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
-from base import RegionInfo
-import proj
 from scipy.spatial import Delaunay
 import shapely.geometry as sg
 import numpy as np
 from copy import copy
+import setpath
+from base import RegionInfo
+import proj
 
 
 def rinf2clip(rinf, con):

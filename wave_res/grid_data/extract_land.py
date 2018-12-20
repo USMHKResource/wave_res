@@ -1,14 +1,13 @@
 """
 This script grabs the coastline data from the NaturalEarth dataset that overlap with the model output, and writes it to a data file.
 """
-
 from __future__ import division 
 import matplotlib.pyplot as plt
-plt.ion()
-import proj
-from base import RegionInfo
 import shapely.geometry as sg
 import numpy as np
+import setpath
+import proj
+from base import RegionInfo
 
 
 land = proj.land

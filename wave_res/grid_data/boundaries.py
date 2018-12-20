@@ -32,16 +32,12 @@ of each range path.
 
 
 import matplotlib.pyplot as plt
-plt.ion()
-from base import RegionInfo
 import numpy as np
-import cartopy.feature as cfeature
+import setpath
+from base import RegionInfo
+import proj
 
-
-scale = '50m'
-land = cfeature.NaturalEarthFeature('physical', 'land', scale,
-                                    edgecolor='face',
-                                    facecolor=cfeature.COLORS['land'])
+plt.ion()
 
 
 def setup_figure(rinf, fignum, **kwargs):
@@ -50,8 +46,8 @@ def setup_figure(rinf, fignum, **kwargs):
     fig = plt.figure(fignum)
     fig.clf()
     ax = plt.axes(projection=prj)
-    ax.add_feature(land)
-    ax.add_feature(cfeature.STATES.with_scale(scale))
+    ax.add_feature(proj.land)
+    ax.add_feature(proj.states)
     ax.set_extent((prj.lonlim + prj.latlim), crs=rinf._proj_pc)
     return fig, ax
 

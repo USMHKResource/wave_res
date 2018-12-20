@@ -1,11 +1,10 @@
+import setpath
 import numpy as np
 import cPickle as pkl
 from copy import deepcopy
 import gzip
+# Import wave_res modules
 import calc_remote as cr
-import sys
-sys.path.append('../')
-import paths as p
 import gis
 import base
 
@@ -55,11 +54,11 @@ def create_info():
                 con_defs['gm'][id] = slice(sep + delta, slc.stop)
                 con_defs['ec'][id] = slice(slc.start, sep)
 
-    with open(str(p.projdir / 'data/Contour_Ranges.pkl'), 'w') as fl:
+    with open(str('Contour_Ranges.pkl'), 'w') as fl:
         pkl.dump(con_defs, fl)
-    with open(str(p.projdir / 'data/FreqBins.pkl'), 'w') as fl:
+    with open(str('FreqBins.pkl'), 'w') as fl:
         pkl.dump(freqbins, fl)
-    with open(str(p.projdir / 'data/GridLonLat.pkl'), 'w') as fl:
+    with open(str('GridLonLat.pkl'), 'w') as fl:
         pkl.dump(gridlonlat, fl)
 
 
@@ -113,7 +112,7 @@ def fix_gaps():
                                    2 * r_max))
                     cdefs[id] = tmp
         new_con_defs[reg] = cdefs
-    with open(str(p.projdir / 'data/Contour_Ranges2.pkl'), 'w') as fl:
+    with open(str('Contour_Ranges2.pkl'), 'w') as fl:
         pkl.dump(new_con_defs, fl)
 
 
@@ -126,21 +125,21 @@ if __name__ == '__main__':
     # This extracts the land data that is relavent for each data point
     import extract_land
     land_data = extract_land.run_all()
-    with open(str(p.projdir / 'data/LandData.pkl'), 'w') as fl:
+    with open(str('LandData.pkl'), 'w') as fl:
         pkl.dump(land_data, fl)
 
     # This sets boundaries (polygons) of each contour.
     import boundaries
     bounds = boundaries.run_all()
-    with open(str(p.projdir / 'data/Boundaries.pkl'), 'w') as fl:
+    with open(str('Boundaries.pkl'), 'w') as fl:
         pkl.dump(bounds, fl)
 
     # This finds the triangles inside of each border
     import create_triangles as tri
     tri_defs = tri.run_all()
     # # This stores the full Triangle.pkl.gz file.
-    # with gzip.open(str(p.projdir / 'data/Triangles.pkl.gz'), 'w') as fl:
+    # with gzip.open(str('Triangles.pkl.gz'), 'w') as fl:
     #     pkl.dump(tri_defs, fl)
     tri_defs_diff = tri.run_diff_tri_dict(tri_defs)
-    with gzip.open(str(p.projdir / 'data/DiffTriangles.pkl.gz'), 'w') as fl:
+    with gzip.open(str('DiffTriangles.pkl.gz'), 'w') as fl:
         pkl.dump(tri_defs_diff, fl)
