@@ -1,11 +1,13 @@
-import calc_remote as cr
-import base
 import numpy as np
-import paths as p
 import cPickle as pkl
-import gis
 from copy import deepcopy
 import gzip
+import calc_remote as cr
+import sys
+sys.path.append('../')
+import paths as p
+import gis
+import base
 
 
 def create_info():
