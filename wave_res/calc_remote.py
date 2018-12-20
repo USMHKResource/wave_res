@@ -150,14 +150,17 @@ def integrate_wef(lon, lat, wef, direction):
     return out
 
 
-def process_and_load(region, months, overwrite=False):
+def process_and_load(scenario, region, months, overwrite=False):
     """Process large data files, compute wave energy flux, and store
     small temporary data files."""
+    # create directory <tmpdir>/{scenario}/ (if it doesn't already exist)
+    p.mkdir(str(p.tmpdir / '{}'.format(scenario)))
     dat = {}
     for mo in months:
         m_ = mo.astype('O')
-        tempname = (p.tmpdir / 'ww3.{region}.{year}{month:02d}_wef.nc'
-                    .format(region=region, year=m_.year, month=m_.month))
+        tempname = (p.tmpdir / '{scenario}/ww3.{region}.{year}{month:02d}_wef.nc'
+                    .format(scenario=scenario, region=region,
+                            year=m_.year, month=m_.month))
         if tempname.is_file() and not overwrite:
             dat[mo] = dnow = pyDictH5.load(str(tempname))
         else:
@@ -168,7 +171,10 @@ def process_and_load(region, months, overwrite=False):
     return dat
 
 
-def calc_total(dat, con_inds, show_total=True):
+#def calc_
+
+
+def calc_total(dat, con_inds):
 
     tot = {}
     for mo in dat:
