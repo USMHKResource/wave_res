@@ -1,7 +1,8 @@
 import wave_res as wr
+import numpy as np
 
-all_months = np.arange(np.datetime64('1980-01'),
-                       np.datetime64('2011-01'))
+all_months = np.arange(np.datetime64('2009-09'),
+                       np.datetime64('2010-01'))
 
 all_regions = ['ak', 'wc', 'at', 'prusvi']
 ranges = np.arange(10, 201, 10)

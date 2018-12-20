@@ -15,15 +15,16 @@ def _concatenate_id(array):
     return np.array(out)
 
 
-def load(region, month):
+def load(scenario, region, month):
     if isinstance(month, basestring):
         month = np.datetime64(month).astype("O")
     elif isinstance(month, np.datetime64):
         month = month.astype('O')
     dat = Dataset(
         p.srcdir /
-        '{year:04d}/eez/ww3.{region}.{year:04d}{month:02d}_spec.nc'
-        .format(year=month.year, region=region, month=month.month),
+        '{scenario}/{year:04d}/eez/ww3.{region}.{year:04d}{month:02d}_spec.nc'
+        .format(scenario=scenario,
+                year=month.year, region=region, month=month.month),
         'r')
     return dat
 
@@ -165,7 +166,7 @@ def process_and_load(scenario, region, months, overwrite=False):
             dat[mo] = dnow = pyDictH5.load(str(tempname))
         else:
             print('Processing file {}'.format(tempname.name))
-            ncdat = load(region, mo)
+            ncdat = load(scenario, region, mo)
             dat[mo] = dnow = calc_wef(ncdat)
             dnow.to_hdf5(str(tempname))
     return dat
