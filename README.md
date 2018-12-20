@@ -54,10 +54,6 @@ Calculating Local Resource
 
 ## Data Setup
 
-### Process `.src` files into `.nc`
-
-Prior to calculating the local resource, the source term output files (text files ending with `.src`), must be converted to netCDF. Use the `read_source.py` script to accomplish this task. This gives a ~8x reduction in the size of these files (from 500GB to 70GB), and dramatically increases the speed of accessing that data.
-
 ### Clipping the area integration
 
 A critical -- and tedious -- piece of computing an area integral of the source terms is to estimate the differential area of each data point (i.e., `dA`). The approach taken ends up uses a 'triangle' integration method, where the triangles are defined by a Delaunay-triangulation. The 'convex' Delaunay triangulation is then clipped to only include the triangles that are within the study area. A significant amount of work has gone into properly clipping these triangles for each region so that we can estimate area integrals for each range. This was accomplished, for each region, following these steps:
