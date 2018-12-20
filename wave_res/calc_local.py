@@ -1,9 +1,7 @@
 from netCDF4 import Dataset
 import numpy as np
 import paths as p
-import proj
 import area_integral as aint
-from scipy.spatial import Delaunay
 from wavespeed.wave_dispersion import rho, gravity
 import pyDictH5
 import base

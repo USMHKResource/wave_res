@@ -1,11 +1,11 @@
-import warnings
-warnings.filterwarnings("ignore", category=RuntimeWarning)
 import paths as p
 from netCDF4 import Dataset
 import wavespeed.wave_dispersion as wavespd
 import gis
 import numpy as np
 import pyDictH5
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 
 def _concatenate_id(array):
