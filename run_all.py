@@ -1,16 +1,19 @@
-import wave_res.calc_local as cl
-reload(cl)
 import wave_res as wr
 import numpy as np
 from wave_res.paths import mkdir
 
+
 months = np.arange(np.datetime64('2009-09'),
                    np.datetime64('2010-01'))
 
+# For now this doesn't include HI
 all_regions = ['ak', 'wc', 'at', 'prusvi']
+
+# These are the ranges
 ranges = np.arange(10, 201, 10)
 
-# In this dictionary, the keys are the scenarios, and the values are lists of regions that should be run for each scenario.
+# In this dictionary, the keys are the scenarios, and the values are
+# lists of regions that should be run for each scenario.
 run_these = {
     #'baseline': ['prusvi'],
     'extraction': ['prusvi'],
@@ -27,15 +30,14 @@ for scenario, REGIONS in run_these.items():
         print("#### Calculating totals for '{}' scenario, '{}' region..."
               .format(scenario, region))
 
-        print("   Calculating remote resource..."
-              .format(scenario, region))
+        print("   Calculating remote resource...")
         # Calculate the remote resource
-        res = wr.remote.calc_remote(scenario, region, months)
+        remote = wr.calc_remote(scenario, region, months)
         # This returns a dictionary-like object (based on pyDictH5.data)
         # containing:
         #  'time': (n_months) the month
         #  'Nhour': (n_months) The number of hours in each month
-        #  'ranges': (n_ranges) The range of each contour [nautical miles]
+        #  'range': (n_ranges) The range of each contour [nautical miles]
         #  'length': (n_ranges) The length of each contour [meters]
         #  '1way': (n_months, n_ranges) Monthly averaged wave energy
         #          flux using the '1way' method [watts]
@@ -47,10 +49,13 @@ for scenario, REGIONS in run_these.items():
         #          flux using the unit-circle method [watts]
 
         # Compute the hour-weighted (rather than month-weighted) averages
-        tot = res.hourly_average()
+        rtot = remote.hourly_average()
+
+        # Print the remote results
         print(
-            "    The remote resource at the eez boundary for the '{region}' region, \n"
-            "    scenario '{scenario}', from {start} to {end} is:\n"
+            "    The average remote resource at the eez boundary for the\n"
+            "    '{region}' region, scenario '{scenario}',\n"
+            "    from {start} to {end} is:\n"
             "      1-way:  {oway: 8.3f} GW\n"
             "      trad:   {trad: 8.3f} GW\n"
             "      bi-dir: {bdir: 8.3f} GW\n"
@@ -59,11 +64,63 @@ for scenario, REGIONS in run_these.items():
                 region=region, scenario=scenario,
                 start=months[0], end=months[-1],
                 # The last range is the eez (thus -1)
-                oway=tot['1way'][-1] / 1e9, trad=tot['trad'][-1] / 1e9,
-                bdir=tot['bdir'][-1] / 1e9, unit=tot['unit'][-1] / 1e9,
+                oway=rtot['1way'][-1] / 1e9, trad=rtot['trad'][-1] / 1e9,
+                bdir=rtot['bdir'][-1] / 1e9, unit=rtot['unit'][-1] / 1e9,
             )
         )
 
-        res.to_hdf5('results/{scenario}/{region}.remote-totals.h5'
-                    .format(scenario=scenario, region=region))
-        # You can load this data with res = pyDictH5.load(<fname>)
+        remote.to_hdf5('results/{scenario}/{region}.remote-totals.h5'
+                       .format(scenario=scenario, region=region))
+        # You can load this data with pyDictH5.load(<fname>)
+
+        print("   Calculating local resource...")
+
+        local = wr.calc_local(scenario, region, months)
+        # This returns a dictionary-like object (based on pyDictH5.data)
+        # containing:
+        #  'time': (n_months) the month
+        #  'Nhour': (n_months) The number of hours in each month
+        #  'range': (n_ranges) The range of each contour [nautical miles]
+        #  'area': (n_ranges) The area between each contour [meters^2]
+        #  'sin': (n_months, n_ranges) Monthly averaged 'wind input'
+        #         source term. [watts]
+        #  'sds': (n_months, n_ranges) Monthly averaged 'dissipation'
+        #         source term. [watts]
+        #  'snl': (n_months, n_ranges) Monthly averaged 'non-linear'
+        #         source term. [watts]
+        #  'sbt': (n_months, n_ranges) Monthly averaged 'bottom
+        #         friction' source term. [watts]
+        #  'sbt': (n_months, n_ranges) Monthly averaged 'ice'
+        #         source term. [watts]
+        #  'stot': (n_months, n_ranges) Monthly averaged 'total'
+        #         source term. [watts]
+        # NOTE: the source terms are totals for the area between that
+        # contour range (i.e., in local['range']), and the range
+        # inshore of it. So, to get the source term for the entire
+        # EEZ, you need to sum them, e.g.:
+        #    sin_total = local['sin'].sum(-1)
+
+        ltot = local.hourly_average()
+
+        print(
+            "    The average local resource over the EEZ for the\n"
+            "    '{region}' region, scenario '{scenario}',\n"
+            "    from {start} to {end} is:\n"
+            "      sin:  {sin: 8.3f} GW\n"
+            "      sds:  {sds: 8.3f} GW\n"
+            "      snl:  {snl: 8.3f} GW\n"
+            "      sbt:  {sbt: 8.3f} GW\n"
+            "      sice: {sice: 8.3f} GW\n"
+            "      stot: {stot: 8.3f} GW\n"
+            .format(
+                region=region, scenario=scenario,
+                start=months[0], end=months[-1],
+                # Sum over ranges to get total
+                sin=ltot['sin'].sum(-1) / 1e9, sds=ltot['sds'].sum(-1) / 1e9,
+                snl=ltot['snl'].sum(-1) / 1e9, sbt=ltot['sbt'].sum(-1) / 1e9,
+                sice=ltot['sice'].sum(-1) / 1e9, stot=ltot['stot'].sum(-1) / 1e9,
+            )
+        )
+
+        local.to_hdf5('results/{scenario}/{region}.local-totals.h5'
+                      .format(scenario=scenario, region=region))

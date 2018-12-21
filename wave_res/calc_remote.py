@@ -8,6 +8,8 @@ import warnings
 import base
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
+wef_int_modes = ['trad', '1way', 'bdir', 'unit']
+
 
 class RemoteTotals(pyDictH5.data):
     pass
@@ -16,9 +18,14 @@ class RemoteTotals(pyDictH5.data):
 class RemoteResults(pyDictH5.data):
 
     def hourly_average(self):
-        if not hasattr(self, '_remote_total'):
-            self._hourly_average = average_results_hourly(self)
-        return self._hourly_average
+        out = RemoteTotals()
+        out['range'] = self['range']
+        out['length'] = self['length']
+        for ky in wef_int_modes:
+            out[ky] = np.average(self[ky],
+                                 weights=self['Nhour'],
+                                 axis=0)
+        return out
 
 
 def _concatenate_id(array):
@@ -182,16 +189,41 @@ def integrate_wef(lon, lat, wef, direction):
     return trad, oneway, bdir, unit
 
 
-wef_int_modes = ['trad', '1way', 'bdir', 'unit']
-
-
 def con_length(lon, lat):
     d, midp = gis.diffll(np.stack((lon, lat)))
     return np.abs(d).sum()
 
 
 def calc_remote(scenario, region, months):
+    """Calculate the remote resource for `scenario` in `region` for
+    `months`.
+    
+    Parameters
+    ==========
+    scenario : string
+         the 'scenario' (case) to evaluate.
+    region : string {'wc', 'ec', 'at', 'gm', 'prusvi', 'hi'}
+         the region
+    months : list/array of np.datetime64.
+         The months to calculate.
 
+    Returns
+    =======
+    This returns a dictionary-like object (based on pyDictH5.data)
+    containing:
+        'time': (n_months) the month
+        'Nhour': (n_months) The number of hours in each month
+        'range': (n_ranges) The range of each contour [nautical miles]
+        'length': (n_ranges) The length of each contour [meters]
+        '1way': (n_months, n_ranges) Monthly averaged wave energy
+                flux using the '1way' method [watts]
+        'trad': (n_months, n_ranges) Monthly averaged wave energy
+                flux using a traditional dot-product [watts]
+        'bdir': (n_months, n_ranges) Monthly averaged wave energy
+                flux using a bi-directional dot-product [watts]
+        'unit': (n_months, n_ranges) Monthly averaged wave energy
+                flux using the unit-circle method [watts]
+    """
     rinf = base.RegionInfo(region)
 
     ranges = np.arange(10, 201, 10)
@@ -201,7 +233,7 @@ def calc_remote(scenario, region, months):
     for ky in wef_int_modes:
         out[ky] = np.empty((len(months), len(ranges)), dtype=np.float32)
     out['time'] = months
-    out['ranges'] = ranges
+    out['range'] = ranges
     out['Nhour'] = np.empty((len(months)), dtype=np.uint16)
     out['length'] = np.zeros(ranges.shape, dtype=np.float32)
 
@@ -222,15 +254,4 @@ def calc_remote(scenario, region, months):
                         dnow['lon'][ci], dnow['lat'][ci])
             for iky, ky in enumerate(wef_int_modes):
                 out[ky][imo, irng] = tmp[iky]
-    return out
-
-
-def average_results_hourly(res):
-    """Compute the hour-weighted average of the results dictionary.
-    """
-    out = RemoteTotals()
-    out['ranges'] = res['ranges']
-    out['length'] = res['length']
-    for ky in wef_int_modes:
-        out[ky] = (res[ky] * res['Nhour'][:, None]).sum(0) / res['Nhour'].sum()
     return out

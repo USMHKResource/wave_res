@@ -1,3 +1,3 @@
-import wave_res.calc_local as local
-import wave_res.calc_remote as remote
+from wave_res.calc_local import calc_local
+from wave_res.calc_remote import calc_remote
 from base import RegionInfo
