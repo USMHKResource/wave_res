@@ -5,6 +5,7 @@ import gis
 import numpy as np
 import pyDictH5
 import warnings
+import base
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 
@@ -172,7 +173,13 @@ def process_and_load(scenario, region, months, overwrite=False):
     return dat
 
 
-#def calc_
+def calc_remote(scenario, region, months):
+
+    rinf = base.RegionInfo(region)
+    dat = process_and_load(scenario, region, months)
+    con_inds = rinf.con_defs['eez']
+    final_sum = calc_total(dat, con_inds)
+    return final_sum
 
 
 def calc_total(dat, con_inds):

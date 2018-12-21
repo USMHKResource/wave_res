@@ -21,4 +21,4 @@ for scenario, regions in run_these.items():
         rinf = wr.RegionInfo(regn)
 
         # Generate temporary data files, and/or load their data
-        dat = wr.remote.process_and_load(scenario, regn, all_months)
+        results = wr.remote.calc_remote(scenario, regn, all_months)
