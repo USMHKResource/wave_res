@@ -16,17 +16,17 @@ conids = ['EEZ'] + ['{:03d}'.format(n) for n in range(10, 200, 10)]
 con_defs = gdat.con_defs
 # This is the outer-boundary of the EEZ (not including the Canada
 # + Mexico borders)
-con_defs['wc']['eez'] = range(34, 148)
+con_defs['wc']['eez'] = [range(34, 148), ]
 con_defs['wc']['borders'] = [range(0, 35), range(147, 176)]
 
 con_defs['at']['eez'] = [range(32, 147), range(227, 282)]
 con_defs['at']['borders'] = [range(0, 33), range(133, 228), range(282, 303)]
 
-con_defs['ec']['eez'] = range(32, 147)
+con_defs['ec']['eez'] = [range(32, 147), ]
 con_defs['ec']['borders'] = [range(0, 33), range(133, 191) + [849, 499]]
-con_defs['gm']['eez'] = range(227, 282)
+con_defs['gm']['eez'] = [range(227, 282), ]
 con_defs['gm']['borders'] = [[499, 849] + range(190, 228), range(282, 303)]
-con_defs['prusvi']['eez'] = range(0, 7)
+con_defs['prusvi']['eez'] = [range(0, 7), ]
 con_defs['prusvi']['borders'] = [range(7, 117) + [0], ]
 con_defs['ak']['eez'] = [range(48, 392), range(439, 541)]
 con_defs['ak']['borders'] = [range(0, 49), range(391, 440), range(540, 616)]
@@ -77,6 +77,8 @@ class RegionInfo(object):
             self.con_defs = gdat.con_defs_old[region]
         else:
             self.con_defs = con_defs[region]
+        if '200' not in self.con_defs and 'eez' in self.con_defs:
+            self.con_defs['200'] = self.con_defs['eez']
         self.freqbins = gdat.freqbins[self.source_region]
         if region in proj.proj:
             self.proj = proj.proj[region]

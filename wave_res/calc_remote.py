@@ -9,6 +9,18 @@ import base
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 
+class RemoteTotals(pyDictH5.data):
+    pass
+
+
+class RemoteResults(pyDictH5.data):
+
+    def hourly_average(self):
+        if not hasattr(self, '_remote_total'):
+            self._hourly_average = average_results_hourly(self)
+        return self._hourly_average
+
+
 def _concatenate_id(array):
     out = []
     for row in array:
@@ -27,6 +39,25 @@ def load(scenario, region, month):
         .format(scenario=scenario,
                 year=month.year, region=region, month=month.month),
         'r')
+    return dat
+
+
+def load_processed(scenario, region, month, overwrite=False):
+    """Process large data files, compute wave energy flux, and store
+    small temporary data files."""
+    # create directory <tmpdir>/{scenario}/ (if it doesn't already exist)
+    p.mkdir(str(p.tmpdir / '{}'.format(scenario)))
+    m_ = month.astype('O')
+    tempname = (p.tmpdir / '{scenario}/ww3.{region}.{year}{month:02d}_wef.nc'
+                .format(scenario=scenario, region=region,
+                        year=m_.year, month=m_.month))
+    if tempname.is_file() and not overwrite:
+        dat = pyDictH5.load(str(tempname))
+    else:
+        print('Processing file {}'.format(tempname.name))
+        ncdat = load(scenario, region, month)
+        dat = calc_wef(ncdat)
+        dat.to_hdf5(str(tempname))
     return dat
 
 
@@ -142,127 +173,64 @@ def integrate_wef(lon, lat, wef, direction):
     flux = (_wef * np.conj(norm)[:, None]) * dang
     # Sum for all of the different methods.
     # Note: this is a 'double sum' (direction and line-integral)
-    out = {}
-    out['trad'] = flux.real.sum()
-    out['bdir'] = np.abs(flux.real).sum()
-    out['unit'] = np.abs(flux).sum()
+    trad = flux.real.sum()
+    bdir = np.abs(flux.real).sum()
+    unit = np.abs(flux).sum()
     _flux = flux.real.copy()
     _flux[_flux < 0] = 0
-    out['1way'] = _flux.sum()
-    return out
+    oneway = _flux.sum()
+    return trad, oneway, bdir, unit
 
 
-def process_and_load(scenario, region, months, overwrite=False):
-    """Process large data files, compute wave energy flux, and store
-    small temporary data files."""
-    # create directory <tmpdir>/{scenario}/ (if it doesn't already exist)
-    p.mkdir(str(p.tmpdir / '{}'.format(scenario)))
-    dat = {}
-    for mo in months:
-        m_ = mo.astype('O')
-        tempname = (p.tmpdir / '{scenario}/ww3.{region}.{year}{month:02d}_wef.nc'
-                    .format(scenario=scenario, region=region,
-                            year=m_.year, month=m_.month))
-        if tempname.is_file() and not overwrite:
-            dat[mo] = dnow = pyDictH5.load(str(tempname))
-        else:
-            print('Processing file {}'.format(tempname.name))
-            ncdat = load(scenario, region, mo)
-            dat[mo] = dnow = calc_wef(ncdat)
-            dnow.to_hdf5(str(tempname))
-    return dat
+wef_int_modes = ['trad', '1way', 'bdir', 'unit']
+
+
+def con_length(lon, lat):
+    d, midp = gis.diffll(np.stack((lon, lat)))
+    return np.abs(d).sum()
 
 
 def calc_remote(scenario, region, months):
 
     rinf = base.RegionInfo(region)
-    dat = process_and_load(scenario, region, months)
-    con_inds = rinf.con_defs['eez']
-    final_sum = calc_total(dat, con_inds)
-    return final_sum
+
+    ranges = np.arange(10, 201, 10)
+
+    # initialize the output
+    out = RemoteResults()
+    for ky in wef_int_modes:
+        out[ky] = np.empty((len(months), len(ranges)), dtype=np.float32)
+    out['time'] = months
+    out['ranges'] = ranges
+    out['Nhour'] = np.empty((len(months)), dtype=np.uint16)
+    out['length'] = np.zeros(ranges.shape, dtype=np.float32)
+
+    for imo, mo in enumerate(months):
+        # This creates and loads temporary files as needed.
+        dnow = load_processed(scenario, region, mo)
+        out['Nhour'][imo] = dnow['Nhour']
+        for irng, rng in enumerate(ranges):
+            tmp = np.zeros(4, dtype=np.float32)
+            rky = '{:03d}'.format(rng)
+            con_inds = rinf.con_defs[rky]
+            for ci in con_inds:
+                tmp += integrate_wef(
+                    dnow['lon'][ci], dnow['lat'][ci],
+                    dnow['wef'][ci], dnow['direction'])
+                if imo == 0:
+                    out['length'][irng] += con_length(
+                        dnow['lon'][ci], dnow['lat'][ci])
+            for iky, ky in enumerate(wef_int_modes):
+                out[ky][imo, irng] = tmp[iky]
+    return out
 
 
-def calc_total(dat, con_inds):
-
-    tot = {}
-    for mo in dat:
-        dnow = dat[mo]
-        tot[mo] = integrate_wef(
-            dnow['lon'][con_inds], dnow['lat'][con_inds],
-            dnow['wef'][con_inds], dnow['direction'])
-
-    final = {}
-    Nh = []
-    for k in tot[tot.keys()[0]]:
-        final[k] = []
-    for mo in tot:
-        d = dat[mo]
-        t = tot[mo]
-        Nh.append(d['Nhour'])
-        for k in t:
-            final[k].append(t[k])
-
-    Nh = np.array(Nh)
-    final_sum = {}
-    for k in final:
-        final[k] = np.array(final[k])
-        final_sum[k] = (final[k] * Nh).sum() / Nh.sum()
-    return final_sum
-
-
-def print_total(total, region, con):
-    print("The total '{}-{}' resource is:".format(region, con))
-    for k in total:
-        print("    '{}': {: 5.1f} GW"
-              .format(k, total[k] / 1e9))
-
-
-if __name__ == '__main__':
-    import argparse
-    import base as b
-
-    parser = argparse.ArgumentParser(
-        description="Calculate the remote wave resource.")
-    parser.add_argument(
-        'region', type=str,
-        choices=b.regions)
-    parser.add_argument(
-        'month_start', type=str, nargs='?',
-        default='2009-01',
-        help="The starting month (in 'year-mo' format)"
-    )
-    parser.add_argument(
-        'month_end', type=str, nargs='?',
-        default='2010-01',
-        help="The end month (in 'year-mo' format)"
-    )
-    parser.add_argument(
-        '--contour', type=str,
-        default='EEZ',
-        choices=b.conids,
-        help="The contour along-which to perform the integral. "
-        "This is only needed when not doing '--process-only'."
-    )
-    parser.add_argument(
-        '--process-only', action='store_true',
-        help="Only process and store temporary files, "
-        "don't calculate the integral."
-    )
-    parser.add_argument(
-        '--overwrite', action='store_true',
-        help="Re-process and overwrite existing temporary files.")
-
-    args = parser.parse_args()
-
-    months = np.arange(np.datetime64(args.month_start),
-                       np.datetime64(args.month_end))
-
-    dat = process_and_load(args.region, months, args.overwrite)
-
-    if args.process_only:
-        exit()
-
-    con_inds = b.con_defs[args.region][args.contour]
-
-    total = calc_total(dat, con_inds)
-    print_total(total, args.region, args.contour)
+def average_results_hourly(res):
+    """Compute the hour-weighted average of the results dictionary.
+    """
+    out = RemoteTotals()
+    out['ranges'] = res['ranges']
+    out['length'] = res['length']
+    for ky in wef_int_modes:
+        out[ky] = (res[ky] * res['Nhour'][:, None]).sum(0) / res['Nhour'].sum()
+    return out
