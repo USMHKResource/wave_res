@@ -4,7 +4,7 @@ from wave_res.paths import mkdir
 
 # Range to compute the resource
 months = np.arange(np.datetime64('1979-01'),
-                   np.datetime64('2006-01'))
+                   np.datetime64('2011-01'))
 
 # For now this doesn't include HI
 all_regions = ['ak', 'wc', 'at', 'prusvi']
@@ -16,7 +16,7 @@ ranges = np.arange(10, 201, 10)
 # lists of regions that should be run for each scenario.
 run_these = {
     'baseline':all_regions,
-    #'extraction':all_regions
+    'extraction':all_regions
 }
 
 
