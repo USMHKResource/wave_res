@@ -117,7 +117,7 @@ def calc_triangles(region):
 
 def run_all(plot=False):
     tri_defs = {}
-    for idr, region in enumerate(['wc', 'ec', 'gm', 'at', 'ak', 'prusvi']):
+    for idr, region in enumerate(['hi', 'wc', 'ec', 'gm', 'at', 'ak', 'prusvi']):
         tri_defs[region] = calc_triangles(region)
     return tri_defs
 
@@ -177,6 +177,6 @@ def show_grid(region, fignum):
 
 if __name__ == '__main__':
 
-    for idreg, region in enumerate(['wc', 'ec', 'gm', 'at', 'ak', 'prusvi', 'hi']):
+    for idreg, region in enumerate(['hi', 'wc', 'ec', 'gm', 'at', 'ak', 'prusvi']):
         fig, ax = show_grid(region, 2000 + idreg)
         fig.savefig('fig/RegionDef-{}-01.png'.format(region), dpi=300)
