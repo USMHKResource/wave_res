@@ -433,14 +433,15 @@ def polyinds_prusvi():
     return out
 
 
-#def polyinds_hi():
-if False:
+def polyinds_hi():
     out = {}
     rinf = RegionInfo('hi')
     fig, ax = setup_figure(rinf, 1000 + 32)
 
     cmap = plt.get_cmap('tab20')
 
+    tail0 = []
+    taile = []
     for rng in range(10, 200, 10):
         ky = '{:03d}'.format(rng)
         seg_i = 0
@@ -469,27 +470,47 @@ if False:
             poly_inds[0] = poly_inds[0][15:-5]
         elif rng == 90:
             poly_inds[0] = poly_inds[0][17:-3]
+        elif rng == 100:
+            poly_inds[0] = poly_inds[0][17:-2]
+        elif rng == 110:
+            poly_inds[0] = poly_inds[0][17:]
+        elif rng >= 120:
+            poly_inds[0] = poly_inds[0][17:]
+            
+        # if rng > 90:
+        #     tail0 += [poly_inds[0][0]]
+        #     poly_inds[0] = tail0_last + poly_inds[0]
+        if rng > 100:
+            taile += [poly_inds[0][-1], ]
+            poly_inds[0] = poly_inds[0] + taile_last[::-1]
 
         poly_inds.append(poly_inds[0])
 
         pinds = np.hstack(poly_inds).tolist()
         boundary = rinf.gridxy[:, pinds]
         ax.plot(boundary[0], boundary[1], '-', color=cmap((rng - 5) / 200.),
-                alpha=0.5)
+                alpha=1, zorder=500-rng)
 
         other = rinf.con_defs[ky][seg_i + 1:]
         for itmp, slc in enumerate(other):
             slc = other[itmp] = slc + [slc[0]]
             ax.plot(rinf.gridxy[0, slc], rinf.gridxy[1, slc], 'b-')
         out[ky] = [pinds, ] + other
+        tail0_last = tail0
+        taile_last = taile
     rng = 200
-    out['EEZ'] = out['eez'] = [rinf.con_defs['EEZ'][0] +
-                               [rinf.con_defs['EEZ'][0][0], ], ]
+    seg_i = 0
+    ky = 'EEZ'
+    xy = rinf.get_contour(ky, xy=True)[seg_i]
+    ax.plot(xy[0, 0], xy[1, 0], 'r+')
+    out['EEZ'] = out['eez'] = [rinf.con_defs['EEZ'][0][:50] +
+                               taile +
+                               rinf.con_defs['EEZ'][0][-113:], ]
     boundary = rinf.gridxy[:, out['EEZ'][0]]
     ax.plot(boundary[0], boundary[1], '-',
             color=cmap((rng - 5) / 200.), alpha=0.5)
 
-    #return out
+    return out
 
 
 def run_all():
@@ -502,8 +523,7 @@ def run_all():
     poly_defs['gm'] = polyinds_gm()
     poly_defs['ec'] = polyinds_ec()
     poly_defs['prusvi'] = polyinds_prusvi()
-    ##### IMPORTANT ####
-    # HI is not yet included in the poly defs b/c it's boundaries are wonky.
+    poly_defs['hi'] = polyinds_hi()
     plt.close('all')
     plt.ion()
     return poly_defs
