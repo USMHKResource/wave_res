@@ -8,7 +8,7 @@ srcdir = os.path.abspath('../wave_ra/pnnl/')
 
 tmpdir = os.path.abspath('./tmpdata/')
 
-pkgdir = os.path.abspath(__file__).rsplit('/')[0]
+pkgdir = os.path.abspath(__file__).rsplit('/', 1)[0] + '/'
 
 if this_machine.startswith('lkilcher-26339s') or \
    this_machine.startswith('lkilcher-32045s'):
