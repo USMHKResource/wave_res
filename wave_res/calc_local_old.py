@@ -109,8 +109,8 @@ if __name__ == '__main__':
 
     Psrc = integrate_source(region, dates, terms=terms)
 
-    Psrc.to_hdf5(str(p.tmpdir /
-                     'integrated_source.{region}.{tag}.h5'
+    Psrc.to_hdf5(str(p.tmpdir +
+                     '/integrated_source.{region}.{tag}.h5'
                      .format(region=region, tag=tag)))
 
     print("The area-integrated source terms for "

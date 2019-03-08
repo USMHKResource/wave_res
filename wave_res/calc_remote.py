@@ -42,7 +42,7 @@ def load(scenario, region, month):
     elif isinstance(month, np.datetime64):
         month = month.astype('O')
     dat = Dataset(
-        p.srcdir + '/' + 
+        p.srcdir + '/' +
         '{scenario}/usa/{year:04d}/eez/ww3.{region}.{year:04d}{month:02d}_spec.nc'
         .format(scenario=scenario,
                 year=month.year, region=region, month=month.month),

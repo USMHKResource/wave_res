@@ -45,8 +45,8 @@ def load_source(scenario, region, dt):
     elif isinstance(dt, np.datetime64):
         dt = dt.astype('O')
     dat = Dataset(
-        p.srcdir + '/' + 
-        '{scenario}/usa/{year}/src/ww3.{region}.{year}{month:02d}_tab.nc'
+        p.srcdir +
+        '/{scenario}/usa/{year}/src/ww3.{region}.{year}{month:02d}_tab.nc'
         .format(scenario=scenario, region=region,
                 year=dt.year, month=dt.month))
     return dat
