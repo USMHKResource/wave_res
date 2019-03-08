@@ -52,6 +52,20 @@ def load_source(scenario, region, dt):
     return dat
 
 
+def get_mask(region, dt):
+    if isinstance(dt, basestring):
+        dt = np.datetime64(dt).astype("O")
+    elif isinstance(dt, np.datetime64):
+        dt = dt.astype('O')
+    dat = Dataset(
+        p.maskdir /
+        'ww3.{region}.{year}{month:02d}_mask.nc'
+        .format(region=region,
+                year=dt.year, month=dt.month))
+    mask = dat.variables['mask'][:].data.astype('bool')
+    return mask
+
+
 def calc_local(scenario, region, dates,
                terms=source_terms):
     """Calculate the local resource for `scenario` in `region` for
@@ -136,8 +150,11 @@ def calc_local(scenario, region, dates,
         dat = load_source(scenario, region, dt)
         out['Nhour'][idt] = len(dat.variables['time'])
         for ky in terms:
+            dnow = dat.variables[ky][:]
+            if region.lower() == 'ak':
+                dnow[get_mask(region, dt)] = 0
             # average time + integrate frequency
-            src[:n_grid] = (dat.variables[ky][:].mean(0) *
+            src[:n_grid] = (dnow.mean(0) *
                             df[None, :]).sum(-1)
             for irng, rng in enumerate(range(10, 201, 10)):
                 rky = '{:03d}'.format(rng)
