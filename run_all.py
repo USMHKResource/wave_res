@@ -2,12 +2,12 @@ import wave_res as wr
 import numpy as np
 from wave_res.paths import mkdir
 
-
-months = np.arange(np.datetime64('2009-09'),
-                   np.datetime64('2010-01'))
+# Range to compute the resource
+months = np.arange(np.datetime64('1979-01'),
+                   np.datetime64('2011-01'))
 
 # For now this doesn't include HI
-all_regions = ['ak', 'wc', 'at', 'prusvi']
+all_regions = ['wc', 'at', 'prusvi','ak']
 
 # These are the ranges
 ranges = np.arange(10, 201, 10)
@@ -15,8 +15,9 @@ ranges = np.arange(10, 201, 10)
 # In this dictionary, the keys are the scenarios, and the values are
 # lists of regions that should be run for each scenario.
 run_these = {
-    #'baseline': ['prusvi'],
-    'extraction': ['prusvi'],
+    'baseline':['ak']
+    #'baseline':all_regions,
+    #'extraction':all_regions
 }
 
 

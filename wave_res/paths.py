@@ -16,7 +16,14 @@ if this_machine.startswith('lkilcher-26339s') or \
     srcdir = Path('/Volumes/lkilcher/wave_ra/pnnl/')
     #srcdir = Path(os.path.expanduser('~/tmp/wave_ra/pnnl/'))
 
+# Gabriel's Paths
+if this_machine.startswith('constance') or this_machine.startswith('node'):
+    rootFld = Path('/pic/projects/fvwetland/')
+    srcdir = rootFld / 'gabriel/waveEnergyResource/assessment/hindcast/'
+    tmpdir = srcdir / 'resource/tmp/'
 
 def mkdir(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
+    else:
+        print('directory exists: ' + directory)
