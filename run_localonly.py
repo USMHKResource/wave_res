@@ -7,12 +7,13 @@ months = np.arange(np.datetime64('1979-01'),
                    np.datetime64('2011-01'))
 
 all_regions = ['wc', 'at', 'prusvi', 'ak', 'hi']
+
 # In this dictionary, the keys are the scenarios, and the values are
 # lists of regions that should be run for each scenario.
 run_these = {
-    'baseline': ['hi'],
-    # 'baseline':all_regions,
-    'extraction': ['hi'],
+    'baseline': ['ak'],
+    'extraction': ['ak'],
+    # 'extraction':all_regions
 }
 
 
@@ -23,51 +24,8 @@ for scenario, REGIONS in run_these.items():
 
         rinf = wr.RegionInfo(region)
 
-        print("#### Calculating totals for '{}' scenario, '{}' region..."
+        print("#### Calculating LOCAL totals for '{}' scenario, '{}' region..."
               .format(scenario, region))
-
-        print("   Calculating remote resource...")
-        # Calculate the remote resource
-        remote = wr.calc_remote(scenario, region, months)
-        # This returns a dictionary-like object (based on pyDictH5.data)
-        # containing:
-        #  'time': (n_months) the month
-        #  'Nhour': (n_months) The number of hours in each month
-        #  'range': (n_ranges) The range of each contour [nautical miles]
-        #  'length': (n_ranges) The length of each contour [meters]
-        #  '1way': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using the '1way' method [watts]
-        #  'trad': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using a traditional dot-product [watts]
-        #  'bdir': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using a bi-directional dot-product [watts]
-        #  'unit': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using the unit-circle method [watts]
-
-        # Compute the hour-weighted (rather than month-weighted) averages
-        rtot = remote.hourly_average()
-
-        # Print the remote results
-        print(
-            "    The average remote resource at the eez boundary for the\n"
-            "    '{region}' region, scenario '{scenario}',\n"
-            "    from {start} to {end} is:\n"
-            "      1-way:  {oway: 8.3f} GW\n"
-            "      trad:   {trad: 8.3f} GW\n"
-            "      bi-dir: {bdir: 8.3f} GW\n"
-            "      unit:   {unit: 8.3f} GW\n"
-            .format(
-                region=region, scenario=scenario,
-                start=months[0], end=months[-1],
-                # The last range is the eez (thus -1)
-                oway=rtot['1way'][-1] / 1e9, trad=rtot['trad'][-1] / 1e9,
-                bdir=rtot['bdir'][-1] / 1e9, unit=rtot['unit'][-1] / 1e9,
-            )
-        )
-
-        remote.to_hdf5('results/{scenario}/{region}.remote-totals.h5'
-                       .format(scenario=scenario, region=region))
-        # You can load this data with pyDictH5.load(<fname>)
 
         print("   Calculating local resource...")
 
