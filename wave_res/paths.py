@@ -14,6 +14,7 @@ pkgdir = Path(os.path.abspath(__file__)).parent
 if this_machine.startswith('lkilcher-26339s') or \
    this_machine.startswith('lkilcher-32045s'):
     srcdir = Path('/Volumes/lkilcher/wave_ra/pnnl/')
+    maskdir = Path(os.path.expanduser('~/Dropbox/tmp/wave_ra/icemask/'))
     #srcdir = Path(os.path.expanduser('~/tmp/wave_ra/pnnl/'))
 
 # Gabriel's Paths
@@ -21,6 +22,10 @@ if this_machine.startswith('constance') or this_machine.startswith('node'):
     rootFld = Path('/pic/projects/fvwetland/')
     srcdir = rootFld / 'gabriel/waveEnergyResource/assessment/hindcast/'
     tmpdir = srcdir / 'resource/tmp/'
+
+if 'maskdir' not in vars():
+    maskdir = srcdir / 'icemask/'
+
 
 def mkdir(directory):
     if not os.path.exists(directory):
