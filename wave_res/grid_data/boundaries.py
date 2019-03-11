@@ -433,8 +433,11 @@ def polyinds_prusvi():
     return out
 
 
-#def polyinds_hi():
-if False:
+def polyinds_hi():
+    """This function is mostly a pass-through because the contours
+    around the islands are mostly defined in the setup_data.fix_gaps
+    function. There is no mainland to loop in here.
+    """
     out = {}
     rinf = RegionInfo('hi')
     fig, ax = setup_figure(rinf, 1000 + 32)
@@ -447,49 +450,33 @@ if False:
         xy = rinf.get_contour(ky, xy=True)[seg_i]
         ax.plot(xy[0, 0], xy[1, 0], 'r+')
 
-        poly_inds = []
+        poly_inds = rinf.con_defs[ky][seg_i]
         border_ind = 0
         bxy = rinf.get_contour('borders', xy=True)[border_ind]
         ax.plot(bxy[0, 0], bxy[1, 0], 'b+')
-        binds = rinf.con_defs['borders'][border_ind]
-        id0, d = mindist(xy[:, -1], bxy)
-        poly_inds.append(rinf.con_defs[ky][seg_i])
-
-        if rng < 51:
-            pass
-        elif rng == 60:
-            seg_i += 1
-            poly_inds[0] = poly_inds[0][:-7]
-            poly_inds.append(rinf.con_defs[ky][seg_i][13:])
-        elif rng == 70:
-            seg_i += 1
-            poly_inds[0] = poly_inds[0][:-7]
-            poly_inds.append(rinf.con_defs[ky][seg_i][15:])
-        elif rng == 80:
-            poly_inds[0] = poly_inds[0][15:-5]
-        elif rng == 90:
-            poly_inds[0] = poly_inds[0][17:-3]
-
-        poly_inds.append(poly_inds[0])
 
         pinds = np.hstack(poly_inds).tolist()
         boundary = rinf.gridxy[:, pinds]
         ax.plot(boundary[0], boundary[1], '-', color=cmap((rng - 5) / 200.),
-                alpha=0.5)
+                alpha=1, zorder=500-rng)
 
         other = rinf.con_defs[ky][seg_i + 1:]
         for itmp, slc in enumerate(other):
             slc = other[itmp] = slc + [slc[0]]
             ax.plot(rinf.gridxy[0, slc], rinf.gridxy[1, slc], 'b-')
         out[ky] = [pinds, ] + other
+
     rng = 200
-    out['EEZ'] = out['eez'] = [rinf.con_defs['EEZ'][0] +
-                               [rinf.con_defs['EEZ'][0][0], ], ]
+    seg_i = 0
+    ky = 'EEZ'
+    xy = rinf.get_contour(ky, xy=True)[seg_i]
+    ax.plot(xy[0, 0], xy[1, 0], 'r+')
+    out['EEZ'] = out['eez'] = rinf.con_defs['EEZ']
     boundary = rinf.gridxy[:, out['EEZ'][0]]
     ax.plot(boundary[0], boundary[1], '-',
             color=cmap((rng - 5) / 200.), alpha=0.5)
 
-    #return out
+    return out
 
 
 def run_all():
@@ -502,8 +489,7 @@ def run_all():
     poly_defs['gm'] = polyinds_gm()
     poly_defs['ec'] = polyinds_ec()
     poly_defs['prusvi'] = polyinds_prusvi()
-    ##### IMPORTANT ####
-    # HI is not yet included in the poly defs b/c it's boundaries are wonky.
+    poly_defs['hi'] = polyinds_hi()
     plt.close('all')
     plt.ion()
     return poly_defs

@@ -20,7 +20,7 @@ def create_info():
     gridlonlat = {}
     for region in base.source_regions:
         print("Processing data for region '{}'...".format(region))
-        dat = cr.load(region, '2009-01')
+        dat = cr.load('baseline', region, '2009-01')
         v = dat.variables
         con_defs[region] = {}
         cid = cr._concatenate_id(v['station_name'][:, 2:5].data)
@@ -87,7 +87,8 @@ def fix_gaps():
     for reg in base.regions:
         rinf = base.RegionInfo(reg, use_old_con_defs=True)
         cdefs = deepcopy(rinf.con_defs)
-        for id in rinf.con_defs.keys():
+        taile = []
+        for id in np.sort(rinf.con_defs.keys()):
             if id == 'eez':
                 # These are created explicitly, and might have breaks already inserted.
                 continue
@@ -111,7 +112,50 @@ def fix_gaps():
                                    range(last, cdefs[id].stop),
                                    2 * r_max))
                     cdefs[id] = tmp
+            poly_inds = []
+            if reg == 'hi':
+                if id == 'EEZ':
+                    rng = 200
+                else:
+                    rng = int(id)
+                seg_i = 0
+                poly_inds.append(cdefs[id][seg_i])
+                if rng < 51:
+                    pass
+                elif rng == 60:
+                    seg_i += 1
+                    poly_inds[0] = poly_inds[0][:-7]
+                    poly_inds.append(cdefs[id][seg_i][13:])
+                elif rng == 70:
+                    seg_i += 1
+                    poly_inds[0] = poly_inds[0][:-7]
+                    poly_inds.append(cdefs[id][seg_i][15:])
+                elif rng == 80:
+                    poly_inds[0] = poly_inds[0][15:-5]
+                elif rng == 90:
+                    poly_inds[0] = poly_inds[0][17:-3]
+                elif rng == 100:
+                    poly_inds[0] = poly_inds[0][17:-2]
+                elif rng == 200:
+                    poly_inds[0] = poly_inds[0][:50] + taile + poly_inds[0][-113:]
+                elif rng >= 110:
+                    poly_inds[0] = poly_inds[0][17:]
+            
+                # if rng > 90:
+                #     tail0 += [poly_inds[0][0]]
+                #     poly_inds[0] = tail0_last + poly_inds[0]
+                if (100 < rng) & (rng < 200):
+                    taile += [poly_inds[0][-1], ]
+                    poly_inds[0] = poly_inds[0] + taile_last[::-1]
+                taile_last = taile
+
+                if rng >= 40:
+                    # Patch the start back on
+                    poly_inds = poly_inds + [poly_inds[0][0], ]
+                    cdefs[id] = [np.hstack(poly_inds).tolist(), ] + cdefs[id][seg_i + 1:]
+
         new_con_defs[reg] = cdefs
+
     with open(str('Contour_Ranges2.pkl'), 'w') as fl:
         pkl.dump(new_con_defs, fl)
 

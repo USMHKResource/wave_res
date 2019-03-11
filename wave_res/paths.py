@@ -18,12 +18,12 @@ if this_machine.startswith('lkilcher-26339s') or \
 
 # Gabriel's Paths
 if this_machine.startswith('constance') or this_machine.startswith('node'):
-    rootFld = '/pic/projects/fvwetland/'
-    srcdir = rootFld + 'gabriel/waveEnergyResource/assessment/hindcast/'
-    tmpdir = srcdir + 'resource/tmp/'
+    rootFld = Path('/pic/projects/fvwetland/')
+    srcdir = rootFld / 'gabriel/waveEnergyResource/assessment/hindcast/'
+    tmpdir = srcdir / 'resource/tmp/'
 
 def mkdir(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
     else:
-        print('exists: ' + directory)
+        print('directory exists: ' + directory)

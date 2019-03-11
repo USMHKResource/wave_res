@@ -1,5 +1,4 @@
 import paths as p
-import os
 from netCDF4 import Dataset
 import wavespeed.wave_dispersion as wavespd
 import gis
@@ -42,7 +41,7 @@ def load(scenario, region, month):
     elif isinstance(month, np.datetime64):
         month = month.astype('O')
     dat = Dataset(
-        p.srcdir + '/' + 
+        p.srcdir /
         '{scenario}/usa/{year:04d}/eez/ww3.{region}.{year:04d}{month:02d}_spec.nc'
         .format(scenario=scenario,
                 year=month.year, region=region, month=month.month),
@@ -54,15 +53,15 @@ def load_processed(scenario, region, month, overwrite=False):
     """Process large data files, compute wave energy flux, and store
     small temporary data files."""
     # create directory <tmpdir>/{scenario}/ (if it doesn't already exist)
-    p.mkdir(str(p.tmpdir + '/' + '{}'.format(scenario)))
+    p.mkdir(str(p.tmpdir / '{}'.format(scenario)))
     m_ = month.astype('O')
-    tempname = (p.tmpdir + '/' + '{scenario}/ww3.{region}.{year}{month:02d}_wef.nc'
+    tempname = (p.tmpdir / '{scenario}/ww3.{region}.{year}{month:02d}_wef.nc'
                 .format(scenario=scenario, region=region,
                         year=m_.year, month=m_.month))
-    if os.path.isfile(tempname) and not overwrite:
+    if tempname.is_file() and not overwrite:
         dat = pyDictH5.load(str(tempname))
     else:
-        print('Processing file {}'.format(tempname))
+        print('Processing file {}'.format(tempname.name))
         ncdat = load(scenario, region, month)
         dat = calc_wef(ncdat)
         dat.to_hdf5(str(tempname))
