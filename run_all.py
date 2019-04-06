@@ -10,9 +10,8 @@ all_regions = ['wc', 'at', 'prusvi', 'ak', 'hi']
 # In this dictionary, the keys are the scenarios, and the values are
 # lists of regions that should be run for each scenario.
 run_these = {
-    'baseline': ['hi'],
-    # 'baseline':all_regions,
-    'extraction': ['hi'],
+    'baseline': all_regions,
+    'extraction': all_regions,
 }
 
 
