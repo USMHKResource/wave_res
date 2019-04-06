@@ -17,7 +17,7 @@ class RemoteTotals(pyDictH5.data):
 
 class RemoteResults(pyDictH5.data):
 
-    def hourly_average(self):
+    def calc_totals(self):
         """Compute hourly average, and integrate in frequency.
         """
         out = RemoteTotals()

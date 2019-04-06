@@ -46,7 +46,7 @@ for scenario, REGIONS in run_these.items():
         #          flux using the unit-circle method [watts/Hz]
 
         # Compute the hour-weighted (rather than month-weighted) averages
-        rtot = remote.hourly_average()
+        rtot = remote.calc_totals()
 
         # Print the remote results
         print(
@@ -98,7 +98,7 @@ for scenario, REGIONS in run_these.items():
         # EEZ, you need to sum them, e.g.:
         #    sin_total = local['sin'].sum(-1)
 
-        ltot = local.hourly_average()
+        ltot = local.calc_totals()
 
         print(
             "    The average local resource over the EEZ for the\n"

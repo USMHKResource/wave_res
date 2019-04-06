@@ -28,7 +28,7 @@ class LocalTotals(pyDictH5.data):
 
 class LocalResults(pyDictH5.data):
 
-    def hourly_average(self):
+    def calc_totals(self):
         """Compute hourly average, and integrate in frequency.
         """
         out = LocalTotals()
