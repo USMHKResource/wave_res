@@ -35,14 +35,15 @@ for scenario, REGIONS in run_these.items():
         #  'Nhour': (n_months) The number of hours in each month
         #  'range': (n_ranges) The range of each contour [nautical miles]
         #  'length': (n_ranges) The length of each contour [meters]
-        #  '1way': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using the '1way' method [watts]
-        #  'trad': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using a traditional dot-product [watts]
-        #  'bdir': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using a bi-directional dot-product [watts]
-        #  'unit': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using the unit-circle method [watts]
+        #  'fbins': (n_freq + 1) The edges of the frequency bins [Hz]
+        #  '1way': (n_months, n_freq, n_ranges) Monthly averaged wave energy
+        #          flux using the '1way' method [watts/Hz]
+        #  'trad': (n_months, n_freq, n_ranges) Monthly averaged wave energy
+        #          flux using a traditional dot-product [watts/Hz]
+        #  'bdir': (n_months, n_freq, n_ranges) Monthly averaged wave energy
+        #          flux using a bi-directional dot-product [watts/Hz]
+        #  'unit': (n_months, n_freq, n_ranges) Monthly averaged wave energy
+        #          flux using the unit-circle method [watts/Hz]
 
         # Compute the hour-weighted (rather than month-weighted) averages
         rtot = remote.hourly_average()

@@ -18,13 +18,16 @@ class RemoteTotals(pyDictH5.data):
 class RemoteResults(pyDictH5.data):
 
     def hourly_average(self):
+        """Compute hourly average, and integrate in frequency.
+        """
         out = RemoteTotals()
         out['range'] = self['range']
         out['length'] = self['length']
+        df = np.diff(self['fbins'])
         for ky in wef_int_modes:
-            out[ky] = np.average(self[ky],
-                                 weights=self['Nhour'],
-                                 axis=0)
+            out[ky] = (np.average(self[ky],
+                                  weights=self['Nhour'],
+                                  axis=0) * df[:, None]).sum(0)
         return out
 
 
@@ -69,8 +72,7 @@ def load_processed(scenario, region, month, overwrite=False):
 
 
 def calc_wef(indat):
-    """Load data and calculate the average wave energy flux for a
-    given region and month.
+    """Reduce the source-data to the variables of interest.
 
     Parameters
     ==========
@@ -82,14 +84,14 @@ def calc_wef(indat):
     data : `pyDictH5.data` object
        A dictionary-like object containing the wave energy flux
        data. This includes:
-         spec (NxFxM) [m^2/Hz/rad]: The wave energy directional spectrum.
          lon (N) (deg): longitude of data.
          lat (N) (deg): latitude of data.
          f (F) [Hz]: frequency of spectrum
          fbins (F+1) [Hz]: the bounds of each spectral bin
          direction M [deg]: The "direction-to" of wave propagation.
          Nhour () [hours]: Number of hours in average.
-         wef (NxM) [W/rad/m]: directional wave energy flux
+         depth (N) [m]: the water depth.
+         wef (NxFxM) [W/rad/m/Hz]: directional wave energy flux vs. freq
          conid (N) [3-char string]: contour identifier
 
     """
@@ -97,7 +99,9 @@ def calc_wef(indat):
     v = indat.variables
 
     data = pyDictH5.data()
-    data['spec'] = v['efth'][:].data.mean(0)
+    # efth has dims: (hourly time, station/location, freq, direction)
+    # So, this averages away time hourly-time
+    _spec = v['efth'][:].data.mean(0)
     # For some reason lat/lon are also fn's of time, but there is no
     # additional info there.
     data['lon'] = v['longitude'][0].data
@@ -110,10 +114,9 @@ def calc_wef(indat):
     # These should all be hours, but this makes sure...
     dt = np.float32((v['time'][1] - v['time'][0]) * 24)
     data['Nhour'] = len(v['time']) * dt
-    cg = wavespd.c_group0(data['f'][None, :], data['depth'][:, None])
-    df = np.diff(data['fbins'])
+    data['cg'] = wavespd.c_group0(data['f'][None, :], data['depth'][:, None])
     data['wef'] = (wavespd.rho * wavespd.gravity *
-                   (data['spec'] * cg[:, :, None] * df[None, :, None]).sum(1))
+                   (_spec * data['cg'][:, :, None]))
     data['conid'] = _concatenate_id(v['station_name'][:, 2:5].data)
     return data
 
@@ -129,7 +132,7 @@ def integrate_wef(lon, lat, wef, direction):
     lat : len(N) array (degrees)
         The latitude of the integration contour.
 
-    wef : NxM array (W / m / rad)
+    wef : NxFxM array (W / m / rad / Hz)
         The directional wave energy flux.
 
     direction : len(M) array (degrees True)
@@ -171,21 +174,21 @@ def integrate_wef(lon, lat, wef, direction):
     # Average the wave energy flux between two points, and give it a
     # complex direction
     _wef = (wef[1:] + wef[:-1]) * np.exp(1j * theta) / 2
-
     # Integrate.
     # Notes
     #  - `norm` has length equal to the distance between points
     #  - conjugate subtracts the normal angle
     #  - Take the `.real` component to get contour-normal fluxes
-    flux = (_wef * np.conj(norm)[:, None]) * dang
+    flux = (_wef * np.conj(norm)[:, None, None]) * dang
     # Sum for all of the different methods.
-    # Note: this is a 'double sum' (direction and line-integral)
-    trad = flux.real.sum()
-    bdir = np.abs(flux.real).sum()
-    unit = np.abs(flux).sum()
+    # Note: this is a 'double sum' (line-integral, direction)
+    #       but we don't sum in the frequency direction.
+    trad = flux.real.sum((0, -1))
+    bdir = np.abs(flux.real).sum((0, -1))
+    unit = np.abs(flux).sum((0, -1))
     _flux = flux.real.copy()
     _flux[_flux < 0] = 0
-    oneway = _flux.sum()
+    oneway = _flux.sum((0, -1))
     return trad, oneway, bdir, unit
 
 
@@ -228,21 +231,24 @@ def calc_remote(scenario, region, months):
 
     ranges = np.arange(10, 201, 10)
 
+    N_f = len(rinf.freqbins) - 1
+
     # initialize the output
     out = RemoteResults()
     for ky in wef_int_modes:
-        out[ky] = np.empty((len(months), len(ranges)), dtype=np.float32)
+        out[ky] = np.empty((len(months), N_f, len(ranges)), dtype=np.float32)
     out['time'] = months
     out['range'] = ranges
     out['Nhour'] = np.empty((len(months)), dtype=np.uint16)
     out['length'] = np.zeros(ranges.shape, dtype=np.float32)
+    out['fbins'] = rinf.freqbins
 
     for imo, mo in enumerate(months):
         # This creates and loads temporary files as needed.
         dnow = load_processed(scenario, region, mo)
         out['Nhour'][imo] = dnow['Nhour']
         for irng, rng in enumerate(ranges):
-            tmp = np.zeros(4, dtype=np.float32)
+            tmp = np.zeros((4, N_f), dtype=np.float32)
             rky = '{:03d}'.format(rng)
             con_inds = rinf.con_defs[rky]
             for ci in con_inds:
@@ -253,5 +259,5 @@ def calc_remote(scenario, region, months):
                     out['length'][irng] += con_length(
                         dnow['lon'][ci], dnow['lat'][ci])
             for iky, ky in enumerate(wef_int_modes):
-                out[ky][imo, irng] = tmp[iky]
+                out[ky][imo, :, irng] = tmp[iky]
     return out
