@@ -79,18 +79,19 @@ for scenario, REGIONS in run_these.items():
         #  'Nhour': (n_months) The number of hours in each month
         #  'range': (n_ranges) The range of each contour [nautical miles]
         #  'area': (n_ranges) The area between each contour [meters^2]
-        #  'sin': (n_months, n_ranges) Monthly averaged 'wind input'
-        #         source term. [watts]
-        #  'sds': (n_months, n_ranges) Monthly averaged 'dissipation'
-        #         source term. [watts]
-        #  'snl': (n_months, n_ranges) Monthly averaged 'non-linear'
-        #         source term. [watts]
-        #  'sbt': (n_months, n_ranges) Monthly averaged 'bottom
-        #         friction' source term. [watts]
-        #  'sbt': (n_months, n_ranges) Monthly averaged 'ice'
-        #         source term. [watts]
-        #  'stot': (n_months, n_ranges) Monthly averaged 'total'
-        #         source term. [watts]
+        #  'fbins': (n_freq + 1) The edges of the frequency bins [Hz]
+        #  'sin': (n_months, n_freq, n_ranges) Monthly averaged 'wind input'
+        #         source term. [watts/Hz]
+        #  'sds': (n_months, n_freq, n_ranges) Monthly averaged 'dissipation'
+        #         source term. [watts/Hz]
+        #  'snl': (n_months, n_freq, n_ranges) Monthly averaged 'non-linear'
+        #         source term. [watts/Hz]
+        #  'sbt': (n_months, n_freq, n_ranges) Monthly averaged 'bottom
+        #         friction' source term. [watts/Hz]
+        #  'sbt': (n_months, n_freq, n_ranges) Monthly averaged 'ice'
+        #         source term. [watts/Hz]
+        #  'stot': (n_months, n_freq, n_ranges) Monthly averaged 'total'
+        #         source term. [watts/Hz]
         # NOTE: the source terms are totals for the area between that
         # contour range (i.e., in local['range']), and the range
         # inshore of it. So, to get the source term for the entire

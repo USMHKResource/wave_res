@@ -29,13 +29,16 @@ class LocalTotals(pyDictH5.data):
 class LocalResults(pyDictH5.data):
 
     def hourly_average(self):
+        """Compute hourly average, and integrate in frequency.
+        """
         out = LocalTotals()
         out['area'] = self['area']
         out['range'] = self['range']
+        df = np.diff(self['fbins'])
         for ky in source_terms:
-            out[ky] = np.average(self[ky],
-                                 weights=self['Nhour'],
-                                 axis=0)
+            out[ky] = (np.average(self[ky],
+                                  weights=self['Nhour'],
+                                  axis=0) * df[:, None]).sum(0)
         return out
 
 
@@ -113,8 +116,8 @@ def calc_local(scenario, region, dates,
 
     rinf = base.RegionInfo(region)
     xy = rinf.allxy.T
-    df = np.diff(rinf.freqbins)
-    src = np.zeros(xy.shape[0], dtype=np.float32)
+    n_f = len(rinf.freqbins) - 1
+    src = np.zeros((xy.shape[0], n_f), dtype=np.float32)
     n_grid = rinf.gridxy.shape[1]
 
     # # Load the first dataset to compute the grid
@@ -130,8 +133,9 @@ def calc_local(scenario, region, dates,
     out = LocalResults()
     out['time'] = dates
     out['Nhour'] = np.zeros(len(out['time']), dtype=np.uint16)
+    out['fbins'] = rinf.freqbins
     for ky in terms:
-        out[ky] = np.zeros((len(dates), 20),
+        out[ky] = np.zeros((len(dates), n_f, 20),
                            dtype=np.float32)
 
     out['range'] = np.arange(10, 201, 10)
@@ -153,17 +157,16 @@ def calc_local(scenario, region, dates,
             dnow = dat.variables[ky][:]
             if region.lower() == 'ak':
                 dnow[get_mask(region, dt)] = 0
-            # average time + integrate frequency
-            src[:n_grid] = (dnow.mean(0) *
-                            df[None, :]).sum(-1)
+            # average in time
+            src[:n_grid] = dnow.mean(0)
             for irng, rng in enumerate(range(10, 201, 10)):
                 rky = '{:03d}'.format(rng)
                 verts = rinf.tri_inds[rky]
                 # Now integrate
                 zsum, _ = aint.sumtriangles(xy, src, verts)
-                out[ky][idt, irng] = zsum
+                out[ky][idt, :, irng] = zsum
         dat.close()
-    # Return units of Watts
+    # Return units of Watts/Hz
     for ky in terms:
         out[ky] *= rho * gravity
     return out
