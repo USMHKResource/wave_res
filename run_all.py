@@ -10,9 +10,8 @@ all_regions = ['wc', 'at', 'prusvi', 'ak', 'hi']
 # In this dictionary, the keys are the scenarios, and the values are
 # lists of regions that should be run for each scenario.
 run_these = {
-    'baseline': ['hi'],
-    # 'baseline':all_regions,
-    'extraction': ['hi'],
+    'baseline': all_regions,
+    'extraction': all_regions,
 }
 
 
@@ -35,17 +34,18 @@ for scenario, REGIONS in run_these.items():
         #  'Nhour': (n_months) The number of hours in each month
         #  'range': (n_ranges) The range of each contour [nautical miles]
         #  'length': (n_ranges) The length of each contour [meters]
-        #  '1way': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using the '1way' method [watts]
-        #  'trad': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using a traditional dot-product [watts]
-        #  'bdir': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using a bi-directional dot-product [watts]
-        #  'unit': (n_months, n_ranges) Monthly averaged wave energy
-        #          flux using the unit-circle method [watts]
+        #  'fbins': (n_freq + 1) The edges of the frequency bins [Hz]
+        #  '1way': (n_months, n_freq, n_ranges) Monthly averaged wave energy
+        #          flux using the '1way' method [watts/Hz]
+        #  'trad': (n_months, n_freq, n_ranges) Monthly averaged wave energy
+        #          flux using a traditional dot-product [watts/Hz]
+        #  'bdir': (n_months, n_freq, n_ranges) Monthly averaged wave energy
+        #          flux using a bi-directional dot-product [watts/Hz]
+        #  'unit': (n_months, n_freq, n_ranges) Monthly averaged wave energy
+        #          flux using the unit-circle method [watts/Hz]
 
         # Compute the hour-weighted (rather than month-weighted) averages
-        rtot = remote.hourly_average()
+        rtot = remote.calc_totals()
 
         # Print the remote results
         print(
@@ -78,25 +78,26 @@ for scenario, REGIONS in run_these.items():
         #  'Nhour': (n_months) The number of hours in each month
         #  'range': (n_ranges) The range of each contour [nautical miles]
         #  'area': (n_ranges) The area between each contour [meters^2]
-        #  'sin': (n_months, n_ranges) Monthly averaged 'wind input'
-        #         source term. [watts]
-        #  'sds': (n_months, n_ranges) Monthly averaged 'dissipation'
-        #         source term. [watts]
-        #  'snl': (n_months, n_ranges) Monthly averaged 'non-linear'
-        #         source term. [watts]
-        #  'sbt': (n_months, n_ranges) Monthly averaged 'bottom
-        #         friction' source term. [watts]
-        #  'sbt': (n_months, n_ranges) Monthly averaged 'ice'
-        #         source term. [watts]
-        #  'stot': (n_months, n_ranges) Monthly averaged 'total'
-        #         source term. [watts]
+        #  'fbins': (n_freq + 1) The edges of the frequency bins [Hz]
+        #  'sin': (n_months, n_freq, n_ranges) Monthly averaged 'wind input'
+        #         source term. [watts/Hz]
+        #  'sds': (n_months, n_freq, n_ranges) Monthly averaged 'dissipation'
+        #         source term. [watts/Hz]
+        #  'snl': (n_months, n_freq, n_ranges) Monthly averaged 'non-linear'
+        #         source term. [watts/Hz]
+        #  'sbt': (n_months, n_freq, n_ranges) Monthly averaged 'bottom
+        #         friction' source term. [watts/Hz]
+        #  'sbt': (n_months, n_freq, n_ranges) Monthly averaged 'ice'
+        #         source term. [watts/Hz]
+        #  'stot': (n_months, n_freq, n_ranges) Monthly averaged 'total'
+        #         source term. [watts/Hz]
         # NOTE: the source terms are totals for the area between that
         # contour range (i.e., in local['range']), and the range
         # inshore of it. So, to get the source term for the entire
         # EEZ, you need to sum them, e.g.:
         #    sin_total = local['sin'].sum(-1)
 
-        ltot = local.hourly_average()
+        ltot = local.calc_totals()
 
         print(
             "    The average local resource over the EEZ for the\n"
