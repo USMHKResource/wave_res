@@ -84,13 +84,14 @@ def calc_wef(indat):
     data : `pyDictH5.data` object
        A dictionary-like object containing the wave energy flux
        data. This includes:
-         lon (N) (deg): longitude of data.
-         lat (N) (deg): latitude of data.
+         lon (N) (deg): longitude of data
+         lat (N) (deg): latitude of data
          f (F) [Hz]: frequency of spectrum
          fbins (F+1) [Hz]: the bounds of each spectral bin
-         direction M [deg]: The "direction-to" of wave propagation.
-         Nhour () [hours]: Number of hours in average.
-         depth (N) [m]: the water depth.
+         direction M [deg]: The "direction-to" of wave propagation
+         Nhour () [hours]: Number of hours in average
+         depth (N) [m]: the water depth
+         cg (NxF) [m/s]: the group velocity
          wef (NxFxM) [W/rad/m/Hz]: directional wave energy flux vs. freq
          conid (N) [3-char string]: contour identifier
 
@@ -174,6 +175,7 @@ def integrate_wef(lon, lat, wef, direction):
     # Average the wave energy flux between two points, and give it a
     # complex direction
     _wef = (wef[1:] + wef[:-1]) * np.exp(1j * theta) / 2
+
     # Integrate.
     # Notes
     #  - `norm` has length equal to the distance between points
