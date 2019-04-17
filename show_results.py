@@ -8,13 +8,19 @@ regions = {'ak', 'at', 'prusvi', 'wc', 'hi'}
 # Sum over these regions to get the total.
 totregions = ['ak', 'at', 'prusvi', 'wc', 'hi']
 
-scenario = 'baseline'
-#scenario = 'extraction'
+# Initialize dictionaries for 'baseline' totals
+remote0 = {}
+local0 = {}
+# These are time-weighted averages
+rtot0 = {}
+ltot0 = {}
 
-remote = {}
-local = {}
-rtot = {}
-ltot = {}
+# Initialize dictionaries for 'extraction' totals
+remoteX = {}
+localX = {}
+# These are time-weighted averages
+rtotX = {}
+ltotX = {}
 
 unit = 'GW'
 unit = 'TWh/yr'
@@ -27,29 +33,45 @@ factor = _factordict[unit]
 irange = -1
 
 for ireg, region in enumerate(regions):
-    rd = remote[region] = pdh5.load('results/{}/{}.remote-totals.h5'
-                                    .format(scenario, region))
-    ld = local[region] = pdh5.load('results/{}/{}.local-totals.h5'
-                                   .format(scenario, region))
-    rd['oneway'] = rd['1way']
+    rd0 = remote0[region] = pdh5.load('results/{}/{}.remote-totals.h5'
+                                      .format('baseline', region))
+    ld0 = local0[region] = pdh5.load('results/{}/{}.local-totals.h5'
+                                     .format('baseline', region))
+    rdX = remoteX[region] = pdh5.load('results/{}/{}.remote-totals.h5'
+                                      .format('extraction', region))
+    ldX = localX[region] = pdh5.load('results/{}/{}.local-totals.h5'
+                                     .format('extraction', region))
+    rd0['oneway'] = rd0['1way']
+    rdX['oneway'] = rdX['1way']
 
-    rtot[region] = {m: (np.average(rd[m][:, irange],
-                                   weights=rd['Nhour']) * factor)
-                    for m in ['oneway', 'unit', 'bdir', 'trad']}
-    ltot[region] = {m: (np.average(ld[m][:, :irange].sum(-1),
-                                   weights=ld['Nhour']) * factor)
-                    for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']}
+    rtot0[region] = {m: (np.average(rd0[m][:, irange],
+                                    weights=rd0['Nhour']) * factor)
+                     for m in ['oneway', 'unit', 'bdir', 'trad']}
+    ltot0[region] = {m: (np.average(ld0[m][:, :irange].sum(-1),
+                                    weights=ld0['Nhour']) * factor)
+                     for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']}
+    rtotX[region] = {m: (np.average(rdX[m][:, irange],
+                                    weights=rdX['Nhour']) * factor)
+                     for m in ['oneway', 'unit', 'bdir', 'trad']}
+    ltotX[region] = {m: (np.average(ldX[m][:, :irange].sum(-1),
+                                    weights=ldX['Nhour']) * factor)
+                     for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']}
+
 
 for ireg, region in enumerate(totregions):
     # Calculate the total across all regions
-    if 'total' not in rtot:
-        rtot['total'] = deepcopy(rtot[region])
-        ltot['total'] = deepcopy(ltot[region])
+    if 'total' not in rtot0:
+        rtot0['total'] = deepcopy(rtot0[region])
+        ltot0['total'] = deepcopy(ltot0[region])
+        rtotX['total'] = deepcopy(rtotX[region])
+        ltotX['total'] = deepcopy(ltotX[region])
     else:
         for m in ['oneway', 'unit', 'bdir', 'trad']:
-            rtot['total'][m] += rtot[region][m]
+            rtot0['total'][m] += rtot0[region][m]
+            rtotX['total'][m] += rtotX[region][m]
         for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']:
-            ltot['total'][m] += ltot[region][m]
+            ltot0['total'][m] += ltot0[region][m]
+            ltotX['total'][m] += ltotX[region][m]
 
 
 print("")
@@ -59,24 +81,37 @@ print("..................")
 print(("{:10s}|" + "{:>8s}" * 4).format("", 'one-way', 'trad', 'unit', 'bidir'))
 print("-" * 44)
 for ireg, region in enumerate(regions):
-    rt = rtot[region]
-    print("{:10s}: {oneway: 7.4g} {trad: 7.4g} {unit: 7.4g} {bdir: 7.4g}"
+    rt = rtot0[region]
+    print("{:10s}: {oneway: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
           .format(region, **rt))
-print("============")
-print("{:10s}: {oneway: 7.4g} {trad: 7.4g} {unit: 7.4g} {bdir: 7.4g}"
-      .format('TOTAL', **rtot['total']))
+print("=======================================================")
+print("{:10s}: {oneway: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
+      .format('TOTAL', **rtot0['total']))
 
-
-print("Local Totals ({})".format(unit))
-print("------------")
-print(("{:10s}|" + "{:>8s}" * 6).format("", 'stot', 'sin', 'sds', 'snl', 'sice', 'sbt'))
+print("")
+print("Local Baseline Totals ({})".format(unit))
+print("...............................")
+print(("{:10s}|" + "{:>11s}" * 6).format("", 'stot', 'sin', 'sds', 'snl', 'sice', 'sbt'))
 print("-" * 44)
 for ireg, region in enumerate(regions):
-    lt = ltot[region]
-    print("{:10s}: {stot: 7.4g} {sin: 7.4g} {sds: 7.4g} {snl: 7.4g} {sice: 7.4g} {sbt: 7.4g}"
+    lt = ltot0[region]
+    print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
           .format(region, **lt))
-print("============")
-print("{:10s}: {stot: 7.4g} {sin: 7.4g} {sds: 7.4g} {snl: 7.4g} {sice: 7.4g} {sbt: 7.4g}"
-      .format('TOTAL', **ltot['total']))
+print("=============================================================================")
+print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
+      .format('TOTAL', **ltot0['total']))
+
+print("")
+print("Local Potential Totals ({})".format(unit))
+print("...............................")
+print(("{:10s}|" + "{:>11s}" * 6).format("", 'stot', 'sin', 'sds', 'snl', 'sice', 'sbt'))
+print("-" * 44)
+for ireg, region in enumerate(regions):
+    lt = ltotX[region]
+    print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
+          .format(region, **lt))
+print("=============================================================================")
+print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
+      .format('TOTAL', **ltotX['total']))
 
 
