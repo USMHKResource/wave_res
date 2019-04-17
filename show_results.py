@@ -2,6 +2,7 @@ import pyDictH5 as pdh5
 import numpy as np
 import matplotlib.pyplot as plt
 from copy import deepcopy
+import json
 
 regions = {'ak', 'at', 'prusvi', 'wc', 'hi'}
 
@@ -14,6 +15,9 @@ local0 = {}
 # These are time-weighted averages
 rtot0 = {}
 ltot0 = {}
+
+with open('EPRI_totals.json') as fl:
+    epri = json.load(fl)
 
 # Initialize dictionaries for 'extraction' totals
 remoteX = {}
@@ -29,6 +33,11 @@ _factordict = {
     'TWh/yr': 365 * 24 * 1e-12,
 }
 factor = _factordict[unit]
+
+if unit != 'TWh/yr':
+    # The EPRI data is in TWh/yr, so we adjust units here
+    for ky in epri:
+        epri[ky] *= factor / _factordict['TWh/yr']        
 
 irange = -1
 
@@ -74,44 +83,47 @@ for ireg, region in enumerate(totregions):
             ltotX['total'][m] += ltotX[region][m]
 
 
-print("")
+def print_results():
 
-print("Remote Totals ({})".format(unit))
-print("..................")
-print(("{:10s}|" + "{:>8s}" * 4).format("", 'one-way', 'trad', 'unit', 'bidir'))
-print("-" * 44)
-for ireg, region in enumerate(regions):
-    rt = rtot0[region]
+    print("")
+
+    print("Remote Totals ({})".format(unit))
+    print("#" * 55)
+    print(("{:10s}|" + "{:>11s}" * 4)
+          .format("", 'one-way', 'trad', 'unit', 'bidir'))
+    print("-" * 55)
+    for ireg, region in enumerate(regions):
+        rt = rtot0[region]
+        print("{:10s}: {oneway: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
+              .format(region, **rt))
+    print("=" * 55)
     print("{:10s}: {oneway: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
-          .format(region, **rt))
-print("=======================================================")
-print("{:10s}: {oneway: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
-      .format('TOTAL', **rtot0['total']))
+          .format('TOTAL', **rtot0['total']))
 
-print("")
-print("Local Baseline Totals ({})".format(unit))
-print("...............................")
-print(("{:10s}|" + "{:>11s}" * 6).format("", 'stot', 'sin', 'sds', 'snl', 'sice', 'sbt'))
-print("-" * 44)
-for ireg, region in enumerate(regions):
-    lt = ltot0[region]
+    print("")
+    print("Local Baseline Totals ({})".format(unit))
+    print("#" * 77)
+    print(("{:10s}|" + "{:>11s}" * 6)
+          .format("", 'stot', 'sin', 'sds', 'snl', 'sice', 'sbt'))
+    print("-" * 77)
+    for ireg, region in enumerate(regions):
+        lt = ltot0[region]
+        print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
+              .format(region, **lt))
+    print("=" * 77)
     print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
-          .format(region, **lt))
-print("=============================================================================")
-print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
-      .format('TOTAL', **ltot0['total']))
+          .format('TOTAL', **ltot0['total']))
 
-print("")
-print("Local Potential Totals ({})".format(unit))
-print("...............................")
-print(("{:10s}|" + "{:>11s}" * 6).format("", 'stot', 'sin', 'sds', 'snl', 'sice', 'sbt'))
-print("-" * 44)
-for ireg, region in enumerate(regions):
-    lt = ltotX[region]
+    print("")
+    print("Local Potential Totals ({})".format(unit))
+    print("#" * 77)
+    print(("{:10s}|" + "{:>11s}" * 6)
+          .format("", 'stot', 'sin', 'sds', 'snl', 'sice', 'sbt'))
+    print("-" * 77)
+    for ireg, region in enumerate(regions):
+        lt = ltotX[region]
+        print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
+              .format(region, **lt))
+    print("=" * 77)
     print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
-          .format(region, **lt))
-print("=============================================================================")
-print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
-      .format('TOTAL', **ltotX['total']))
-
-
+          .format('TOTAL', **ltotX['total']))
