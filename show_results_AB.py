@@ -2,8 +2,7 @@ import pyDictH5 as pdh5
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd 
-
-
+from collections import defaultdict
 
 def rePack(x):
     time = x['time']
@@ -42,7 +41,7 @@ def integ(x,mfs=200,local=False):
 def wAverage(x, unit):
     _factordict = {
         'GW': 1e-9,
-        'TWh/yr': 365 * 24 * 1e-12,
+        'TWh/yr': 365*24*1e-12,
     }
     factor = _factordict[unit]
     weights = x['Nhour']
@@ -70,21 +69,18 @@ def wAverage_grouping(x,unit,group='month'):
             tempDf.name = i
             result.append(tempDf)
     
-    result = pd.concat(result,axis=1)
-    
-    return result
-            
+    return pd.concat(result,axis=1)
 
 
 if __name__ == "__main__":
 
     regions = ['ak', 'at', 'prusvi', 'wc', 'hi'] 
 
+    saveDir = 'preferedSaveDir/'
     #unit = 'GW'
     unit = 'TWh/yr'
-
-    mfs = 200
     
+    # Initial Loading
     remote0 = {region:rePack(pdh5.load('results/{}/{}.remote-totals.h5'
                                         .format('baseline', region)))
                                         for region in regions}
@@ -101,61 +97,138 @@ if __name__ == "__main__":
     loadedData = {'rtot0':[remote0,False],'ltot0':[local0,True],
                     'rtotX':[remoteX,False],'ltotX':[localX,True]}
     
-    partitionedData = {name:{region: integ(data[0][region],mfs=mfs,local=data[1]) 
+
+    # pick a distance and calculate 32 yr avg
+    mfs = 200 #miles from shore
+    dataAtMFS = {name:{region: integ(data[0][region],mfs=mfs,local=data[1]) 
                                 for region in regions}
                                 for name,data in loadedData.iteritems()}
 
     totals = {name:pd.DataFrame({region: wAverage(data[region],unit) 
                     for region in regions}).transpose() 
-                    for name,data in partitionedData.iteritems()}
+                    for name,data in dataAtMFS.iteritems()}
     
 
-print("")
-print('Remote Totals ({})'.format(unit))
-print(totals['rtotX'])
-print("")
-print('Local Baseline Totals ({})'.format(unit))
-print(totals['ltot0'])
-print("")
-print('Local Potential Totals ({})'.format(unit))
-print(totals['ltotX'])
+    # as a function of distance
+    mfss = range(0,201)[::10][1:]
+    all_mfs = {}
+    for mfs in mfss:
+        dataAtMFS = {name:{region: integ(data[0][region],mfs=mfs,local=data[1]) 
+                                for region in regions}
+                                for name,data in loadedData.iteritems()}
 
-'''
-# To save
-rtot0.to_csv('/filename.csv')
-ltot0.to_csv('/filename.csv')
-rtotX.to_csv('/filename.csv')
-ltotX.to_csv('/filename.csv')
-'''
+        all_mfs[mfs] = {name:pd.DataFrame({region: wAverage(data[region],unit) 
+                    for region in regions}).transpose() 
+                    for name,data in dataAtMFS.iteritems()}
+    
+    # Group as a function of distance
+    group, source = 'ltot0', 'stot'
+    regVal = defaultdict(list)
+    for region in regions:    
+        for mfs in mfss:
+            regVal[region].append(all_mfs[mfs][group].loc[region,source])
+    
+    # plot the Grouped data
+    fig = plt.figure(figsize = [8,3])
+    for location,values in regVal.iteritems():
+        plt.plot(mfss,values,label=location)
 
-# Monthly Groupings using datetime indexing through Pandas
-# little more complex but not much
+    plt.ylabel('Selected Total ('+unit+')')
+    plt.xlabel('Distance from Shore (miles)')
+    plt.title('Full Year Average '+source+' from '+group)
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+    #plt.savefig(saveDir+'figname.png')
+    plt.show()
 
-groupMethod = 'month'
-groupTotals = {name:{region:wAverage_grouping(data[region],unit,group=groupMethod) 
-                    for region in regions}
-                    for name,data in partitionedData.iteritems()}
+    # Monthly Groupings using datetime indexing through Pandas
+    # little more complex but not much
 
-# A simple plotting routine
+    mfs = 200 #miles from shore
+    dataAtMFS = {name:{region: integ(data[0][region],mfs=mfs,local=data[1]) 
+                                for region in regions}
+                                for name,data in loadedData.iteritems()}
 
-totals, method = 'ltotX', 'sds'
-plotGroup = groupTotals[totals]
+    groupMethod = 'month'
+    groupTotals = {name:{region:wAverage_grouping(data[region],unit,group=groupMethod) 
+                        for region in regions}
+                        for name,data in dataAtMFS.iteritems()}
 
-fig = plt.figure(figsize = [8,3])
-for location,group in plotGroup.iteritems():
-    plt.plot(group.index,group[method],label=location)
+    # A simple plotting routine
 
-plt.ylabel('Selected Total ('+unit+')')
-plt.xlabel(groupMethod)
-plt.title(method+' from '+totals)
-plt.legend()
-plt.grid()
-plt.tight_layout()
-plt.show()
+    totals, source = 'ltotX', 'stot'
+    plotGroup = groupTotals[totals]
+
+    fig = plt.figure(figsize = [8,3])
+    for location,group in plotGroup.iteritems():
+        plt.plot(group.index,group[source],label=location)
+
+    plt.ylabel('Selected Total ('+unit+')')
+    plt.xlabel(groupMethod)
+    plt.title('Monthly Averaged '+source+' from '+totals+' '+str(mfs)+' miles Offshore')
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+    #plt.savefig(saveDir+'figname.png')
+    plt.show()
+
+    # source term monthly averages as a function of distance from shore
+
+    groupMethod = 'month'
+    mfss = range(0,201)[::10][1:]
+    all_mfs = {}
+    for mfs in mfss:
+        dataAtMFS = {name:{region: integ(data[0][region],mfs=mfs,local=data[1]) 
+                                for region in regions}
+                                for name,data in loadedData.iteritems()}
 
 
+        all_mfs[mfs] = {name:{region:wAverage_grouping(data[region],unit,group=groupMethod) 
+                        for region in regions}
+                        for name,data in dataAtMFS.iteritems()}
 
+    # Group as a function of distance based on the month
+    group, source, month  = 'ltot0', 'stot', 2
+    regVal = defaultdict(list)
+    for region in regions:    
+        for mfs in mfss:
+            regVal[region].append(
+                all_mfs[mfs][group][region].loc[month,source])
 
+    # Plot source vs distance from shore for chosen month
+
+    fig = plt.figure(figsize = [8,3])
+    for location,values in regVal.iteritems():
+        plt.plot(mfss,values,label=location)
+
+    plt.ylabel('Selected Total ('+unit+')')
+    plt.xlabel('Distance from Shore (miles)')
+    plt.title(source+' from '+group+' in Month '+str(month))
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+    #plt.savefig(saveDir+'figname.png')
+    plt.show()
+
+    # Surface plot 
+    group, source, region  = 'ltot0', 'stot', 'hi'
+    regVal = []
+    for mfs in mfss:
+        data = all_mfs[mfs][group][region][source]
+        regVal.append(data.values)
+
+    sourceSurface = np.vstack(regVal)
+    fig, ax = plt.subplots(constrained_layout=True)
+    cont = ax.contourf(range(1,13),mfss,sourceSurface,50)
+    cbar = fig.colorbar(cont)
+    cbar.ax.set_ylabel('Selected Source Total ('+unit+')')
+    ax.set_ylabel('Distance from Shore (miles)')
+    ax.set_xlabel('Month of the Year')
+    ax.set_title('Monthly Average of '+source+' from '+group+' at '+region)
+    ax.grid()
+    #plt.savefig(saveDir+'figname.png')
+    plt.show()
 
 
 
