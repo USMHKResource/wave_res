@@ -133,7 +133,7 @@ if True:
     dist = rem['range']
     dat = np.average(rem['oneway'], weights=rem['Nhour'], axis=0) * factor
     ax.plot(dist, dat, 'b-')
-    dat = np.average(remX['bdir'] - remX['oneway'], weights=rem['Nhour'], axis=0) * factor
+    dat = np.average(rem['bdir'] - rem['oneway'], weights=rem['Nhour'], axis=0) * factor
     ax.plot(dist, dat, 'b:')
     #ax.plot(dist[:-1], np.diff(dat))
     dat = np.average(lc0['stot'], weights=rem['Nhour'], axis=0) * factor
@@ -153,6 +153,8 @@ if True:
     dat = np.average(lcX['stot'], weights=rem['Nhour'], axis=0) * factor
     ax.plot(dist, dat, 'k--')
     ax.set_ylim([-20, 20])
+    ax.axhline(0,color='k',linestyle=':')
+    fig.savefig('fig/Flux2Sourceterms.png')
 
 
 def print_results():
