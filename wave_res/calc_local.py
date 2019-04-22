@@ -9,16 +9,16 @@ import base
 # Wave Flux Units
 # ########
 #   s: wave-height var spec (m2 s)
-# J = rho g cg s df = (kg/m3) (m/s2) (m/s) (m2 s) (1/s) = kg m /s3
+# J = rho g \int cg s df = (kg/m3) (m/s2) (m/s) (m2 s) (1/s) = kg m /s3
 # The line integral of this gives power
-# P = \int J dl = kg m2 /s3
+# P = \int J dl = kg m2 / s3
 
 # Wave Source Term Units
 # ########
 #   S: source spec (m2)
-# Q = rho g S df = (kg/m3) (m/s2) (m2) (1/s) = kg /s3
+# Q = rho g \int S df = (kg/m3) (m/s2) (m2) (1/s) = kg /s3
 # The area integral of this gives power
-# P = \int Q dA
+# P = \int Q dA = kg m2 / s3
 
 source_terms = ['sin', 'snl', 'sds', 'sbt', 'sice', 'stot']
 
