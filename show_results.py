@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from copy import deepcopy
 import json
+import matplotlib.pyplot as plt
 
 regions = {'ak', 'at', 'prusvi', 'wc', 'hi'}
 
@@ -40,6 +41,10 @@ if unit != 'TWh/yr':
         epri[ky] *= factor / _factordict['TWh/yr']        
 
 irange = -1
+
+
+def zero_pad(arr, n):
+    return np.pad(arr, n, mode='constant')
 
 for ireg, region in enumerate(regions):
     rd0 = remote0[region] = pdh5.load('results/{}/{}.remote-totals.h5'
@@ -81,6 +86,73 @@ for ireg, region in enumerate(totregions):
         for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']:
             ltot0['total'][m] += ltot0[region][m]
             ltotX['total'][m] += ltotX[region][m]
+
+
+if False:
+    region = 'wc'
+    rem = remote0[region]
+    remX = remoteX[region]
+    lc0 = local0[region]
+    lcX = localX[region]
+    fig = plt.figure(10);fig.clf()
+    ax = fig.subplots(1, 1)
+    dist = rem['range']
+    dat = np.average(rem['oneway'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, dat, 'b-')
+    dat = np.average(remX['oneway'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, dat, 'b-.')
+    dat = np.average(remX['bdir'] - remX['oneway'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, dat, 'b:')
+    #ax.plot(dist[:-1], np.diff(dat))
+    dat = np.average(lc0['stot'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, np.cumsum(dat))
+    dat = np.average(lcX['stot'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, np.cumsum(dat))
+
+    fig = plt.figure(11);fig.clf()
+    ax = fig.subplots(1, 1)
+    dist = rem['range']
+    dat_one = np.average(rem['oneway'], weights=rem['Nhour'], axis=0) * factor
+    dat_bdr = np.average(rem['bdir'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist[:-1], np.diff(dat_one), 'b-')
+    ax.plot(dist[:-1], np.diff(dat_bdr - dat_one), 'r-')
+    ax.plot(dist[:-1], -(np.diff(dat_one) - np.diff(dat_bdr - dat_one)), 'r--')
+    
+    dat = np.average(lc0['stot'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, dat, 'k-')
+    dat = np.average(lcX['stot'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, dat, 'k--')
+    
+if True:
+    region = 'wc'
+    rem = remoteX[region]
+    lc0 = local0[region]
+    lcX = localX[region]
+    fig = plt.figure(10);fig.clf()
+    ax = fig.subplots(1, 1)
+    dist = rem['range']
+    dat = np.average(rem['oneway'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, dat, 'b-')
+    dat = np.average(remX['bdir'] - remX['oneway'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, dat, 'b:')
+    #ax.plot(dist[:-1], np.diff(dat))
+    dat = np.average(lc0['stot'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, np.cumsum(dat))
+    dat = np.average(lcX['stot'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, np.cumsum(dat))
+
+    fig = plt.figure(11);fig.clf()
+    ax = fig.subplots(1, 1)
+    dat_one = np.average(rem['oneway'], weights=rem['Nhour'], axis=0) * factor
+    dat_bdr = np.average(rem['bdir'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, -np.diff(zero_pad(dat_one, (1, 0))), 'b-')
+    ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0))), 'r-')
+    ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0)))-np.diff(zero_pad(dat_one, (1, 0))), 'm-')
+    dat = np.average(lc0['stot'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, dat, 'k-')
+    dat = np.average(lcX['stot'], weights=rem['Nhour'], axis=0) * factor
+    ax.plot(dist, dat, 'k--')
+    ax.set_ylim([-20, 20])
 
 
 def print_results():
