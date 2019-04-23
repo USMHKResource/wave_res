@@ -247,7 +247,7 @@ def calc_remote(scenario, region, months):
 
     for imo, mo in enumerate(months):
         # This creates and loads temporary files as needed.
-        dnow = load_processed(scenario, region, mo)
+        dnow = load_processed(scenario, rinf.source_region, mo)
         out['Nhour'][imo] = dnow['Nhour']
         for irng, rng in enumerate(ranges):
             tmp = np.zeros((4, N_f), dtype=np.float32)

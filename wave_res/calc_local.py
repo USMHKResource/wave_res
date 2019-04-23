@@ -151,7 +151,7 @@ def calc_local(scenario, region, dates,
     # Load data and perform integral
     for idt, dt in enumerate(dates):
         print("      Integrating {}...".format(dt))
-        dat = load_source(scenario, region, dt)
+        dat = load_source(scenario, rinf.source_region, dt)
         out['Nhour'][idt] = len(dat.variables['time'])
         for ky in terms:
             dnow = dat.variables[ky][:]
