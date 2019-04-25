@@ -20,6 +20,9 @@ ltot0 = {}
 with open('EPRI_totals.json') as fl:
     epri = json.load(fl)
 
+source_terms = ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']
+remote_terms = ['trad', 'oneway', 'bdir', 'unit']
+    
 # Initialize dictionaries for 'extraction' totals
 remoteX = {}
 localX = {}
@@ -46,30 +49,49 @@ irange = -1
 def zero_pad(arr, n):
     return np.pad(arr, n, mode='constant')
 
+
+def int_freq(dat, terms):
+    for ky in terms:
+        dat[ky] = (dat[ky] * np.diff(dat['fbins'])[None, :, None]).sum(1)
+
+
+def int_freq2(dat, terms):
+    df = np.diff(dat['fbins'])[None, :, None]
+    f = dat['fbins'][:-1][None, :, None] + df / 2
+    for ky in terms:
+        dat[ky] = (dat[ky] * df).sum(1)
+
+
 for ireg, region in enumerate(regions):
-    rd0 = remote0[region] = pdh5.load('results/{}/{}.remote-totals.h5'
+    rd0 = remote0[region] = pdh5.load('frequencyResults/{}/{}.remote-totals.h5'
                                       .format('baseline', region))
-    ld0 = local0[region] = pdh5.load('results/{}/{}.local-totals.h5'
+    ld0 = local0[region] = pdh5.load('frequencyResults/{}/{}.local-totals.h5'
                                      .format('baseline', region))
-    rdX = remoteX[region] = pdh5.load('results/{}/{}.remote-totals.h5'
+    rdX = remoteX[region] = pdh5.load('frequencyResults/{}/{}.remote-totals.h5'
                                       .format('extraction', region))
-    ldX = localX[region] = pdh5.load('results/{}/{}.local-totals.h5'
+    ldX = localX[region] = pdh5.load('frequencyResults/{}/{}.local-totals.h5'
                                      .format('extraction', region))
     rd0['oneway'] = rd0['1way']
     rdX['oneway'] = rdX['1way']
 
+    int_freq(rd0, remote_terms)
+    int_freq(rdX, remote_terms)
+    int_freq2(ld0, source_terms)
+    int_freq2(ldX, source_terms)
+    
+    
     rtot0[region] = {m: (np.average(rd0[m][:, irange],
                                     weights=rd0['Nhour']) * factor)
-                     for m in ['oneway', 'unit', 'bdir', 'trad']}
+                     for m in remote_terms}
     ltot0[region] = {m: (np.average(ld0[m][:, :irange].sum(-1),
                                     weights=ld0['Nhour']) * factor)
-                     for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']}
+                     for m in source_terms}
     rtotX[region] = {m: (np.average(rdX[m][:, irange],
                                     weights=rdX['Nhour']) * factor)
-                     for m in ['oneway', 'unit', 'bdir', 'trad']}
+                     for m in remote_terms}
     ltotX[region] = {m: (np.average(ldX[m][:, :irange].sum(-1),
                                     weights=ldX['Nhour']) * factor)
-                     for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']}
+                     for m in source_terms}
 
 
 for ireg, region in enumerate(totregions):
@@ -201,3 +223,5 @@ def print_results():
     print("=" * 77)
     print("{:10s}: {stot: 10.4g} {sin: 10.4g} {sds: 10.4g} {snl: 10.4g} {sice: 10.4g} {sbt: 10.4g}"
           .format('TOTAL', **ltotX['total']))
+
+print_results()
