@@ -87,6 +87,7 @@ def freq_bin2(dat, terms):
         rtnDat[ky] = (dat[ky] * df)
     return rtnDat
 
+
 for irange in iranges:
     for ireg, region in enumerate(regions):
 
@@ -261,29 +262,45 @@ if False:
     #fig.savefig('fig/Flux2Sourceterms.png')
     plt.show()
 
-if True:
+if False:
     cut = lambda x: x[:,ifreq,:]
     region = 'wc'
-    rem = remote0[region]
+    rem = remoteX[region]
     lc0 = local0[region]
     lcX = localX[region]
     dist = rem['range']
 
-    ifreqs = range(0,29)
+    ifreqs = range(5,25)
     for ifreq in ifreqs:
         fig = plt.figure(11);fig.clf()
         ax = fig.subplots(1, 1)
-        dat_one = np.average(cut(rem['oneway']), weights=rem['Nhour'], axis=0) * factor
-        dat_bdr = np.average(cut(rem['bdir']), weights=rem['Nhour'], axis=0) * factor
+        if True:
+            bw = np.diff(rem['fbins'])[ifreq]
+
+        dat_one = np.average(cut(rem['oneway']), weights=rem['Nhour'], axis=0) * factor * bw
+        dat_bdr = np.average(cut(rem['bdir']), weights=rem['Nhour'], axis=0) * factor * bw
         ax.plot(dist, -np.diff(zero_pad(dat_one, (1, 0))), 'b-',label='-df(oneway)')
         ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0))), 'r-',label='df(bdr-oneway)')
         ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0)))-np.diff(zero_pad(dat_one, (1, 0))), 'm-',
                                                 label='df(bdr-oneway)-df(oneway)')
-        dat = np.average(cut(lc0['stot']), weights=rem['Nhour'], axis=0) * factor
+        dat = np.average(cut(lc0['stot']), weights=rem['Nhour'], axis=0) * factor * bw * .7
         ax.plot(dist, dat, 'k-',label='lc0 stot')
-        dat = np.average(cut(lcX['stot']), weights=rem['Nhour'], axis=0) * factor
+
+        '''
+        dat = np.average(cut(lc0['sin']), weights=rem['Nhour'], axis=0) * factor * bw
+        ax.plot(dist, dat, 'r-*',label='lc0 sin')
+        dat = np.average(cut(lc0['sds']), weights=rem['Nhour'], axis=0) * factor * bw
+        ax.plot(dist, dat, 'r--',label='lc0 sds')
+        
+        dat = np.average(cut(lc0['snl']), weights=rem['Nhour'], axis=0) * factor * bw
+        ax.plot(dist, dat, 'b--',label='lc0 snl')
+        dat = np.average(cut(lc0['sbt']), weights=rem['Nhour'], axis=0) * factor * bw
+        ax.plot(dist, dat, 'g--',label='lc0 sbt')
+        '''
+
+        dat = np.average(cut(lcX['stot']), weights=rem['Nhour'], axis=0) * factor * bw
         ax.plot(dist, dat, 'k--',label='lcX stot')
-        ax.set_ylim([-20, 120])
+        ax.set_ylim([-0.5, 2.5])
         ax.axhline(0,color='k',linestyle=':')
         plt.title('Flux source terms at frequency '+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]])))
         plt.legend()
