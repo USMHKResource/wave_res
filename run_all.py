@@ -3,7 +3,7 @@ import numpy as np
 from wave_res.paths import mkdir
 
 # Range to compute the resource
-months = np.arange(np.datetime64('1979-01'),
+months = np.arange(np.datetime64('2010-01'),
                    np.datetime64('2011-01'))
 
 all_regions = ['wc', 'at', 'prusvi', 'ak', 'hi']
