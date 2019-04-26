@@ -23,6 +23,10 @@ if this_machine.startswith('constance') or this_machine.startswith('node'):
     srcdir = rootFld / 'gabriel/waveEnergyResource/assessment/hindcast/'
     tmpdir = srcdir / 'resource/tmpFreq/'
 
+#Aidans Paths
+if this_machine.startswith('abharath-34229s'):
+    srcdir = Path('/frequencyResults/')
+
 if 'maskdir' not in vars():
     maskdir = srcdir / 'iceMask/' / 'akMask'
 
