@@ -26,6 +26,7 @@ if this_machine.startswith('constance') or this_machine.startswith('node'):
 #Aidans Paths
 if this_machine.startswith('abharath-34229s'):
     srcdir = Path('/frequencyResults/')
+    # 'Y:\wind\public\users\lkilcher\wave_ra\pnnl\'
 
 if 'maskdir' not in vars():
     maskdir = srcdir / 'icemask/'
