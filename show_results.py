@@ -187,7 +187,7 @@ if False:
     plt.show()
 
 
-if True:
+if False:
     region = 'wc'
     rem = remote0[region]
     remX = remoteX[region]
@@ -264,10 +264,10 @@ if False:
     #fig.savefig('fig/Flux2Sourceterms.png')
     plt.show()
 
-if False:
+if True:
     cut = lambda x: x[:,ifreq,:]
     region = 'wc'
-    rem = remoteX[region]
+    rem = remote0[region]
     lc0 = local0[region]
     lcX = localX[region]
     dist = rem['range']
@@ -334,7 +334,7 @@ if False:
         plt.title('Flux source terms at frequency '+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]])))
         plt.legend()
         #fig.savefig('fig/Flux2Sourceterms_f'+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]]))+'.png')
-        #plt.show()
+        plt.show()
 
 if True:
     pass

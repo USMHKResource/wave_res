@@ -144,13 +144,25 @@ for irange in iranges:
                                         weights=ldXBin['Nhour'],axis=0) * factor)
                         for m in source_terms}
 
+# calculate fluxes
+def calc_fluxes(dat_one, dat_bdr):
+    off = dat_bdr - dat_one
+    osf = dat_one
+    into_box = off[1::] + osf[:-1]
+    out_of_box = osf[1::] + off[:-1]
+    return into_box - out_of_box
 
-## Normal comaprisons of flux v source terms and distance from shore
-if False:
+
+if True:
+    '''
+    Normal comaprisons of flux v source terms and distance from shore
+    '''
     cut = lambda x: x[:,ifreq,:]
     region = 'wc'
-    rem, lc0, lcX = remoteX[region], local0[region], localX[region]
-    dist,fbins,weights = rem['range'],rem['fbins'],rem['Nhour']
+    rem0, remX , lc0, lcX = (remote0[region],remoteX[region],
+                                 local0[region], localX[region])
+
+    dist,fbins,weights = rem0['range'],rem0['fbins'],rem0['Nhour']
 
     freqs = [np.mean(f) for f in zip(fbins,fbins[1:])]
     for ifreq,freq in enumerate(freqs):
@@ -159,46 +171,23 @@ if False:
         if True:
             bw = np.diff(fbins)[ifreq]
 
-        dat_one = np.average(cut(rem['oneway']), weights=weights, axis=0) * factor * bw
-        dat_bdr = np.average(cut(rem['bdir']), weights=weights, axis=0) * factor * bw
+        dat_one0 = np.average(cut(rem0['oneway']), weights=weights, axis=0) * factor * bw
+        dat_bdr0 = np.average(cut(rem0['bdir']), weights=weights, axis=0) * factor * bw
         
-        off = dat_bdr - dat_one
-        osf = dat_one
-
-        into_box = off[1::] + osf[:-1]
-        out_of_box = osf[1::] + off[:-1]
-
-        net_flux = into_box - out_of_box
-
-        print(f'Net Flux {net_flux}, for freq: {freq} Hz')
-
-        #ax.plot(dist, -np.diff(zero_pad(dat_one, (1, 0))), 'b-',label='-df(oneway)')
-        #ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0))), 'r-',label='df(bdr-oneway)')
-        ax.plot(dist, zero_pad(net_flux,(1,0)), 'r-', label='net flux')
-
-        ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0)))-np.diff(zero_pad(dat_one, (1, 0))), 'm-',
-                                                label='df(bdr-oneway)-df(oneway)')
+        dat_oneX = np.average(cut(remX['oneway']), weights=weights, axis=0) * factor * bw
+        dat_bdrX = np.average(cut(remX['bdir']), weights=weights, axis=0) * factor * bw
         
-        dat = np.average(cut(lc0['stot']), weights=rem['Nhour'], axis=0) * factor * bw 
-        ax.plot(dist, dat, 'k-',label='lc0 stot')
-
-        '''
-        dat = np.average(cut(lc0['sin']), weights=rem['Nhour'], axis=0) * factor * bw
-        ax.plot(dist, dat, 'r-*',label='lc0 sin')
-        dat = np.average(cut(lc0['sds']), weights=rem['Nhour'], axis=0) * factor * bw
-        ax.plot(dist, dat, 'r--',label='lc0 sds')
+        dat0 = np.average(cut(lc0['stot']), weights=weights, axis=0) * factor * bw
+        datX = np.average(cut(lcX['stot']), weights=weights, axis=0) * factor * bw
         
-        dat = np.average(cut(lc0['snl']), weights=rem['Nhour'], axis=0) * factor * bw
-        ax.plot(dist, dat, 'b--',label='lc0 snl')
-        dat = np.average(cut(lc0['sbt']), weights=rem['Nhour'], axis=0) * factor * bw
-        ax.plot(dist, dat, 'g--',label='lc0 sbt')
-        '''
-
-        dat = np.average(cut(lcX['stot']), weights=rem['Nhour'], axis=0) * factor * bw
-        ax.plot(dist, dat, 'k--',label='lcX stot')
+        ax.plot(dist, dat0, 'b-',label='lc0 stot')
+        ax.plot(dist, datX, 'b--',label='lcX stot')
+        ax.plot(dist, zero_pad(calc_fluxes(dat_one0,dat_bdr0),(1,0)), 'r-', label='net flux 0')
+        ax.plot(dist, zero_pad(calc_fluxes(dat_oneX,dat_bdrX),(1,0)), 'r--', label='net flux X')
+        
         ax.set_ylim([-0.5, 2.5])
         ax.axhline(0,color='k',linestyle=':')
-        plt.title('Flux source terms at frequency '+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]])))
+        plt.title(f'Flux / Source terms full, f={freq}')
         plt.legend()
         #fig.savefig('fig/Flux2Sourceterms_f'+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]]))+'.png')
         plt.show()
@@ -218,11 +207,11 @@ if True:
     avg = lambda x,y: np.average(x,weights=weights,axis=0).sum(axis=0)*factor*y
 
     region = 'wc'
-    rem, lc0, lcX = remoteX[region], local0[region], localX[region]
-    dist,fbins,weights = rem['range'],rem['fbins'],rem['Nhour']
+    rem0, remX, lc0, lcX = remote0[region], remoteX[region], local0[region], localX[region]
+    dist,fbins,weights = rem0['range'],rem0['fbins'],rem0['Nhour']
 
     freqs = [np.mean(f) for f in zip(fbins,fbins[1:])]
-    fluxes, sources0, sourcesX = [],[],[]
+    fluxes0, fluxesX, sources0, sourcesX = [],[],[],[]
     
     # Loop through all frequencies
     for ifreq,freq in enumerate(freqs):
@@ -239,45 +228,48 @@ if True:
         # cut the source and flux terms based on the fc
         lc0Sums = avg(lc0['stot'][:,ifc,:],bandWidth)
         lcXSums = avg(lcX['stot'][:,ifc,:],bandWidth)
-        dat_one, dat_bdr = (avg(rem['oneway'][:,ifc,:],bandWidth),
-                            avg(rem['bdir'][:,ifc,:],bandWidth))
-
-        # calculate fluxes
-        off = dat_bdr - dat_one
-        osf = dat_one
-        into_box = off[1::] + osf[:-1]
-        out_of_box = osf[1::] + off[:-1]
-        net_flux = into_box - out_of_box
+        dat_one0, dat_bdr0 = (avg(rem0['oneway'][:,ifc,:],bandWidth),
+                            avg(rem0['bdir'][:,ifc,:],bandWidth))
+        dat_oneX, dat_bdrX = (avg(remX['oneway'][:,ifc,:],bandWidth),
+                            avg(remX['bdir'][:,ifc,:],bandWidth))
 
         # append over frequency
         sources0.append(lc0Sums)
         sourcesX.append(lcXSums)
-        fluxes.append(net_flux)
 
-        if False: # Plots fluxes and sources for each frequency and fc
+        flux0, fluxX = (calc_fluxes(dat_one0, dat_bdr0),
+                        calc_fluxes(dat_oneX, dat_bdrX))
+        fluxes0.append(flux0)
+        fluxesX.append(fluxX)
+
+        if True: # Plots fluxes and sources for each frequency and fc
             fig = plt.figure(11);fig.clf()
             ax = fig.subplots(1, 1)
             ax.plot(dist, lc0Sums, 'r-', label='lc0 stot')
-            ax.plot(dist, zero_pad(net_flux,(1,0)), 'b-', label='net flux')
+            ax.plot(dist, lcXSums, 'r--', label='lcX stot')
+            ax.plot(dist, zero_pad(flux0,(1,0)), 'b-', label='net flux 0')
+            ax.plot(dist, zero_pad(fluxX,(1,0)), 'b--', label='net flux X')
             ax.set_ylim([-0.5, 50])
             ax.axhline(0,color='k',linestyle=':')
-            plt.title(f'Flux / Source terms, f = {freq:.5f} Hz, f_c = {fc} Hz')
+            plt.title(f'Flux / Source terms, f = {freq:.5f} Hz, f_c = {fc:.5f} Hz')
             plt.legend()
             #fig.savefig(f'fig/Flux2Sourceterms_f={ffreq:.3f}Hz.png')
             plt.show()
         
     if True: # Plots the total sum over frequencies for fluxes and sources.
         Sum = lambda x: np.sum(np.array(x),axis=0)
-        sources0, sourcesX, fluxes = Sum(sources0), Sum(sourcesX), Sum(fluxes)
+        sources0, sourcesX, fluxes0, fluxesX = (Sum(sources0), Sum(sourcesX), 
+                                                Sum(fluxes0),Sum(fluxesX))
 
-        fig = plt.figure(11);fig.clf()
+        fig = plt.figure(11,figsize=(8,4));fig.clf()
         ax = fig.subplots(1, 1)
         ax.plot(dist, sources0, 'r-', label='lc0 stot')
-        ax.plot(dist, sourcesX, 'g-', label='lcX stot')
-        ax.plot(dist, zero_pad(fluxes,(1,0)), 'b-', label='net flux')
-        ax.set_ylim([-0.5, 800])
+        ax.plot(dist, sourcesX, 'r--', label='lcX stot')
+        ax.plot(dist, zero_pad(fluxes0,(1,0)), 'b-', label='net flux 0')
+        ax.plot(dist, zero_pad(fluxesX,(1,0)), 'b--', label='net flux X')
+        ax.set_ylim([-100, 600])
         ax.axhline(0,color='k',linestyle=':')
         plt.title(f'Integral Flux / Source terms')
-        plt.legend()
-        fig.savefig(f'fig/Flux2Sourceterms_fc.png')
+        plt.legend(loc=1)
+        #fig.savefig(f'fig/Flux2Sourceterms_fc.png')
         plt.show()
