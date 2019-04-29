@@ -174,6 +174,7 @@ def integrate_wef(lon, lat, wef, direction):
     dang = np.abs(np.median(np.diff(theta)))
     # Average the wave energy flux between two points, and give it a
     # complex direction
+    # _wef has shape: N_points, N_freq, N_direction (AB: CHECKTHIS)
     _wef = (wef[1:] + wef[:-1]) * np.exp(1j * theta) / 2
 
     # Integrate.
@@ -193,6 +194,7 @@ def integrate_wef(lon, lat, wef, direction):
     oneway = _flux.sum((0, -1))
     return trad, oneway, bdir, unit
 
+    # offshore_flux = bdir - oneway
 
 def con_length(lon, lat):
     d, midp = gis.diffll(np.stack((lon, lat)))
@@ -254,6 +256,7 @@ def calc_remote(scenario, region, months):
             rky = '{:03d}'.format(rng)
             con_inds = rinf.con_defs[rky]
             for ci in con_inds:
+                plt.plot(dnow['lon'][ci], dnow['lat'][ci])
                 tmp += integrate_wef(
                     dnow['lon'][ci], dnow['lat'][ci],
                     dnow['wef'][ci], dnow['direction'])

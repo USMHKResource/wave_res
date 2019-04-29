@@ -187,7 +187,7 @@ if False:
     plt.show()
 
 
-if False:
+if True:
     region = 'wc'
     rem = remote0[region]
     remX = remoteX[region]
@@ -245,6 +245,8 @@ if False:
 
     fig = plt.figure(11);fig.clf()
     ax = fig.subplots(1, 1)
+    
+
     dat_one = np.average(cut(rem['oneway']), weights=rem['Nhour'], axis=0) * factor
     dat_bdr = np.average(cut(rem['bdir']), weights=rem['Nhour'], axis=0) * factor
     ax.plot(dist, -np.diff(zero_pad(dat_one, (1, 0))), 'b-',label='-df(oneway)')
@@ -279,11 +281,38 @@ if False:
 
         dat_one = np.average(cut(rem['oneway']), weights=rem['Nhour'], axis=0) * factor * bw
         dat_bdr = np.average(cut(rem['bdir']), weights=rem['Nhour'], axis=0) * factor * bw
-        ax.plot(dist, -np.diff(zero_pad(dat_one, (1, 0))), 'b-',label='-df(oneway)')
-        ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0))), 'r-',label='df(bdr-oneway)')
+        
+
+        off = dat_bdr - dat_one
+        osf = dat_one
+        print(off,osf)
+
+        #off = off[:-1]
+        #osf = osf[:-1]
+
+        print(off.shape,osf.shape)
+
+        # Way one
+        #out_of_box = off[1::] + osf[:-1]
+        #into_box = osf[1::] + off[:-1]
+        # Way 2
+        into_box = off[1::] + osf[:-1]
+        out_of_box = osf[1::] + off[:-1]
+
+        net_flux = into_box - out_of_box
+
+
+        
+        print('Net Flux {}, for freq: {}'.format(net_flux, ifreq))
+
+        #ax.plot(dist, -np.diff(zero_pad(dat_one, (1, 0))), 'b-',label='-df(oneway)')
+        #ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0))), 'r-',label='df(bdr-oneway)')
+        ax.plot(dist, zero_pad(net_flux,(1,0)), 'r-', label='net flux')
+
         ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0)))-np.diff(zero_pad(dat_one, (1, 0))), 'm-',
                                                 label='df(bdr-oneway)-df(oneway)')
-        dat = np.average(cut(lc0['stot']), weights=rem['Nhour'], axis=0) * factor * bw * .7
+        
+        dat = np.average(cut(lc0['stot']), weights=rem['Nhour'], axis=0) * factor * bw 
         ax.plot(dist, dat, 'k-',label='lc0 stot')
 
         '''
@@ -305,7 +334,11 @@ if False:
         plt.title('Flux source terms at frequency '+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]])))
         plt.legend()
         #fig.savefig('fig/Flux2Sourceterms_f'+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]]))+'.png')
-        plt.show()
+        #plt.show()
+
+if True:
+    pass
+
 
 def print_results():
 
