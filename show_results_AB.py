@@ -214,7 +214,7 @@ if True:
 
     f_m == frequency modelled I believe
     '''
-    cut = lambda x: x[:,ifreq,:]
+    # Convenience function for the time averaging
     avg = lambda x,y: np.average(x,weights=weights,axis=0).sum(axis=0)*factor*y
 
     region = 'wc'
@@ -223,28 +223,38 @@ if True:
 
     freqs = [np.mean(f) for f in zip(fbins,fbins[1:])]
     fluxes, sources0, sourcesX = [],[],[]
+    
+    # Loop through all frequencies
     for ifreq,freq in enumerate(freqs):
-        bandWidth = np.diff(fbins)[ifreq]
+        bandWidth = np.diff(fbins)[ifreq] # bandwidth scaling for each freq bin
         
+        # Calculate the cutoff frequency for the given center frequency.
+        # Logic: energy produced from waves of this ~frequency are allowed to 
+        #        transfer up to fc. So the fluxes calculated may be artificially
+        #        cut by WW3. It would seem then that we should exclude the fluxes
+        #        AND source terms at these frequencies.
         fc = 2.5*freq
         ifc = freqs <= fc
 
+        # cut the source and flux terms based on the fc
         lc0Sums = avg(lc0['stot'][:,ifc,:],bandWidth)
         lcXSums = avg(lcX['stot'][:,ifc,:],bandWidth)
         dat_one, dat_bdr = (avg(rem['oneway'][:,ifc,:],bandWidth),
                             avg(rem['bdir'][:,ifc,:],bandWidth))
 
+        # calculate fluxes
         off = dat_bdr - dat_one
         osf = dat_one
         into_box = off[1::] + osf[:-1]
         out_of_box = osf[1::] + off[:-1]
         net_flux = into_box - out_of_box
 
+        # append over frequency
         sources0.append(lc0Sums)
         sourcesX.append(lcXSums)
         fluxes.append(net_flux)
 
-        if False:
+        if False: # Plots fluxes and sources for each frequency and fc
             fig = plt.figure(11);fig.clf()
             ax = fig.subplots(1, 1)
             ax.plot(dist, lc0Sums, 'r-', label='lc0 stot')
@@ -253,12 +263,11 @@ if True:
             ax.axhline(0,color='k',linestyle=':')
             plt.title(f'Flux / Source terms, f = {freq:.5f} Hz, f_c = {fc} Hz')
             plt.legend()
-            #fig.savefig('fig/Flux2Sourceterms_f'+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]]))+'.png')
+            #fig.savefig(f'fig/Flux2Sourceterms_f={ffreq:.3f}Hz.png')
             plt.show()
         
-    if True:
+    if True: # Plots the total sum over frequencies for fluxes and sources.
         Sum = lambda x: np.sum(np.array(x),axis=0)
-        print(np.cumsum(sources0,axis=0))
         sources0, sourcesX, fluxes = Sum(sources0), Sum(sourcesX), Sum(fluxes)
 
         fig = plt.figure(11);fig.clf()
