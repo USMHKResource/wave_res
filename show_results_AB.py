@@ -152,6 +152,18 @@ def calc_fluxes(dat_one, dat_bdr):
     out_of_box = osf[1::] + off[:-1]
     return into_box - out_of_box
 
+Sum = lambda x: np.sum(np.array(x),axis=0)
+
+'''
+PLOT ACTIVATING VARIABLES
+'''
+noFcCut = True # run calculations with no fc cutting
+FcCut = True # run calculations with fc cutting
+singleFreq = False # calculate data with single frequency, if False freq are summed
+freqBinPlot = False # plot fluxes and sources for each frequency bin
+sumPlot = True # plot fluxes and sources over summed frequency ranges
+absDiff = True # plot the absolute difference between lc0-rem0, lcX-remX in both cases
+
 
 if True:
     '''
@@ -162,34 +174,81 @@ if True:
     rem0, remX , lc0, lcX = (remote0[region],remoteX[region],
                                  local0[region], localX[region])
 
+    fluxes0, fluxesX, sources0, sourcesX = [],[],[],[]
+    
     dist,fbins,weights = rem0['range'],rem0['fbins'],rem0['Nhour']
 
     freqs = [np.mean(f) for f in zip(fbins,fbins[1:])]
     for ifreq,freq in enumerate(freqs):
-        fig = plt.figure(11);fig.clf()
-        ax = fig.subplots(1, 1)
+
         if True:
             bw = np.diff(fbins)[ifreq]
 
-        dat_one0 = np.average(cut(rem0['oneway']), weights=weights, axis=0) * factor * bw
-        dat_bdr0 = np.average(cut(rem0['bdir']), weights=weights, axis=0) * factor * bw
+        if singleFreq:
+            # Chooses a particular frequency to work with
+            dat_one0 = np.average(cut(rem0['oneway']), weights=weights, axis=0) * factor * bw
+            dat_bdr0 = np.average(cut(rem0['bdir']), weights=weights, axis=0) * factor * bw
+            dat_oneX = np.average(cut(remX['oneway']), weights=weights, axis=0) * factor * bw
+            dat_bdrX = np.average(cut(remX['bdir']), weights=weights, axis=0) * factor * bw
+            dat0 = np.average(cut(lc0['stot']), weights=weights, axis=0) * factor * bw
+            datX = np.average(cut(lcX['stot']), weights=weights, axis=0) * factor * bw
+            sources0.append(dat0)
+            sourcesX.append(datX)
+            flux0, fluxX = (calc_fluxes(dat_one0, dat_bdr0),
+                            calc_fluxes(dat_oneX, dat_bdrX))
+            fluxes0.append(flux0)
+            fluxesX.append(fluxX)
+
+        else:
+            # total sum over all frequencies
+            dat_one0 = np.average(rem0['oneway'], weights=weights, axis=0).sum(axis=0) * factor * bw
+            dat_bdr0 = np.average(rem0['bdir'], weights=weights, axis=0).sum(axis=0) * factor * bw
+            dat_oneX = np.average(remX['oneway'], weights=weights, axis=0).sum(axis=0) * factor * bw
+            dat_bdrX = np.average(remX['bdir'], weights=weights, axis=0).sum(axis=0) * factor * bw
+            dat0 = np.average(lc0['stot'], weights=weights, axis=0).sum(axis=0) * factor * bw
+            datX = np.average(lcX['stot'], weights=weights, axis=0).sum(axis=0) * factor * bw
         
-        dat_oneX = np.average(cut(remX['oneway']), weights=weights, axis=0) * factor * bw
-        dat_bdrX = np.average(cut(remX['bdir']), weights=weights, axis=0) * factor * bw
-        
-        dat0 = np.average(cut(lc0['stot']), weights=weights, axis=0) * factor * bw
-        datX = np.average(cut(lcX['stot']), weights=weights, axis=0) * factor * bw
-        
-        ax.plot(dist, dat0, 'b-',label='lc0 stot')
-        ax.plot(dist, datX, 'b--',label='lcX stot')
-        ax.plot(dist, zero_pad(calc_fluxes(dat_one0,dat_bdr0),(1,0)), 'r-', label='net flux 0')
-        ax.plot(dist, zero_pad(calc_fluxes(dat_oneX,dat_bdrX),(1,0)), 'r--', label='net flux X')
-        
-        ax.set_ylim([-0.5, 2.5])
+            sources0.append(dat0)
+            sourcesX.append(datX)
+            flux0, fluxX = (calc_fluxes(dat_one0, dat_bdr0),
+                            calc_fluxes(dat_oneX, dat_bdrX))
+            fluxes0.append(flux0)
+            fluxesX.append(fluxX)
+
+        if freqBinPlot:
+            fig = plt.figure(11);fig.clf()
+            ax = fig.subplots(1, 1)
+            ax.plot(dist, dat0, 'r-',label='lc0 stot')
+            ax.plot(dist, datX, 'r--',label='lcX stot')
+            ax.plot(dist, zero_pad(flux0,(1,0)), 'b-', label='net flux 0')
+            ax.plot(dist, zero_pad(fluxX,(1,0)), 'b--', label='net flux X')
+            if singleFreq:
+                ax.set_ylim([-0.5, 2.5])
+            else:
+                ax.set_ylim([-0.5, 50])
+            ax.axhline(0,color='k',linestyle=':')
+            plt.title(f'Flux / Source terms, f={freq:.5f} Hz, summed = {summ}')
+            plt.legend()
+            #fig.savefig('fig/Flux2Sourceterms_f'+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]]))+'.png')
+            plt.show()
+
+    sources0, sourcesX, fluxes0, fluxesX = (Sum(sources0), Sum(sourcesX), 
+                                                Sum(fluxes0),Sum(fluxesX))
+    noCut = [sources0, sourcesX, fluxes0, fluxesX]
+
+    if sumPlot: # Plots the total sum over frequencies for fluxes and sources.
+
+        fig = plt.figure(11,figsize=(8,4));fig.clf()
+        ax = fig.subplots(1, 1)
+        ax.plot(dist, sources0, 'r-', label='lc0 stot')
+        ax.plot(dist, sourcesX, 'r--', label='lcX stot')
+        ax.plot(dist, zero_pad(fluxes0,(1,0)), 'b-', label='net flux 0')
+        ax.plot(dist, zero_pad(fluxesX,(1,0)), 'b--', label='net flux X')
+        ax.set_ylim([-100, 600])
         ax.axhline(0,color='k',linestyle=':')
-        plt.title(f'Flux / Source terms full, f={freq}')
-        plt.legend()
-        #fig.savefig('fig/Flux2Sourceterms_f'+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]]))+'.png')
+        plt.title(f'Integral Flux / Source terms, no Frequaency cutoff')
+        plt.legend(loc=1)
+        #fig.savefig(f'fig/Flux2Sourceterms_fc.png')
         plt.show()
 
 if True:
@@ -242,7 +301,7 @@ if True:
         fluxes0.append(flux0)
         fluxesX.append(fluxX)
 
-        if True: # Plots fluxes and sources for each frequency and fc
+        if freqBinPlot: # Plots fluxes and sources for each frequency and fc
             fig = plt.figure(11);fig.clf()
             ax = fig.subplots(1, 1)
             ax.plot(dist, lc0Sums, 'r-', label='lc0 stot')
@@ -256,10 +315,11 @@ if True:
             #fig.savefig(f'fig/Flux2Sourceterms_f={ffreq:.3f}Hz.png')
             plt.show()
         
-    if True: # Plots the total sum over frequencies for fluxes and sources.
-        Sum = lambda x: np.sum(np.array(x),axis=0)
-        sources0, sourcesX, fluxes0, fluxesX = (Sum(sources0), Sum(sourcesX), 
+    sources0, sourcesX, fluxes0, fluxesX = (Sum(sources0), Sum(sourcesX), 
                                                 Sum(fluxes0),Sum(fluxesX))
+    Cut = [sources0, sourcesX, fluxes0, fluxesX]
+
+    if sumPlot: # Plots the total sum over frequencies for fluxes and sources.
 
         fig = plt.figure(11,figsize=(8,4));fig.clf()
         ax = fig.subplots(1, 1)
@@ -273,3 +333,39 @@ if True:
         plt.legend(loc=1)
         #fig.savefig(f'fig/Flux2Sourceterms_fc.png')
         plt.show()
+
+if absDiff:
+    noCut0diff = np.array(noCut[0])-zero_pad(noCut[2],(1,0))
+    noCutXdiff = np.array(noCut[1])-zero_pad(noCut[3],(1,0))
+    Cut0diff = np.array(Cut[0])-zero_pad(Cut[2],(1,0))
+    CutXdiff = np.array(Cut[1])-zero_pad(Cut[3],(1,0))
+
+    # cross terms to look at the extracted remote and local params
+    noCutCrossXdiff = np.array(noCut[0])-zero_pad(noCut[3],(1,0))
+    cutCrossXdiff = np.array(Cut[0])-zero_pad(Cut[3],(1,0))
+
+    a = np.abs 
+
+    fig = plt.figure(11,figsize=(8,4));fig.clf()
+    ax = fig.subplots(1, 1)
+    ax.plot(dist, a(noCut0diff), 'k-', label='no fc Cut (lc0-rem0)')
+    ax.plot(dist, a(noCutXdiff), 'k--', label='no fc Cut (lcX-remX)')
+    ax.plot(dist, a(Cut0diff), 'g-', label='fc Cut (lc0-rem0)')
+    ax.plot(dist, a(CutXdiff), 'g--', label='fc Cut (lcX-remX)')
+    ax.plot(dist, a(noCutCrossXdiff), 'm-', label='no fc Cut (lc0-remX)')
+    ax.plot(dist, a(cutCrossXdiff), 'm--', label='fc Cut (lc0-remX)')
+    ax.set_ylim([-100, 600])
+    ax.axhline(0,color='k',linestyle=':')
+    plt.title(f'Absolute Difference')
+    plt.legend(loc=1)
+    #fig.savefig(f'fig/Flux2Sourceterms_fc.png')
+    plt.show()
+
+    rmse = lambda x: np.sqrt(np.mean(x**2))
+
+    print(f'With no freq cut RMSE(lc0-rem0) = {rmse(noCut0diff)}')
+    print(f'With no freq cut RMSE(lcX-remX) = {rmse(noCutXdiff)}')
+    print(f'With freq cut RMSE(lc0-rem0) = {rmse(Cut0diff)}')
+    print(f'With freq cut RMSE(lcX-remX) = {rmse(CutXdiff)}')
+    print(f'With no freq cut the cross term RMSE(lc0-remX) = {rmse(noCutCrossXdiff)}')
+    print(f'With freq cut the cross term RMSE(lc0-remX) = {rmse(cutCrossXdiff)}')
