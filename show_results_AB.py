@@ -161,8 +161,9 @@ noFcCut = True # run calculations with no fc cutting
 FcCut = True # run calculations with fc cutting
 singleFreq = False # calculate data with single frequency, if False freq are summed
 freqBinPlot = False # plot fluxes and sources for each frequency bin
-sumPlot = True # plot fluxes and sources over summed frequency ranges
-absDiff = True # plot the absolute difference between lc0-rem0, lcX-remX in both cases
+sumPlot = False # plot fluxes and sources over summed frequency ranges
+absDiff = False # plot the absolute difference between lc0-rem0, lcX-remX in both cases
+RMSE = True # calculate root mean squared calculations
 
 
 if True:
@@ -334,16 +335,16 @@ if True:
         #fig.savefig(f'fig/Flux2Sourceterms_fc.png')
         plt.show()
 
+noCut0diff = np.array(noCut[0])-zero_pad(noCut[2],(1,0))
+noCutXdiff = np.array(noCut[1])-zero_pad(noCut[3],(1,0))
+Cut0diff = np.array(Cut[0])-zero_pad(Cut[2],(1,0))
+CutXdiff = np.array(Cut[1])-zero_pad(Cut[3],(1,0))
+
+# cross terms to look at the extracted remote and local params
+noCutCrossXdiff = np.array(noCut[0])-zero_pad(noCut[3],(1,0))
+cutCrossXdiff = np.array(Cut[0])-zero_pad(Cut[3],(1,0))
+
 if absDiff:
-    noCut0diff = np.array(noCut[0])-zero_pad(noCut[2],(1,0))
-    noCutXdiff = np.array(noCut[1])-zero_pad(noCut[3],(1,0))
-    Cut0diff = np.array(Cut[0])-zero_pad(Cut[2],(1,0))
-    CutXdiff = np.array(Cut[1])-zero_pad(Cut[3],(1,0))
-
-    # cross terms to look at the extracted remote and local params
-    noCutCrossXdiff = np.array(noCut[0])-zero_pad(noCut[3],(1,0))
-    cutCrossXdiff = np.array(Cut[0])-zero_pad(Cut[3],(1,0))
-
     a = np.abs 
 
     fig = plt.figure(11,figsize=(8,4));fig.clf()
@@ -361,11 +362,12 @@ if absDiff:
     #fig.savefig(f'fig/Flux2Sourceterms_fc.png')
     plt.show()
 
+if RMSE:
     rmse = lambda x: np.sqrt(np.mean(x**2))
 
-    print(f'With no freq cut RMSE(lc0-rem0) = {rmse(noCut0diff)}')
-    print(f'With no freq cut RMSE(lcX-remX) = {rmse(noCutXdiff)}')
-    print(f'With freq cut RMSE(lc0-rem0) = {rmse(Cut0diff)}')
-    print(f'With freq cut RMSE(lcX-remX) = {rmse(CutXdiff)}')
-    print(f'With no freq cut the cross term RMSE(lc0-remX) = {rmse(noCutCrossXdiff)}')
-    print(f'With freq cut the cross term RMSE(lc0-remX) = {rmse(cutCrossXdiff)}')
+    print(f'With no freq cut RMSE(lc0-rem0) = {rmse(noCut0diff[:-1])}')
+    print(f'With no freq cut RMSE(lcX-remX) = {rmse(noCutXdiff[:-1])}')
+    print(f'With freq cut RMSE(lc0-rem0) = {rmse(Cut0diff[:-1])}')
+    print(f'With freq cut RMSE(lcX-remX) = {rmse(CutXdiff[:-1])}')
+    print(f'With no freq cut the cross term RMSE(lc0-remX) = {rmse(noCutCrossXdiff[:-1])}')
+    print(f'With freq cut the cross term RMSE(lc0-remX) = {rmse(cutCrossXdiff[:-1])}')
