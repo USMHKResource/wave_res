@@ -228,7 +228,7 @@ if True:
             else:
                 ax.set_ylim([-0.5, 50])
             ax.axhline(0,color='k',linestyle=':')
-            plt.title(f'Flux / Source terms, f={freq:.5f} Hz, summed = {summ}')
+            plt.title(f'Flux / Source terms, f={freq:.5f} Hz, summed = {freqBinPlot}')
             plt.legend()
             #fig.savefig('fig/Flux2Sourceterms_f'+str(np.mean([rem['fbins'][ifreq],rem['fbins'][ifreq+1]]))+'.png')
             plt.show()
