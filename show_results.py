@@ -147,7 +147,7 @@ if False:
     
 if True:
     region = 'wc'
-    rem = remoteX[region]
+    rem = remote0[region]
     lc0 = local0[region]
     lcX = localX[region]
     fig = plt.figure(10);fig.clf()
