@@ -70,7 +70,7 @@ def get_mask(region, dt):
 
 
 def calc_local(scenario, region, dates,
-               terms=source_terms):
+               terms=source_terms,fc=True):
     """Calculate the local resource for `scenario` in `region` for
     `months`.
     
@@ -83,6 +83,12 @@ def calc_local(scenario, region, dates,
     months : list/array of np.datetime64.
          The months to calculate.
     source_terms : list of strings {'sin', '}
+    fc : boolean
+         If True (default) energy content in the source terms 
+         above the cutoff frequency are not considered in the integration. A 
+         value of fFM = 2.5 is hardcoded, it corresponds to the default value
+         used by the ST4 physics.
+         fc = fFM/Tm01 = 2.5/Tm01
 
     Returns
     =======
@@ -153,10 +159,25 @@ def calc_local(scenario, region, dates,
         print("      Integrating {}...".format(dt))
         dat = load_source(scenario, rinf.source_region, dt)
         out['Nhour'][idt] = len(dat.variables['time'])
+        # Compute the cutoff frequency
+        if fc:
+            ff = dat['frequency'][:].data
+            m0 = np.trapz(dat['ef'][:].data,ff,axis=-1)
+            m1 = np.trapz(dat['ef'][:].data*ff[None,None,:],ff,axis=-1)
+            fcut = 2.5*m1/m0 # 2.5/Tm01, v5.16 manual Sec 2.3.18,
+                             # Line 1506,  2362 ww3_grid.ftn
+        
         for ky in terms:
             dnow = dat.variables[ky][:]
+            # Ice mask
             if region.lower() == 'ak':
                 dnow[get_mask(region, dt)] = 0
+            # Frequency cutoff mask
+            if fc:
+                for aa in range(fcut.shape[0]): # Not pretty
+                    for bb in range(fcut.shape[1]):
+                        ind = ff > fcut[aa,bb]
+                        dnow[aa,bb,ind] = 0
             # average in time
             src[:n_grid] = dnow.mean(0)
             for irng, rng in enumerate(range(10, 201, 10)):

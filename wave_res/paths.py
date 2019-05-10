@@ -21,10 +21,10 @@ if this_machine.startswith('lkilcher-26339s') or \
 if this_machine.startswith('constance') or this_machine.startswith('node'):
     rootFld = Path('/pic/projects/fvwetland/')
     srcdir = rootFld / 'gabriel/waveEnergyResource/assessment/hindcast/'
-    tmpdir = srcdir / 'resource/tmp/'
+    tmpdir = srcdir / 'resource/tmpFreq/'
 
 if 'maskdir' not in vars():
-    maskdir = srcdir / 'icemask/'
+    maskdir = srcdir / 'iceMask/' / 'akMask'
 
 
 def mkdir(directory):
