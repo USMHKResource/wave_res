@@ -374,7 +374,7 @@ def polyinds_prusvi():
     rinf = RegionInfo('prusvi')
     fig, ax = setup_figure(rinf, 1000 + 32)
 
-    cmap = plt.get_cmap('tab20')
+    cmap = plt.get_cmap('Accent')
 
     for rng in range(10, 200, 10):
         ky = '{:03d}'.format(rng)
@@ -442,7 +442,7 @@ def polyinds_hi():
     rinf = RegionInfo('hi')
     fig, ax = setup_figure(rinf, 1000 + 32)
 
-    cmap = plt.get_cmap('tab20')
+    cmap = plt.get_cmap('Accent')
 
     for rng in range(10, 200, 10):
         ky = '{:03d}'.format(rng)
@@ -480,7 +480,7 @@ def polyinds_hi():
 
 
 def run_all():
-    plt.ioff()
+    #plt.ioff()
     poly_defs = {}
 
     poly_defs['wc'] = polyinds_wc()
@@ -491,5 +491,7 @@ def run_all():
     poly_defs['prusvi'] = polyinds_prusvi()
     poly_defs['hi'] = polyinds_hi()
     plt.close('all')
-    plt.ion()
+    #plt.ion()
     return poly_defs
+
+
