@@ -165,10 +165,8 @@ def calc_local(scenario, region, dates,
                 dnow[get_mask(region, dt)] = 0
             # Frequency cutoff mask
             if fc:
-                for aa in range(fcut.shape[0]): # Not pretty
-                    for bb in range(fcut.shape[1]):
-                        ind = ff > fcut[aa,bb]
-                        dnow[aa,bb,ind] = 0
+                # Set source-terms greater than fcut to zero
+                dnow[ff[None, None, :] > fcut[:, :, None]] = 0
             # average in time
             src[:n_grid] = dnow.mean(0)
             for irng, rng in enumerate(range(10, 201, 10)):
