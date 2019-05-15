@@ -6,12 +6,14 @@ from wave_res.paths import mkdir
 months = np.arange(np.datetime64('1979-01'),
                    np.datetime64('2011-01'))
 
-all_regions = ['wc', 'at', 'prusvi', 'ak', 'hi']
+all_regions = ['wc', 'at', 'prusvi', 'ak', 'hi','gm','ec']
 # In this dictionary, the keys are the scenarios, and the values are
 # lists of regions that should be run for each scenario.
 run_these = {
-    'baseline': all_regions,
-    'extraction': all_regions,
+#    'baseline': all_regions,
+#    'extraction': all_regions,
+    'baseline':['prusvi'],
+#    'extraction':['gm','ec']
 }
 
 
@@ -71,7 +73,7 @@ for scenario, REGIONS in run_these.items():
 
         print("   Calculating local resource...")
 
-        local = wr.calc_local(scenario, region, months)
+        local = wr.calc_local(scenario, region, months,fc=True)
         # This returns a dictionary-like object (based on pyDictH5.data)
         # containing:
         #  'time': (n_months) the month
