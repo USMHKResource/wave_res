@@ -70,7 +70,7 @@ def get_mask(region, dt):
 
 
 def calc_local(scenario, region, dates,
-               terms=source_terms,fc=True):
+               terms=source_terms, fc=True):
     """Calculate the local resource for `scenario` in `region` for
     `months`.
     
@@ -84,8 +84,8 @@ def calc_local(scenario, region, dates,
          The months to calculate.
     source_terms : list of strings {'sin', '}
     fc : boolean
-         If True (default) energy content in the source terms 
-         above the cutoff frequency are not considered in the integration. A 
+         If True (default) energy content in the source terms
+         above the cutoff frequency are not considered in the integration. A
          value of fFM = 2.5 is hardcoded, it corresponds to the default value
          used by the ST4 physics.
          fc = fFM/Tm01 = 2.5/Tm01
@@ -126,15 +126,6 @@ def calc_local(scenario, region, dates,
     src = np.zeros((xy.shape[0], n_f), dtype=np.float32)
     n_grid = rinf.gridxy.shape[1]
 
-    # # Load the first dataset to compute the grid
-    # dat = load_source(region, dates[0])
-    # xy = prj.transform_points(
-    #     proj.pc,
-    #     dat.variables['lon'][:],
-    #     dat.variables['lat'][:])[:, :2]
-    # verts = Delaunay(xy).vertices
-    # dat.close()
-
     # Initialize the output
     out = LocalResults()
     out['time'] = dates
@@ -162,11 +153,11 @@ def calc_local(scenario, region, dates,
         # Compute the cutoff frequency
         if fc:
             ff = dat['frequency'][:].data
-            m0 = np.trapz(dat['ef'][:].data,ff,axis=-1)
-            m1 = np.trapz(dat['ef'][:].data*ff[None,None,:],ff,axis=-1)
-            fcut = 2.5*m1/m0 # 2.5/Tm01, v5.16 manual Sec 2.3.18,
-                             # Line 1506,  2362 ww3_grid.ftn
-        
+            m0 = np.trapz(dat['ef'][:].data, ff, axis=-1)
+            m1 = np.trapz(dat['ef'][:].data * ff[None, None, :], ff, axis=-1)
+            fcut = 2.5 * m1 / m0 # 2.5/Tm01, v5.16 manual Sec 2.3.18,
+                                 # Line 1506,  2362 ww3_grid.ftn
+
         for ky in terms:
             dnow = dat.variables[ky][:]
             # Ice mask
