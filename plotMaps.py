@@ -166,13 +166,13 @@ if __name__ == "__main__":
 	localArrows = True
 	linearAxes = False
 	contours = True
-	save = True
+	save = False
 	
 	redAlpha = 0.3
 	pc = ccrs.PlateCarree()
 
 	regions = ['ak','at','hi','prusvi','wc']
-	#regions = ['ak']
+	regions = ['ak']
 		
 	for region in regions:
 		
