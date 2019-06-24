@@ -63,13 +63,13 @@ def int_freq2(dat, terms):
 
 
 for ireg, region in enumerate(regions):
-    rd0 = remote0[region] = pdh5.load('frequencyResults/{}/{}.remote-totals.h5'
+    rd0 = remote0[region] = pdh5.load('results/freq/{}/{}.remote-totals.h5'
                                       .format('baseline', region))
-    ld0 = local0[region] = pdh5.load('frequencyResults/{}/{}.local-totals.h5'
+    ld0 = local0[region] = pdh5.load('results/freq/{}/{}.local-totals.h5'
                                      .format('baseline', region))
-    rdX = remoteX[region] = pdh5.load('frequencyResults/{}/{}.remote-totals.h5'
+    rdX = remoteX[region] = pdh5.load('results/freq/{}/{}.remote-totals.h5'
                                       .format('extraction', region))
-    ldX = localX[region] = pdh5.load('frequencyResults/{}/{}.local-totals.h5'
+    ldX = localX[region] = pdh5.load('results/freq/{}/{}.local-totals.h5'
                                      .format('extraction', region))
     rd0['oneway'] = rd0['1way']
     rdX['oneway'] = rdX['1way']
