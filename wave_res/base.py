@@ -19,20 +19,61 @@ con_defs = gdat.con_defs
 con_defs['wc']['eez'] = [range(34, 148), ]
 con_defs['wc']['borders'] = [range(0, 35), range(147, 176)]
 
+# These are the WC separated boundaries between canada and mexico
+con_defs['wc']['eez'] = [range(34, 148), ]
+con_defs['wc']['brdr_MEX'] = [range(0, 35), ] 
+con_defs['wc']['brdr_CAN'] = [range(147, 176), ]
+
 con_defs['at']['eez'] = [range(32, 147), range(227, 282)]
 con_defs['at']['borders'] = [range(0, 33), range(133, 228), range(282, 303)]
+
+# These are the separated boundaries for the atlantic region
+# ATL - Atlantic
+# GULF - Gulf of Mexico
+# CAN - Canada
+# BHMS - Bahamas
+# CUBA - Cuba
+# MEX - Mexico
+con_defs['at']['eez-ATL'] = [range(32, 147), ]
+con_defs['at']['eez-GULF'] = [range(227, 282), ]
+con_defs['at']['brdr_CAN'] = [range(0, 33), ]
+con_defs['at']['brdr_BHMS'] = [range(146,193)]
+con_defs['at']['brdr_CUBA'] = [range(193, 228), ]
+con_defs['at']['brdr_MEX'] = [range(281, 303), ]
 
 con_defs['ec']['eez'] = [range(32, 147), ]
 con_defs['ec']['borders'] = [range(0, 33), range(133, 191) + [849, 499]]
 con_defs['gm']['eez'] = [range(227, 282), ]
 con_defs['gm']['borders'] = [[499, 849] + range(190, 228), range(282, 303)]
+
+
 con_defs['prusvi']['eez'] = [range(0, 7), ]
 con_defs['prusvi']['borders'] = [range(7, 117) + [0], ]
+# These are the separated boundaries for Puerto Rico
+# DR - Dominican Republic
+# VNZ - Venezuela
+# BVI - British Virgin Islands
+con_defs['prusvi']['brdr_DR'] = [range(74, 116), ]
+con_defs['prusvi']['brdr_VNZ'] = [range(43, 74), ]
+con_defs['prusvi']['brdr_BVI'] = [range(7, 43), ]
+
+
 con_defs['ak']['eez'] = [range(48, 392), range(439, 541)]
 con_defs['ak']['borders'] = [range(0, 49), range(391, 440), range(540, 616)]
+# These are the separated boundaries for Alaska
+# BS - Bering Sea
+# PAC - Pacific
+# RUS - Russia
+con_defs['ak']['eez-BS'] = [range(439, 541), ]
+con_defs['ak']['eez-PAC'] = [range(48, 392), ]
+
+con_defs['ak']['brdr_CAN'] = [range(0, 49), ]
+con_defs['ak']['brdr_RUS-PAC'] = [range(391, 440), ]
+con_defs['ak']['brdr_RUS-BS'] = [range(540, 616), ]
 
 # These are from GGM's def of HI EEZ (it's a bit wonky b/c the HI EEZ
 # includes the other islands in the HI chain (e.g., Midway)).
+# - No changes needed for the Hawaii region - AB
 con_defs['hi']['eez'] = [np.r_[range(0,67,1),
                                np.array([3081, 2907, 2736, 2567, 2400, 2236,
                                          2075, 1607, 1456, 1221, 1077, 1078,
