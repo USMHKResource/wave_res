@@ -8,16 +8,20 @@ if __name__ == "__main__":
 
     base = 'C:\\Users\\abharath\\Documents\\coastlines\\GSHHS_shp\\c\\'
     eez = 'C:\\Users\\abharath\\Documents\\World_EEZ\\'
+    usM = 'USMaritimeLimitsNBoundaries.shp'
     fname = 'GSHHS_c_L1.shp'
     eezs = 'eez_boundaries_v10.shp'
 
     fig, ax = plt.subplots(1, 1)
     a = gpd.read_file(base+fname)
     b = gpd.read_file(eez+eezs)
+    c = gpd.read_file(eez+usM)
     a.plot(ax=ax)
-    #b.plot(ax=ax)
+    b.plot(ax=ax)
+    c.plot(ax=ax,color='red')
     alpha = 0.9
 
+    """
     con_defs = gdat.con_defs
     latlon = gdat.gridlonlat
     bounds = gdat.bounds
@@ -102,5 +106,5 @@ if __name__ == "__main__":
 
     ax.scatter(latlon['hi'][0,con_defs['hi']['eez']],latlon['hi'][1,con_defs['hi']['eez']],c='k',alpha=alpha)
     ax.scatter(latlon['hi'][0,con_defs['hi']['brdr_MW']],latlon['hi'][1,con_defs['hi']['brdr_MW']],c='g',alpha=alpha)
-    
+    """
     plt.show()
