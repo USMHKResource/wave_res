@@ -6,11 +6,11 @@ import json
 import matplotlib.pyplot as plt
 
 #regions = {'ak', 'at', 'prusvi', 'wc', 'hi'}
-regions = {'wc'}
+regions = {'wc', 'ak'}
 
 # Sum over these regions to get the total.
 # totregions = ['ak', 'at', 'prusvi', 'wc', 'hi']
-totregions = ['wc']
+totregions = ['wc', 'ak']
 # Initialize dictionaries for 'baseline' totals
 remote0 = {}
 local0 = {}
@@ -52,7 +52,7 @@ if unit != 'TWh/yr':
     for ky in epri:
         epri[ky] *= factor / _factordict['TWh/yr']        
 
-iranges = range(10,20)
+iranges = range(20)
 
 
 def zero_pad(arr, n):
@@ -91,13 +91,13 @@ def freq_bin2(dat, terms):
 for irange in iranges:
     for ireg, region in enumerate(regions):
 
-        rd0 = remote0[region] = pdh5.load('frequencyResults/{}/{}.remote-totals.h5'
+        rd0 = remote0[region] = pdh5.load('results/freq.fcut/{}/{}.remote-totals.h5'
                                         .format('baseline', region))
-        ld0 = local0[region] = pdh5.load('frequencyResults/{}/{}.local-totals.h5'
+        ld0 = local0[region] = pdh5.load('results/freq.fcut/{}/{}.local-totals.h5'
                                         .format('baseline', region))
-        rdX = remoteX[region] = pdh5.load('frequencyResults/{}/{}.remote-totals.h5'
+        rdX = remoteX[region] = pdh5.load('results/freq.fcut/{}/{}.remote-totals.h5'
                                         .format('extraction', region))
-        ldX = localX[region] = pdh5.load('frequencyResults/{}/{}.local-totals.h5'
+        ldX = localX[region] = pdh5.load('results/freq.fcut/{}/{}.local-totals.h5'
                                         .format('extraction', region))
         rd0['oneway'] = rd0['1way']
         rdX['oneway'] = rdX['1way']
@@ -115,7 +115,7 @@ for irange in iranges:
         ld0Bin = freq_bin2(ld0, source_terms)
         ldXBin = freq_bin2(ldX, source_terms)
         
-        # Intergal Averages
+        # Integral Averages
         rtot0Int[region] = {m: (np.average(rd0Int[m][:, irange],
                                         weights=rd0Int['Nhour']) * factor)
                         for m in remote_terms}
@@ -155,9 +155,7 @@ for irange in iranges:
             ax.plot(mf,Norm,label='diff')
             plt.title(str(irange))
             plt.legend()
-plt.show()
 
-'''
 for ireg, region in enumerate(totregions):
     # Calculate the total across all regions
     if 'total' not in rtot0Int:
@@ -172,7 +170,7 @@ for ireg, region in enumerate(totregions):
         for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']:
             ltot0Int['total'][m] += ltot0Int[region][m]
             ltotXInt['total'][m] += ltotXInt[region][m]
-'''
+
 if False:
     region = 'wc'
     binnedData,total = ltotXBin, ltotXInt
@@ -264,7 +262,7 @@ if False:
     #fig.savefig('fig/Flux2Sourceterms.png')
     plt.show()
 
-if True:
+if False:
     cut = lambda x: x[:,ifreq,:]
     region = 'wc'
     rem = remote0[region]
@@ -309,7 +307,7 @@ if True:
         #ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0))), 'r-',label='df(bdr-oneway)')
         ax.plot(dist, zero_pad(net_flux,(1,0)), 'r-', label='net flux')
 
-        ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0)))-np.diff(zero_pad(dat_one, (1, 0))), 'm-',
+        ax.plot(dist, np.diff(zero_pad(dat_bdr - dat_one, (1, 0)))-np.diff(zero_pad(dat_one, (1, ))), 'm-',
                                                 label='df(bdr-oneway)-df(oneway)')
         
         dat = np.average(cut(lc0['stot']), weights=rem['Nhour'], axis=0) * factor * bw 
