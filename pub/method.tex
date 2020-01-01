@@ -1,5 +1,39 @@
 \section{Method}
 
+The overarching goal of this study is to define the wave energy resources and to
+develop a consistent and accurate methodology to estimate the total
+theoretically available wave resource for a given region. The wave climate is
+simulated by implementing WAVEWATCH III® v5.16
+\citep{tolmanDistributedmemoryConceptsWave2002} in all model
+simulations in this study. WAVEWATCH III® (hereafter WW3) is a skillful and well
+established numerical model that has been implemented successfully in many
+previous wave resource assessments
+\citep[e.g.,][]{garcia-medinaWaveResourceAssessment2014,yangWaveModelTest2017}.
+WW3 solves the five-dimensional action balance equation:
+
+\begin{align}
+    \frac{DN}{Dt} = \frac{\Src{tot}}{\sigma} = \frac{1}{\sigma}\left ( \Src{in} + \Src{ds} + \Src{nl} + \Src{bot} + \Src{brk} \right )
+\end{align}
+where $N(t,x,y,\sigma,\theta) \equiv D/\sigma$ is the wave action, $D$ is the variance spectrum, $t$ is
+time, $x$ and $y$ are the spatial coordinates, $\sigma$ is the radian frequency, and $\theta$ is
+the direction of wave propagation. The wave action is conserved in the absence
+of sinks and sources of energy, their combined effect is represented as $\Src{tot}$. In
+this study we implement the ST4 physics package option in WW3 to simulate wind
+energy input ($\Src{in}$) and dissipation due to whitecapping ($\Src{ds}$)
+\citep{ardhuinObservationSwellDissipation2009}. The non-linear quadruplet
+interactions ($\Src{nl}$) are modeled with the
+Hasselmann and Hasselmann
+(\citeyear{hasselmannComputationsParameterizationsNonlinear1985}) formulation.
+Bottom friction ($\Src{bot}$) and depth induced wave breaking ($\Src{brk}$) are
+modeled with the JONSWAP Hasselmann etal.
+\citeyear{hasselmannMeasurementsWindwaveGrowth1973} and Battjes
+and Janssen \citeyear{battjesEnergyLossSetup1978} models, respectively.
+Default parameters are used for all formulations. The wave spectrum is
+discretized with 24 equally spaced bins in $\theta$ space and 29 logarithmically spaced
+frequency bins from 0.035Hz to 0.5Hz. \note{Details of the spatial grids are
+provided... what are we going to say about the spatial grids?}
+
+
 Calibrated WW3 models, remote and local terms...
 
 \subsection{Model Configuration}
