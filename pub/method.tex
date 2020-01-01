@@ -1,0 +1,41 @@
+\section{Method}
+
+Calibrated WW3 models, remote and local terms...
+
+\subsection{Model Configuration}
+
+\subsection{Remote Resource}
+
+We utilize EEZ boundaries defined by \citep[]{flandersmarineinstituteMaritimeBoundariesGeodatabase}.
+
+\subsection{Local Resource}
+
+\begin{enumerate}
+\item Global WW3 feeds into regional WW3 model (mid-level resolution)
+\item ST4 package (improvement in power density and Hs, but overpredicts energy-period<-- is there a citation for this)
+\item We add all source terms together (except bottom friction), because:
+  \begin{itemize}
+  \item Questions about accuracy of individual terms \citep{garcia-medinaWaveResourceAssessment2014}
+  \item The length-scale over which the input-term acts is similar to that of the dissipation terms.
+  \item The non-linear terms transfer energy to lower frequencies (with some losses), and in general the input-term adds energy at frequencies that is above the frequency that most WECs are expected to operate. \note{Is this true? What about small devices/PBE?}
+  \end{itemize}
+\item integrate source-terms in direction (direction not important), because within the domain energy can be absorbed from all directions.
+\item No currents, so wave action, ‘N’, is wave energy.
+\item State number of directions/frequencies (should we compare different direc/freq resolutions)
+\item Domain: entire U.S. EEZ (including territories)
+\item 30+ year hindcast
+\item ‘Control volume’ is EEZ surrounding a continent/island. We break this into pieces for each country. I.e.: we don’t include line-integral at boundary between countries.
+\item Save full directional spectra at 10 nmi intervals from mainland, out to 200 nmi. Can we store all of this data? UNITS: W/m
+\item Save full directional spectra at 100-m depth intervals from mainland, out to 200 nmi (or 1000 m?) UNITS: W/m
+\item Total power available within a specified domain (e.g., the EEZ) = Line integral of wave-flux at boundary + Area integral of source terms
+\item Note that wave-fluxes at EEZ boundaries between nations are not included because this would be ‘double counting’.
+\end{enumerate}
+
+\subsection{Potential Resource}
+
+\begin{itemize}
+\item Basically this is the same as above, but we add an energy extraction sink-term at the EEZ boundary. This does two things:
+\item We can compare the local resource with and without remote waves.
+\item Global WW3 feeds into regional WW3 model (mid-level resolution)
+\end{itemize}
+
