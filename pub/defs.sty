@@ -1,0 +1,16 @@
+\newcommand{\note}[1]{\textcolor{red}{\em #1}}
+\newcommand{\Src}[1]{\ensuremath{S_{ #1 }}}
+\newcommand{\degrees}[0]{\ensuremath{^\circ}}
+
+\makeatletter
+\providecommand{\doi}[1]{%
+  \begingroup
+    \let\bibinfo\@secondoftwo
+    \urlstyle{rm}%
+    \href{http://dx.doi.org/#1}{%
+      doi:\discretionary{}{}{}%
+      \nolinkurl{#1}%
+    }%
+  \endgroup
+}
+\makeatother
