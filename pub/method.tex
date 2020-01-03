@@ -1,48 +1,53 @@
-\section{Method}
+\section{Method} \label{sec:method}
+The overarching goal of this study is to define the wave energy resources and to develop a consistent and accurate methodology to estimate the total theoretically available wave resource for a given region. 
+Wave resource assessments typically rely on the use of wave model 'hindcasts' to estimate the history of the wave field over the region(s) of interest, and then to compute estimates of the theoretical resource from the model output. 
+In this work all wave climate hindcasts are simulated using WAVEWATCH III\textregistered v5.16 \citep{tolmanDistributedmemoryConceptsWave2002}.
 
-The overarching goal of this study is to define the wave energy resources and to
-develop a consistent and accurate methodology to estimate the total
-theoretically available wave resource for a given region. The wave climate is
-simulated by implementing WAVEWATCH III® v5.16
-\citep{tolmanDistributedmemoryConceptsWave2002} in all model
-simulations in this study. WAVEWATCH III® (hereafter WW3) is a skillful and well
-established numerical model that has been implemented successfully in many
-previous wave resource assessments
-\citep[e.g.,][]{garcia-medinaWaveResourceAssessment2014,yangWaveModelTest2017}.
+\subsection{Numerical Model} \label{sec:method:model}
+WAVEWATCH III® (hereafter WW3) is a skillful and well established numerical model that has been implemented successfully in many previous wave resource assessments \citep[e.g.,][]{garcia-medinaWaveResourceAssessment2014,yangWaveModelTest2017}.
 WW3 solves the five-dimensional action balance equation:
 
 \begin{align}
-    \frac{DN}{Dt} = \frac{\Src{tot}}{\sigma} = \frac{1}{\sigma}\left ( \Src{in} + \Src{ds} + \Src{nl} + \Src{bot} + \Src{brk} \right )
+  \frac{DN}{Dt} = \frac{\Src{tot}}{\sigma} = \frac{1}{\sigma}\left ( \Src{in} + \Src{ds} + \Src{nl} + \Src{bot} + \Src{brk} \right )
 \end{align}
-where $N(t,x,y,\sigma,\theta) \equiv D/\sigma$ is the wave action, $D$ is the variance spectrum, $t$ is
-time, $x$ and $y$ are the spatial coordinates, $\sigma$ is the radian frequency, and $\theta$ is
-the direction of wave propagation. The wave action is conserved in the absence
-of sinks and sources of energy, their combined effect is represented as $\Src{tot}$. In
-this study we implement the ST4 physics package option in WW3 to simulate wind
-energy input ($\Src{in}$) and dissipation due to whitecapping ($\Src{ds}$)
-\citep{ardhuinObservationSwellDissipation2009}. The non-linear quadruplet
-interactions ($\Src{nl}$) are modeled with the
-Hasselmann and Hasselmann
-(\citeyear{hasselmannComputationsParameterizationsNonlinear1985}) formulation.
-Bottom friction ($\Src{bot}$) and depth induced wave breaking ($\Src{brk}$) are
-modeled with the JONSWAP Hasselmann etal.
-\citeyear{hasselmannMeasurementsWindwaveGrowth1973} and Battjes
-and Janssen \citeyear{battjesEnergyLossSetup1978} models, respectively.
-Default parameters are used for all formulations. The wave spectrum is
-discretized with 24 equally spaced bins in $\theta$ space and 29 logarithmically spaced
-frequency bins from 0.035Hz to 0.5Hz. \note{Details of the spatial grids are
-provided... what are we going to say about the spatial grids?}
+where $N(t,x,y,\sigma,\theta) \equiv D/\sigma$ is the wave action, $D$ is the variance spectrum, $t$ is time, $x$ and $y$ are the spatial coordinates, $\sigma$ is the radian frequency, and $\theta$ is the direction of wave propagation.
+The wave action is conserved in the absence of sinks and sources of energy, their combined effect is represented as $\Src{tot}$. In this study we implement the ``ST4'' physics package option in WW3 to simulate wind energy input ($\Src{in}$) and dissipation due to whitecapping ($\Src{ds}$) \citep{ardhuinObservationSwellDissipation2009}.
+The wind forcing (for both the global and regional domains) is taken from NOAA's Climate Forecast System Reanalysis \citep{sahaNCEPClimateForecast2010}, and the implementation is based on NOAA's operational forecasting system.
+The non-linear quadruplet interactions ($\Src{nl}$) are modeled with the Hasselmann and Hasselmann (\citeyear{hasselmannComputationsParameterizationsNonlinear1985}) formulation.
+Bottom friction ($\Src{bot}$) and depth induced wave breaking ($\Src{brk}$) are modeled with the JONSWAP Hasselmann etal. \citeyear{hasselmannMeasurementsWindwaveGrowth1973} and Battjes and Janssen \citeyear{battjesEnergyLossSetup1978} models, respectively.
+Default parameters are used for all formulations. 
 
+The WW3 simulations span a 32-year period from January 1, 1979 to December 31, 2010. The first year (1979) is treated as a 'spin-up' year, and is not included in any calculations of resource totals. We do not consider variability in the wave climate on timescales longer than the 31-year period contained here (i.e., changes in the wave resource due to climate change are not included).
+The wave spectrum is discretized with 24 equally spaced bins in $\theta$ space and 29 logarithmically spaced frequency bins from 0.035Hz to 0.5Hz. A global WW3 model is used to drive local regional grids. Each regional grid spans a contiguous section of the U.S. EEZ.
+\note{Details of the spatial grids are provided... what are we going to say about the spatial grids? My understanding is that the spatial grid of the regional models is one thing, but the data was written-out on a different grid (i.e., the 10nm:10nm:200nm contours), right?}
 
-Calibrated WW3 models, remote and local terms...
+\note{GGM: Still need more details on:}
+\begin{itemize}
+\item Bathymetry data?
+\item Model validation. Is this just a citation, or a few sentences, or a full section/subsection?
+\item Should we clarify here that we configured the model to write-out source terms, or save that for later?
+\end{itemize}
 
-\subsection{Model Configuration}
+\subsection{Calculate Resource Totals} \label{sec:method:calc}
 
-\subsection{Remote Resource}
+Herein we estimate the total theoretical wave resource ($R_t$, the energy available to do work) as a sum of `remote' and `local' components:
+\begin{align}
+  R_t = R_r + R_l
+\end{align}
+The remote resource, $R_r$, is computed as a line-integral of the wave energy that fluxes toward the coastline across the EEZ boundary, and is the component of the wave energy resource that has traditionally been computed in earlier works \citep{gunnQuantifyingGlobalWave2012,EPRIwaveresource2011}. The local resource, $R_l$, is computed as an area-integral of the wave source- and sink-terms (except for bottom friction). 
 
-We utilize EEZ boundaries defined by \citep[]{flandersmarineinstituteMaritimeBoundariesGeodatabase}.
+\subsubsection{Remote Resource} \label{sec:method:calc:remote}
 
-\subsection{Local Resource}
+\begin{align}
+  R_r = \rho g \int_{\leez}\iint c_g(f) D(f,\theta) \delta \cos(\theta_n - \theta) df d\theta dl
+\end{align}
+Where $c_g(f)$ is the wave group velocity, $\leez$ is the EEZ boundary (integration contour), and $\theta_n$ is the direction normal to this contour. $\delta$ has a value of 1 for waves propagating onshore, and a value of 0 otherwise. This `one-way' condition ensures that waves propagating offshore are not {\em subtracted} from the total. 
+We utilize EEZ boundaries defined by \citep[]{flandersmarineinstituteMaritimeBoundariesGeodatabase2018}, and the integration contour $\leez$ only includes the segments separating the U.S. EEZ from the open-ocean (thick black line in Figure \ref{fig:diagram:west-eez}), and does not include the EEZ segments that separate one nation's EEZ from anothers (hereafter `EEZ borders', thin dashed lines in Figure \ref{fig:diagram:west-eez})
+Further details of computing $R_r$ are described in section \ref{sec:method:calc:remote}.
+This piece has not previously been considered in wave resource assessments, but not including it has been the subject of some criticism, such as questions of the form ``how quickly will the wave-field re-energize down-wave from a wave farm?''
+Herein we include two approaches to computing $R_l$, the first is by taking the source-terms in the `standard-run' approach where no additional changes are made to the model. The second is estimated from the source-terms when no wave-energy is allowed to propagate across the edge of the EEZ. In other words this `lake case' only contains waves generated by winds within the EEZ, and is hereafter referred to as the local `potential resource'. Further details on $R_l$ and each of these cases be found in section \ref{sec:method:calc:local}; a discussion of the pros/cons of the two approaches can be found in section \note{???}.
+
+\subsubsection{Local Resource} \label{sec:method:calc:local}
 
 \begin{enumerate}
 \item Global WW3 feeds into regional WW3 model (mid-level resolution)
@@ -65,7 +70,7 @@ We utilize EEZ boundaries defined by \citep[]{flandersmarineinstituteMaritimeBou
 \item Note that wave-fluxes at EEZ boundaries between nations are not included because this would be ‘double counting’.
 \end{enumerate}
 
-\subsection{Potential Resource}
+\subsubsection{Potential Resource}
 
 \begin{itemize}
 \item Basically this is the same as above, but we add an energy extraction sink-term at the EEZ boundary. This does two things:
