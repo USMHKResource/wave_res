@@ -16,9 +16,17 @@ srcdir = pl.Path('../results/freq.fcut/').resolve()
 colors = {'ak': 'k', 'wc': 'b', 'hi': 'g',
           'ec': 'r', 'prusvi': 'purple', 'gm': 'm'}
 
-plot_regions = ['wc', 'hi', 'ec', ]
+labels = {'wc': 'West Coast',
+          'hi': 'Hawaii',
+          'ec': 'East Coast',
+          'ak': 'Alaska'}
+
+plot_regions = ['wc', 'hi', 'ec']
 # [width, spacing, offset]
 bar_plot_coefs = [1.2, 1.6666, 0.8]
+# plot_regions = ['wc', 'hi', 'ec', 'ak']
+# # [width, spacing, offset]
+# bar_plot_coefs = [0.8, 1, 0.8]
 
 if flag['show remote']:
 
@@ -55,7 +63,7 @@ if flag['show remote']:
                 np.diff(Int2),
                 color=colors[region],
                 width=bar_plot_coefs[0],
-                label=region)
+                label=labels[region])
 
     ax0.set_xlim([0, 30])
     ax0.set_xticks(np.arange(0, 31, 5))
@@ -102,7 +110,7 @@ if flag['show local']:
             axI.plot(1. / Fbins, Int2, '+')
 
             if case == 'baseline':
-                label = region
+                label = labels[region]
             else:
                 label = None
             ax0.bar(Tbins[1:] - bar_plot_coefs[2] - idx * bar_plot_coefs[1],
