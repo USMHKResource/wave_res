@@ -44,7 +44,7 @@ The remote resource, $R_r$, is computed as a line-integral of the wave energy th
 
 The remote resource represents the integrated wave power across a defined region:
 
-\begin{align}
+\begin{align}\label{eq:remoteResource}
   R_r = \rho g \int_{\leez}\iint c_g(f) \, \delta \, D(f,\theta) df d\theta dl
 \end{align}
 where $c_g(f)$ is the wave group velocity, $\leez$ is the EEZ boundary (integration contour), and $\delta$ is the directionality coefficient which we take to be $\delta = \cos(\theta_n - \theta)$ for waves propagating toward the coastline, and $\delta = 0$ otherwise. $\theta_n$ is the direction of the normal to the integration contour pointing toward the coastline. This `one-way' condition ensures that waves propagating offshore are not {\em subtracted} from the total \citep[]{gunnQuantifyingGlobalWave2012}. A detailed rationalle for the one-way approach to estimating $R_r$ is included in appendix \ref{appendix:one-way-method}.
