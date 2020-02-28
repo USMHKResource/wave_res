@@ -1,6 +1,6 @@
 \section{Method} \label{sec:method}
 The overarching goal of this study is to define the wave energy resources and to develop a consistent and accurate methodology to estimate the total theoretically available wave resource for a given region. 
-Wave resource assessments typically rely on the use of wave model 'hindcasts' to estimate the history of the wave field over the region(s) of interest, and then to compute estimates of the theoretical resource from the model output. 
+Wave resource assessments typically rely on the use of wave model `hindcasts' to estimate the history of the wave field over the region(s) of interest, and then to compute estimates of the theoretical resource from the model output. 
 In this work all wave climate hindcasts are simulated using WAVEWATCH III\textregistered v5.16 \citep{tolmanDistributedmemoryConceptsWave2002}.
 
 \subsection{Numerical Model} \label{sec:method:model}
@@ -30,32 +30,36 @@ The wave spectrum is discretized with 24 equally spaced bins in $\theta$ space a
 
 \subsection{Calculate Resource Totals} \label{sec:method:calc}
 
-Herein we estimate the total theoretical wave resource ($R_t$, the energy available to do work) as a sum of `remote' and `local' components:
+The total theoretical wave resource, $R_T$, is defined as a sum of `remote' and `local' components:
 \begin{align}
-  R_t = R_r + R_l
+  R_T = R_R + R_L
 \end{align}
-The remote resource, $R_r$, is computed as a line-integral of the wave energy that fluxes toward the coastline across the EEZ boundary, and is the piece of the wave energy resource that has traditionally been called `the wave resource' in earlier works \citep{gunnQuantifyingGlobalWave2012,EPRIwaveresource2011}. The local resource, $R_l$, is computed as an area-integral of the wave source- and sink-terms (except for bottom friction), and is a piece of the wave resource that has not previously been included in wave resource assessments.
+The remote resource, $R_R$, is the piece of the wave energy resource that has previously been defined as the total wave resource \citep{gunnQuantifyingGlobalWave2012,EPRIwaveresource2011}, while the local resource, $R_L$, has not previously been included in wave resource assessments.
 
 \subsubsection{Remote Resource} \label{sec:method:calc:remote}
 
-\begin{align}
-  R_r = \rho g \int_{\leez}\iint \delta \, c_g(f) \, D(f,\theta) \d f \d \theta \d l
-\end{align}
-Where $c_g(f)$ is the wave group velocity, $\leez$ is the EEZ boundary (integration contour), and $\delta$ is the directionality coefficient which we take to be $\delta = \cos(\theta_n - \theta)$ for waves propagating toward the coastline, and $\delta_1 = 0$ otherwise. $\theta_n$ is the direction of the normal to the integration contour pointing toward the coastline. This `one-way' condition ensures that waves propagating offshore are not {\em subtracted} from the total \citep[]{gunnQuantifyingGlobalWave2012}. A detailed rationalle for the one-way approach to estimating $R_r$ is included in appendix \ref{appendix:one-way-method}.
+The remote resource is computed as a line-integral of the wave energy that fluxes toward the coastline across the EEZ boundary. 
 
-The instantaneous estimates of $R_r$ are then averaged over the 31-year period from Jan. 1 1980, through Dec 31, 2010 to obtain an estimate of $\overline{R_r}$.
+\begin{align}
+  R_R = \rho g \int_{\leez}\iint \delta \, c_g(f) \, \bar{D}(f,\theta) \d f \d \theta \d l
+\end{align}
+Where $c_g(f)$ is the wave group velocity, $\leez$ is the EEZ boundary (integration contour), and $\delta$ is the directionality coefficient which we take to be $\delta = \cos(\theta_n - \theta)$ for waves propagating toward the coastline, and $\delta_1 = 0$ otherwise. $\theta_n$ is the direction of the normal to the integration contour pointing toward the coastline. The `one-way' condition ensures that waves propagating offshore are not {\em subtracted} from the total \citep[]{gunnQuantifyingGlobalWave2012}. A detailed rationalle for the one-way approach to estimating $R_R$ is included in appendix \ref{appendix:one-way-method}. The over-bar denotes a time-average of the wave-variance spectrum over the 32-year period of the simulation. 
+
+The instantaneous estimates of $R_R$ are then averaged over the 31-year period from Jan. 1 1980, through Dec 31, 2010 to obtain an estimate of $\overline{R_R}$.
 The integration contour $\leez$ only includes the segments of the U.S. EEZ that separate U.S. EEZ waters from the open-ocean (thick black line in Figure \ref{fig:diagram:west-eez}), and does not include the EEZ segments that separate one nation's EEZ from anothers (hereafter `EEZ borders', thin dashed lines in Figure \ref{fig:diagram:west-eez}) \citep[]{flandersmarineinstituteMaritimeBoundariesGeodatabase2018}. This is because wave-energy that fluxes across EEZ borders will be counted -- using the methodology described here -- by the nation from which that resource originated. For example, waves that propagate southward across the Canada-U.S. EEZ border are counted as Canada's resource, and waves that propagate northward across this border are counted as U.S. resource. Either way, these waves will already have been counted in the originating nation's resource, and so including wave fluxes across these borders would only lead to `double counting`.
+
 
 \subsubsection{Local Resource} \label{sec:method:calc:local}
 
+The local resource is computed as an area-integral of the all of the wave source- and sink-terms, except for bottom friction:
 
 \begin{align}
-  R_l &= \rho g \iiint \left ( \Src{in} + \Src{ds} + \Src{brk} +\Src{nl} \right ) \d f \d \theta \d A
+  R_L &= \rho g \iiint \left ( \bar{S}_{in} + \bar{S}_{ds} + \bar{S}_{brk} + \bar{S}_{nl} \right ) \d f \d \theta \d A
 \end{align}
 
-
-This piece has not previously been considered in wave resource assessments, but not including it has been the subject of some criticism, such as questions of the form ``how quickly will the wave-field re-energize down-wave from a wave farm?''
-Herein we include two approaches to computing $R_l$, the first is by taking the source-terms in the `standard-run' approach where no additional changes are made to the model. The second is estimated from the source-terms when no wave-energy is allowed to propagate across the edge of the EEZ. In other words this `lake case' only contains waves generated by winds within the EEZ, and is hereafter referred to as the local `potential resource'. 
+This term explicitly accounts for the wave energy that is added to the wave-field by the winds ($S_{in}$), as well as the swell dissipation 
+This piece has not previously been considered in wave resource assessments, which has led to some criticism in the form of questions like, ``how quickly will the wave-field re-energize down-wave from a wave farm?''  And, ``which contour is the {\em right} contour along-which to compute $R_T = R_R$ (i.e., when $R_L$ is not included in $R_T$)?'' Including $R_L$ in $R_T$ explicitly adds the energy to the total 
+Herein we include two approaches to computing $R_L$, the first is by taking the source-terms in the `standard-run' approach where no additional changes are made to the model. The second is estimated from the source-terms when no wave-energy is allowed to propagate across the edge of the EEZ. In other words this `lake case' only contains waves generated by winds within the EEZ, and is hereafter referred to as the local `potential resource'. 
 
 \begin{enumerate}
 \item Global WW3 feeds into regional WW3 model (mid-level resolution)
