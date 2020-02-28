@@ -1,6 +1,6 @@
 \section{Method} \label{sec:method}
 The overarching goal of this study is to define the wave energy resources and to develop a consistent and accurate methodology to estimate the total theoretically available wave resource for a given region. 
-Wave resource assessments typically rely on the use of wave model `hindcasts' to estimate the history of the wave field over the region(s) of interest, and then to compute estimates of the theoretical resource from the model output. 
+Wave resource assessments typically rely on the use of wave model 'hindcasts' to estimate the history of the wave field over the region(s) of interest, and then to compute estimates of the theoretical resource from the model output. The reason for this is that in-situ or remote measurements do not cover the oceans with enough resolution to characterize the spatial variations of waves that occur at short scales. 
 In this work all wave climate hindcasts are simulated using WAVEWATCH III\textregistered v5.16 \citep{tolmanDistributedmemoryConceptsWave2002}.
 
 \subsection{Numerical Model} \label{sec:method:model}
@@ -17,16 +17,20 @@ The non-linear quadruplet interactions ($\Src{nl}$) are modeled with the Hasselm
 Bottom friction ($\Src{bot}$) and depth induced wave breaking ($\Src{brk}$) are modeled with the JONSWAP Hasselmann etal. \citeyear{hasselmannMeasurementsWindwaveGrowth1973} and Battjes and Janssen \citeyear{battjesEnergyLossSetup1978} models, respectively.
 Default parameters are used for all formulations. 
 
-The WW3 simulations span a 32-year period from January 1, 1979 to December 31, 2010. The first year (1979) is treated as a 'spin-up' year, and is not included in any calculations of resource totals. Variability in the wave climate on timescales longer than the 31-year period included in the average are not considered (i.e., changes in the wave resource due to climate change are not included).
-The wave spectrum is discretized with 24 equally spaced bins in $\theta$ space and 29 logarithmically spaced frequency bins from 0.035Hz to 0.5Hz. A global WW3 model is used to drive local regional grids. Each regional grid spans a contiguous section of the U.S. EEZ.
-\note{Details of the spatial grids are provided... what are we going to say about the spatial grids? My understanding is that the spatial grid of the regional models is one thing, but the data was written-out on a different grid (i.e., the 10nm:10nm:200nm contours), right?}
+The WW3 simulations span a 32-year period from January 1, 1979 to December 31, 2010. The first year (1979) is treated as a 'spin-up' year, and is not included in any calculations of resource totals. Variability in the wave climate on timescales longer than the 31-year period included in the average are not considered (i.e., changes in the wave resource due to climate change are not included). The wave spectrum is discretized with 24 equally spaced bins in $\theta$ space and 29 logarithmically spaced frequency bins from 0.035Hz to 0.5Hz. The NOAA NCEP hindcast Phase 1 mosaic-model \note{GGM Citation: https://polar.ncep.noaa.gov/mmab/papers/tn291/MMAB\_291.pdf,  https://polar.ncep.noaa.gov/mmab/papers/tn302/MMAB\_302.pdf} where a global (0.5$^{\circ}$ resolution) drives regional models (10" - 4" resolution) was implemented in this study with enhanced output. This modeling system provides complete covereage over the U.S. EEZ with higher resolution focused on shallower waters.
+
+Model output is collected at the U.S. EEZ around Alaska (excluding the Arctic Coast), Atlantic Coast, Caribbean Coast (Puerto Rico and U.S. Virgin Islands), Gulf Coast, Hawaii (excluding the Papah$\bar{\text{a}}$naumoku$\bar{\text{a}}$kea Marine National Monument), and the West Coast. Full variance spectra is stored at the EEZ borders. Inside the EEZ, directionally integrated source term output is collected at lines of equal distance from shore from 18.5 km (10 nmi) to 351.9 km (190 nmi) every 18.5 kms. Both output types are collected at hourly intervals every 1/6$^{\circ}$ along the defined lines.
+
+
+\note{Details of the spatial grids are provided... what are we going to say about the spatial grids? My understanding is that the spatial grid of the regional models is one thing, but the data was written-out on a different grid (i.e., the 10nm:10nm:200nm contours), right? \textcolor{green}{Correct, I added that to the previous paragraph}}
 
 \note{GGM: Still need more details on:}
 \begin{itemize}
-\item Bathymetry data?
-\item Model validation. Is this just a citation, or a few sentences, or a full section/subsection?
-\item Should we clarify here that we configured the model to write-out source terms, or save that for later?
+\item Bathymetry data? \textcolor{green}{References to NOAA}
+\item Model validation. Is this just a citation, or a few sentences, or a full section/subsection? \textcolor{green}{I think the model configuration/development is pretty unexiting so I would rather keep this section short with references to NOAA's products. We pretty much reran their models with the exceptions that you already described (ST4) and collected the output we needed. I tried to make that explicit in the previous paraagraph.}
+\item Should we clarify here that we configured the model to write-out source terms, or save that for later? \textcolor{green}{Done, Do we want a figure with the output plan?}
 \end{itemize}
+
 
 \subsection{Calculate Resource Totals} \label{sec:method:calc}
 
@@ -56,10 +60,24 @@ The local resource is computed as an area-integral of the all of the wave source
 \begin{align}
   R_L &= \rho g \iiint \left ( \bar{S}_{in} + \bar{S}_{ds} + \bar{S}_{brk} + \bar{S}_{nl} \right ) \d f \d \theta \d A
 \end{align}
+where $dA$ is the area integral of the source terms. Since the model is based on a spherical coordinate system, the coordinates were transformed using an Albers Equal Area projection before performing the area integral. 
 
-This term explicitly accounts for the wave energy that is added to the wave-field by the winds ($S_{in}$), as well as the swell dissipation 
 This piece has not previously been considered in wave resource assessments, which has led to some criticism in the form of questions like, ``how quickly will the wave-field re-energize down-wave from a wave farm?''  And, ``which contour is the {\em right} contour along-which to compute $R_T = R_R$ (i.e., when $R_L$ is not included in $R_T$)?'' Including $R_L$ in $R_T$ explicitly adds the energy to the total 
-Herein we include two approaches to computing $R_L$, the first is by taking the source-terms in the `standard-run' approach where no additional changes are made to the model. The second is estimated from the source-terms when no wave-energy is allowed to propagate across the edge of the EEZ. In other words this `lake case' only contains waves generated by winds within the EEZ, and is hereafter referred to as the local `potential resource'. 
+Herein we include two approaches to computing $R_L$, the first is done using the source-terms in the `natural' condition where waves from the global domain propagate freely into the U.S. EEZ. The second is estimated from the source-terms when no wave-energy is allowed to propagate across the edge of the EEZ. In other words this `lake case' only contains waves generated by winds within the EEZ, and is hereafter referred to as the local `potential resource'. It is meant to simulate the hypothetical case where arrays of wave energy converters extract all of the incoming wave energy at the outer edge of the EEZ.
+
+\begin{align}
+  R_{l} = \rho g \iiint \left(S_{in} + S_{ds} + S_{brk} + S_{nl} \right) \; df \; d\theta \; dA
+\end{align}
+where $dA$ is the area integral of the source terms. Since the model is based on a spherical coordinate system, the coordinates were transformed using an Albers Equal Area projection before performing the area integral. 
+
+In WW3, as it is customary in third-generation spectral wave models, the waves are computed over a specified spectral width after which a spectral tail is appended to represent the energy in the high frequencies \citep[e.g.][]{ardhuinObservationSwellDissipation2009}. This frequency cutoff is generally the minimum of the highest described frequency and the cutoff supported by the source term formulations. The simulations in this study are performed with the default high frequency cutoff:
+
+\begin{align}
+  f_{c} = \frac{2.5}{T_{m01}}
+\end{align}
+where $T_{m01}$ is the mean spectral period. The source term integrals are performed for the range where the wave spectrum is actively simulated.
+
+>>>>>>> clean-slate-ggm
 
 \begin{enumerate}
 \item Global WW3 feeds into regional WW3 model (mid-level resolution)
@@ -68,7 +86,7 @@ Herein we include two approaches to computing $R_L$, the first is by taking the 
   \begin{itemize}
   \item Questions about accuracy of individual terms \citep{garcia-medinaWaveResourceAssessment2014}
   \item The length-scale over which the input-term acts is similar to that of the dissipation terms.
-  \item The non-linear terms transfer energy to lower frequencies (with some losses), and in general the input-term adds energy at frequencies that is above the frequency that most WECs are expected to operate. \note{Is this true? What about small devices/PBE?}
+  \item The non-linear terms transfer energy to lower frequencies (with some losses), and in general the input-term adds energy at frequencies that is above the frequency that most WECs are expected to operate. \note{Is this true? What about small devices/PBE?} \textcolor{green}{The upper limit is 0.5Hz in our study so this is ok}
   \end{itemize}
 \item integrate source-terms in direction (direction not important), because within the domain energy can be absorbed from all directions.
 \item No currents, so wave action, ‘N’, is wave energy.
