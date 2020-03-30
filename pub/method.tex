@@ -1,6 +1,6 @@
 \section{Method} \label{sec:method}
 The overarching goal of this study is to define the wave energy resources and to develop a consistent and accurate methodology to estimate the total theoretically available wave resource for a given region. 
-Wave resource assessments typically rely on the use of wave model 'hindcasts' to estimate the history of the wave field over the region(s) of interest, and then to compute estimates of the theoretical resource from the model output. The reason for this is that in-situ or remote measurements do not cover the oceans with enough resolution to characterize the spatial variations of waves that occur at short scales. 
+Wave resource assessments typically rely on the use of wave model `hindcasts' to estimate the history of the wave field over the region(s) of interest, and then to compute estimates of the theoretical resource from the model output. The reason for this is that in-situ or remote measurements do not cover the oceans with enough resolution to characterize the spatial variations of waves that occur at short scales. 
 In this work all wave climate hindcasts are simulated using WAVEWATCH III\textregistered v5.16 \citep{tolmanDistributedmemoryConceptsWave2002}.
 
 \subsection{Numerical Model} \label{sec:method:model}
@@ -11,7 +11,10 @@ WW3 solves the five-dimensional action balance equation:
   \frac{DN}{Dt} = \frac{\Src{tot}}{\sigma} = \frac{1}{\sigma}\left ( \Src{in} + \Src{ds} + \Src{brk} + \Src{nl} + \Src{bot} \right )
 \end{align}
 where $N(t,x,y,\sigma,\theta) \equiv D/\sigma$ is the wave action, $D$ is the variance spectrum, $t$ is time, $x$ and $y$ are the spatial coordinates, $\sigma$ is the radian frequency, and $\theta$ is the direction of wave propagation.
-The wave action is conserved in the absence of sinks and sources of energy, their combined effect is represented as $\Src{tot}$. In this study we implement the ``ST4'' physics package option in WW3 to simulate wind energy input ($\Src{in}$) and dissipation due to whitecapping ($\Src{ds}$) \citep{ardhuinObservationSwellDissipation2009}.
+The wave action is conserved in the absence of sinks and sources of energy, their combined effect is represented as $\Src{tot}$.
+The models do not include currents so that $\sigma$ (intrinstic frequency) is spatially constant, and therefore wave energy (i.e., variance, $D$) is a conserved quantity (i.e., energy is only gained or lost by the source terms above).
+
+In this study we implement the ``ST4'' physics package option in WW3 to simulate wind energy input ($\Src{in}$) and dissipation due to whitecapping ($\Src{ds}$) \citep{ardhuinObservationSwellDissipation2009}.
 The wind forcing (for both the global and regional domains) is taken from NOAA's Climate Forecast System Reanalysis \citep{sahaNCEPClimateForecast2010}, and the implementation is based on NOAA's operational forecasting system.
 The non-linear quadruplet interactions ($\Src{nl}$) are modeled with the Hasselmann and Hasselmann (\citeyear{hasselmannComputationsParameterizationsNonlinear1985}) formulation.
 Bottom friction ($\Src{bot}$) and depth induced wave breaking ($\Src{brk}$) are modeled with the JONSWAP Hasselmann etal. \citeyear{hasselmannMeasurementsWindwaveGrowth1973} and Battjes and Janssen \citeyear{battjesEnergyLossSetup1978} models, respectively.
@@ -19,22 +22,17 @@ Default parameters are used for all formulations.
 
 The WW3 simulations span a 32-year period from January 1, 1979 to December 31, 2010. The first year (1979) is treated as a 'spin-up' year, and is not included in any calculations of resource totals. Variability in the wave climate on timescales longer than the 31-year period included in the average are not considered (i.e., changes in the wave resource due to climate change are not included). The wave spectrum is discretized with 24 equally spaced bins in $\theta$ space and 29 logarithmically spaced frequency bins from 0.035Hz to 0.5Hz. The NOAA NCEP hindcast Phase 1 mosaic-model \note{GGM Citation: https://polar.ncep.noaa.gov/mmab/papers/tn291/MMAB\_291.pdf,  https://polar.ncep.noaa.gov/mmab/papers/tn302/MMAB\_302.pdf} where a global (0.5$^{\circ}$ resolution) drives regional models (10" - 4" resolution) was implemented in this study with enhanced output. This modeling system provides complete covereage over the U.S. EEZ with higher resolution focused on shallower waters.
 
-Model output is collected at the U.S. EEZ around Alaska (excluding the Arctic Coast), Atlantic Coast, Caribbean Coast (Puerto Rico and U.S. Virgin Islands), Gulf Coast, Hawaii (excluding the Papah$\bar{\text{a}}$naumoku$\bar{\text{a}}$kea Marine National Monument), and the West Coast. Full variance spectra is stored at the EEZ borders. Inside the EEZ, directionally integrated source term output is collected at lines of equal distance from shore from 18.5 km (10 nmi) to 351.9 km (190 nmi) every 18.5 kms. Both output types are collected at hourly intervals every 1/6$^{\circ}$ along the defined lines.
-
-
-\note{Details of the spatial grids are provided... what are we going to say about the spatial grids? My understanding is that the spatial grid of the regional models is one thing, but the data was written-out on a different grid (i.e., the 10nm:10nm:200nm contours), right? \textcolor{green}{Correct, I added that to the previous paragraph}}
+Model output is collected at the U.S. EEZ around Alaska (excluding the Arctic Coast), Atlantic Coast, Caribbean Coast (Puerto Rico and U.S. Virgin Islands), Gulf Coast, Hawaii (excluding the Papah$\bar{\text{a}}$naumoku$\bar{\text{a}}$kea Marine National Monument), and the West Coast. Full variance spectra are stored at the U.S. EEZ boundary (at 200 nmi from shore, and along EEZ `borders' with other nation's). Inside the EEZ, directionally integrated source term output is collected at lines of equal distance from shore from 18.5 km (10 nmi) to 351.9 km (190 nmi) every 18.5 kms. Both output types are collected at hourly intervals every 1/6$^{\circ}$ along the defined lines.
 
 \note{GGM: Still need more details on:}
 \begin{itemize}
 \item Bathymetry data? \textcolor{green}{References to NOAA}
-\item Model validation. Is this just a citation, or a few sentences, or a full section/subsection? \textcolor{green}{I think the model configuration/development is pretty unexiting so I would rather keep this section short with references to NOAA's products. We pretty much reran their models with the exceptions that you already described (ST4) and collected the output we needed. I tried to make that explicit in the previous paraagraph.}
-\item Should we clarify here that we configured the model to write-out source terms, or save that for later? \textcolor{green}{Done, Do we want a figure with the output plan?}
 \end{itemize}
 
 
 \subsection{Calculate Resource Totals} \label{sec:method:calc}
 
-The total theoretical wave resource, $R_T$, is defined as a sum of `remote' and `local' components:
+In this work we propose that the total theoretical wave resource, $R_T$, be defined as a sum of `remote' and `local' components:
 \begin{align}
   R_T = R_R + R_L
 \end{align}
@@ -46,29 +44,30 @@ The remote resource is computed as a line-integral of the wave energy that fluxe
 
 \begin{align}
   R_R = \rho g \int_{\leez}\iint \delta \, c_g(f) \, \bar{D}(f,\theta) \d f \d \theta \d l
+\label{eqn:RR}
 \end{align}
-Where $c_g(f)$ is the wave group velocity, $\leez$ is the EEZ boundary (integration contour), and $\delta$ is the directionality coefficient which we take to be $\delta = \cos(\theta_n - \theta)$ for waves propagating toward the coastline, and $\delta_1 = 0$ otherwise. $\theta_n$ is the direction of the normal to the integration contour pointing toward the coastline. The `one-way' condition ensures that waves propagating offshore are not {\em subtracted} from the total \citep[]{gunnQuantifyingGlobalWave2012}. A detailed rationalle for the one-way approach to estimating $R_R$ is included in appendix \ref{appendix:one-way-method}. The over-bar denotes a time-average of the wave-variance spectrum over the 32-year period of the simulation. 
+Where $c_g(f)$ is the wave group velocity, $\leez$ is the EEZ boundary (integration contour), and $\delta$ is the directionality coefficient which we take to be $\delta = \cos(\theta_n - \theta)$ for waves propagating toward the coastline, and $\delta_1 = 0$ otherwise. $\theta_n$ is the direction of the normal to the integration contour pointing toward the coastline. The `one-way' condition ensures that waves propagating offshore are not {\em subtracted} from the total \citep[]{gunnQuantifyingGlobalWave2012}. A detailed rationalle for the one-way approach to estimating $R_R$ is included in appendix \ref{appendix:one-way-method}. The over-bar denotes a time-average of the wave-variance spectrum over the 31-year period from Jan. 1 1980, through Dec 31, 2010.
 
-The instantaneous estimates of $R_R$ are then averaged over the 31-year period from Jan. 1 1980, through Dec 31, 2010 to obtain an estimate of $\overline{R_R}$.
-The integration contour $\leez$ only includes the segments of the U.S. EEZ that separate U.S. EEZ waters from the open-ocean (thick black line in Figure \ref{fig:diagram:west-eez}), and does not include the EEZ segments that separate one nation's EEZ from anothers (hereafter `EEZ borders', thin dashed lines in Figure \ref{fig:diagram:west-eez}) \citep[]{flandersmarineinstituteMaritimeBoundariesGeodatabase2018}. This is because wave-energy that fluxes across EEZ borders will be counted -- using the methodology described here -- by the nation from which that resource originated. For example, waves that propagate southward across the Canada-U.S. EEZ border are counted as Canada's resource, and waves that propagate northward across this border are counted as U.S. resource. Either way, these waves will already have been counted in the originating nation's resource, and so including wave fluxes across these borders would only lead to `double counting`.
+The integration contour $\leez$ only includes the segments of the U.S. EEZ that separate U.S. EEZ waters from the open-ocean (hereafter the `EEZ boundary'; thick black line in Figure \ref{fig:diagram:west-eez}), and does not include the EEZ segments that separate one nation's EEZ from that of a neighbor (hereafter the `EEZ borders'; thin dashed lines). \citep[]{flandersmarineinstituteMaritimeBoundariesGeodatabase2018}. This is because wave-energy that fluxes across EEZ borders will be counted -- using the methodology described here -- by the nation from which that resource originated. For example, waves that propagate southward across the Canada-U.S. EEZ border are counted as Canada's resource, and waves that propagate northward across this border are counted as U.S. resource. Either way, these waves will already have been counted in the originating nation's resource, and so including wave fluxes across these borders would only lead to `double counting'.
 
 
 \subsubsection{Local Resource} \label{sec:method:calc:local}
 
-The local resource is computed as an area-integral of the all of the wave source- and sink-terms, except for bottom friction:
+The local resource is computed as an area-integral of all wave source- and sink-terms, except for bottom friction:
 
 \begin{align}
-  R_L &= \rho g \iiint \left ( \bar{S}_{in} + \bar{S}_{ds} + \bar{S}_{brk} + \bar{S}_{nl} \right ) \d f \d \theta \d A
+  R_L &= \rho g \int_{EEZ}\iint \left ( \bar{S}_{in} + \bar{S}_{ds} + \bar{S}_{brk} + \bar{S}_{nl} \right ) \d f \d \theta \d A
+\label{eqn:RL}
 \end{align}
-where $dA$ is the area integral of the source terms. Since the model is based on a spherical coordinate system, the coordinates were transformed using an Albers Equal Area projection before performing the area integral. 
+where $dA$ is differential-area integral of the source terms. Since the model results are output in spherical coordinate system, the coordinates were transformed using an Albers equal area projection before performing the area integral. By performing these projections on a region-by-region basis with carefully chosen projection parameters, this approach introduces $<1\% $ local distortion at the edges of the largest regions (Alaska), and therefore introduces a $\ll 1\%$ error in the total estimate of $R_L$.
 
-This piece has not previously been considered in wave resource assessments, which has led to some criticism in the form of questions like, ``how quickly will the wave-field re-energize down-wave from a wave farm?''  And, ``which contour is the {\em right} contour along-which to compute $R_T = R_R$ (i.e., when $R_L$ is not included in $R_T$)?'' Including $R_L$ in $R_T$ explicitly adds the energy to the total 
-Herein we include two approaches to computing $R_L$, the first is done using the source-terms in the `natural' condition where waves from the global domain propagate freely into the U.S. EEZ. The second is estimated from the source-terms when no wave-energy is allowed to propagate across the edge of the EEZ. In other words this `lake case' only contains waves generated by winds within the EEZ, and is hereafter referred to as the local `potential resource'. It is meant to simulate the hypothetical case where arrays of wave energy converters extract all of the incoming wave energy at the outer edge of the EEZ.
+This piece has not previously been considered in wave resource assessments, which has led to some criticism in the form of questions like, ``how quickly will the wave-field re-energize down-wave from a wave farm?''  And, ``which contour is the {\em right} contour along-which to compute $R_T = R_R$ (i.e., when $R_L$ is not included in $R_T$)?'' Including $R_L$ in $R_T$ explicitly adds the locally generated wave energy to the total, and therefore addresses these critiques. 
 
-\begin{align}
-  R_{l} = \rho g \iiint \left(S_{in} + S_{ds} + S_{brk} + S_{nl} \right) \; df \; d\theta \; dA
-\end{align}
-where $dA$ is the area integral of the source terms. Since the model is based on a spherical coordinate system, the coordinates were transformed using an Albers Equal Area projection before performing the area integral. 
+However, because the source terms in \eqref{eqn:RL} depend on the sea-state and the sea-state depends on energy extracted ``up-wave'', there is ambiguity in estimating $R_L$ related to where and when wave energy is extracted by WECs. To address this, we calculate two estimates of $R_L$. The first, `natural local resource' ($R_{L_\circ}$) is calculated from the source-terms where waves from the global domain propagate freely throughout the model domain (i.e., the U.S. EEZ). The second, `potential local resource' ($R_{L_*}$) is calculated from the source-terms when no wave energy propagates across the EEZ boundary. In other words, this latter case can be thought of as a `lake case' that only contains waves generated by winds within the EEZ. 
+
+In all cases we examined, $R_{L_*}$ was found to be greater than $R_{L_\circ}$, which suggests that $R_L$ should be defined as being equal to $R_{L_*}$. However, the scenario of extracting all wave energy at the edge of the EEZ is so hypothetical that it seems unrealistic to use this value to define $R_L$. Therefore, we treat these two estimates of $R_L$ as an uncertainty range for it.  Further discussion of this choice are discussed in section \ref{sec:discussion}.
+
+It is worth noting that -- though directionality is critically important to estimating $R_R$ correctly in \eqref{eqn:RR} -- directionality is not important to estimating $R_L$ correctly (in \eqref{eqn:RL} all directions are weighted equally), only the total energy is. This is because this energy is being added to the wave-field per unit-area (it is not a wave-energy flux), and could theoretically be absorbed by a WEC or array of WECs within the domain before it ever reached a boundary where a line-integral would be appropriate (i.e., when directionality is important).
 
 In WW3, as it is customary in third-generation spectral wave models, the waves are computed over a specified spectral width after which a spectral tail is appended to represent the energy in the high frequencies \citep[e.g.][]{ardhuinObservationSwellDissipation2009}. This frequency cutoff is generally the minimum of the highest described frequency and the cutoff supported by the source term formulations. The simulations in this study are performed with the default high frequency cutoff:
 
@@ -85,16 +84,7 @@ where $T_{m01}$ is the mean spectral period. The source term integrals are perfo
   \item The length-scale over which the input-term acts is similar to that of the dissipation terms.
   \item The non-linear terms transfer energy to lower frequencies (with some losses), and in general the input-term adds energy at frequencies that is above the frequency that most WECs are expected to operate. \note{Is this true? What about small devices/PBE?} \textcolor{green}{The upper limit is 0.5Hz in our study so this is ok}
   \end{itemize}
-\item integrate source-terms in direction (direction not important), because within the domain energy can be absorbed from all directions.
-\item No currents, so wave action, ‘N’, is wave energy.
-\item State number of directions/frequencies (should we compare different direc/freq resolutions)
-\item Domain: entire U.S. EEZ (including territories)
-\item 30+ year hindcast
 \item ‘Control volume’ is EEZ surrounding a continent/island. We break this into pieces for each country. I.e.: we don’t include line-integral at boundary between countries.
-\item Save full directional spectra at 10 nmi intervals from mainland, out to 200 nmi. Can we store all of this data? UNITS: W/m
-\item Save full directional spectra at 100-m depth intervals from mainland, out to 200 nmi (or 1000 m?) UNITS: W/m
-\item Total power available within a specified domain (e.g., the EEZ) = Line integral of wave-flux at boundary + Area integral of source terms
-\item Note that wave-fluxes at EEZ boundaries between nations are not included because this would be ‘double counting’.
 \end{enumerate}
 
 %%% Local Variables:
