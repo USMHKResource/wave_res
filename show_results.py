@@ -100,6 +100,12 @@ for irange in iranges:
                                         .format('extraction', region))
         ldX = localX[region] = pdh5.load('results/freq.fcut/{}/{}.local-totals.h5'
                                         .format('extraction', region))
+        if region == 'hi':
+            rd0['1way'] = rd0['bdir'] - rd0['1way']
+            rdX['1way'] = rdX['bdir'] - rdX['1way']
+            rd0['trad'] *= -1
+            rdX['trad'] *= -1
+        
         rd0['oneway'] = rd0['1way']
         rdX['oneway'] = rdX['1way']
 
@@ -404,5 +410,16 @@ def print_results():
 print_results()
 
 # Write-out the results.
-pd.DataFrame(rtot0Int).T.join(pd.DataFrame(ltot0Int).T).to_csv('results/Total_Baseline_Results.csv')
-pd.DataFrame(rtotXInt).T.join(pd.DataFrame(ltotXInt).T).to_csv('results/Total_Extraction_Results.csv')
+df0 = pd.DataFrame(rtot0Int).T.join(pd.DataFrame(ltot0Int).T)
+dfX = pd.DataFrame(rtotXInt).T.join(pd.DataFrame(ltotXInt).T)
+
+df0 = df0.reindex(['wc', 'ec', 'hi', 'ak', 'gm', 'prusvi', 'total'])
+dfX = dfX.reindex(['wc', 'ec', 'hi', 'ak', 'gm', 'prusvi', 'total'])
+
+df0.to_csv(
+    'results/Total_Baseline_Results.csv',
+    columns=['oneway', 'off', 'bdir', 'trad', 'unit', 'sbt', 'sds', 'sice', 'sin', 'snl', 'stot'])
+dfX.to_csv(
+    'results/Total_Extraction_Results.csv',
+    columns=['oneway', 'off', 'bdir', 'trad', 'unit', 'sbt', 'sds', 'sice', 'sin', 'snl', 'stot']
+    )
