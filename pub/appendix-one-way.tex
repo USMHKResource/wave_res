@@ -4,7 +4,7 @@
 
 \note{Add a short intro about the importance of wave directionality here? (OWP is valuable, but `unit circle' method is bunk.)}
 
-As the National Academy review points out, estimates of $R_r$ must account for wave directionity in order to avoid double-counting. For example, when a wave with energy density of $1 \unit{kW/m}$ crosses a 1 km integration contour segment with its wave crests parallel to the segment, the total power is 1MW (upper row of Figure \ref{fig:directionality}). Likewise, when that same 1-km wide wave crosses a contour-segment with its wave crests at an angle to the integration contour, the total energy contained in the wave is still only 1 MW. The directionality coefficient corrects for fact that the length of the contour segment is longer to capture the whole 1-km wave at an angle (3 km in lower row of Figure \ref{fig:directionality}, where $\theta = 70.5 \unit{degrees}$). In the `unit circle' method described in the 2011 resource assessment $\delta$ is taken to be $1$ in all cases (directionality is neglected), which for the wave depicted in the lower row of Figure \ref{fig:directionality} gives an estimate of 3 MW crossing the contour. This is clearly incorrect since the 1-km wide wave only contains 1 MW of power, and demonstrates the importance of accounting for directionality.
+As the National Academy review points out, estimates of $R_r$ must account for wave directionity in order to avoid double-counting. For example, when a wave with energy density of $1 \unit{kW/m}$ crosses a $1 \unit{km}$ integration contour segment with its wave crests parallel to the segment, the total power is 1MW (upper row of Figure \ref{fig:directionality}). Likewise, when that same 1-km wide wave crosses a contour-segment with its wave crests at an angle to the integration contour, the total energy contained in the wave is still only 1 MW. The directionality coefficient corrects for fact that the length of the contour segment is longer to capture the whole 1-km wave at an angle (3 km in lower row of Figure \ref{fig:directionality}, where $\theta = 70.5 \unit{degrees}$). In the `unit circle' method described in the 2011 resource assessment $\delta$ is taken to be $1$ in all cases (directionality is neglected), which for the wave depicted in the lower row of Figure \ref{fig:directionality} gives an estimate of 3 MW crossing the contour. This is clearly incorrect since the 1-km wide wave only contains 1 MW of power, and demonstrates the importance of accounting for directionality.
 
 \begin{figure}[ht]
     \centering
@@ -31,12 +31,7 @@ The one-way approach to estimating $R_r$ deserves some explanation because it de
     \delta_{*} = \cos(\theta_n - \theta)
     \label{eqn:trad-def}
 \end{align}
-The primary problem with this definition for the purposes of wave resource assessment is that waves that propagate away from the shoreline of interest ($|\theta_n - \theta|>90$) are subtracted from the resource total. This motivates consideration of two alternate definitions of $\delta$. First, a `bi-directional' case:
-\begin{align}
-    \delta_2 = |\delta_{*}|
-    \label{eqn:2way-def}
-\end{align}
-and the one-way case:
+The primary problem with this definition for the purposes of wave resource assessment is that waves that propagate away from the shoreline of interest ($|\theta_n - \theta|>90$) are subtracted from the resource total. To avoid this we utilize the `one-way' condition for summing wave energy:
 \begin{align}
     \delta_1 = 
     \begin{cases}
@@ -45,6 +40,22 @@ and the one-way case:
     \end{cases}
     \label{eqn:1way-def}
 \end{align}
+
+The primary draw-back to the one-way condition is that if wave energy criss-crosses back-and-forth across the integration contour, then it is added to the total each time it crosses the contour (rather than being counted, correctly, exactly once). However, since waves do not typically swerve back and forth (i.e., across a straight line), this should only be an issue when the integration contour zig-zags or otherwise has segments that a straight-travelling wave would cross multiple times (e.g., where the contour folds, or when islands are spaced such that there are several independent contours nearby one another).
+
+In order to investigate the extent of double-counting due to the one-way condition, we also keep track of the offshore propagating wave energy using the complimentary definition of the directionality coefficient:
+\begin{align}
+  \label{eqn:1way-off-def}
+    \delta_{off} = 
+    \begin{cases}
+     -\delta_* & \mathrm{for\ }|\theta_n - \theta|>90^\circ \\
+    0 & \mathrm{otherwise}.
+    \end{cases}
+\end{align}
+Where the minus sign makes the value of $\delta_{off}$ positive. We then o
+
+Accounting for both the onshore \eqref{eqn:1way-def} and offshore \eqref{eqn:1way-off-def} wave energy flux independently, gives us the opportunity to assess the relative importance of 
+
 In weighing the pros/cons of these definitions of $\delta$ it is important to understand that wave resource assessments are typically based on models that do not extract wave energy when it encounters the integration contour of interest (e.g., $\leez$). That is, wave energy that propagates across the integration contour at one location might propagate across it again at another location, and there is typically no way to `track' waves (i.e., wave energy) within these models.
 This means that both of the definitions of $\delta$ in \eqref{eqn:2way-def} and \eqref{eqn:1way-def} will `double-count' waves that criss-cross back-and-forth across the integration countour ($\delta_2$ to a larger degree). This can occur for waves that travel straight across a zig-zagging integration contour, or for waves that zig-zag along a straight contour. 
 
