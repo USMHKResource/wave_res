@@ -6,7 +6,9 @@ channels:
 
 dependencies:
   - python=2.7
+  - pip
   - matplotlib
+  - pandas
   - numpy
   - netcdf4
   - ipython=4.2

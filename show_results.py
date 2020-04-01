@@ -4,13 +4,14 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 import json
 import matplotlib.pyplot as plt
+import pandas as pd
 
-#regions = {'ak', 'at', 'prusvi', 'wc', 'hi'}
-regions = {'wc', 'ak'}
+regions = {'ak', 'ec', 'gm', 'prusvi', 'wc', 'hi'}
+#regions = {'wc', 'ak'}
 
 # Sum over these regions to get the total.
-# totregions = ['ak', 'at', 'prusvi', 'wc', 'hi']
-totregions = ['wc', 'ak']
+totregions = ['ak', 'ec', 'gm', 'prusvi', 'wc', 'hi']
+#totregions = ['wc', 'ak', ]
 # Initialize dictionaries for 'baseline' totals
 remote0 = {}
 local0 = {}
@@ -157,6 +158,9 @@ for irange in iranges:
             plt.legend()
 
 for ireg, region in enumerate(totregions):
+    # Calculate the offshore flux.
+    rtot0Int[region]['off'] = rtot0Int[region]['bdir'] - rtot0Int[region]['oneway']
+    rtotXInt[region]['off'] = rtotXInt[region]['bdir'] - rtotXInt[region]['oneway']
     # Calculate the total across all regions
     if 'total' not in rtot0Int:
         rtot0Int['total'] = deepcopy(rtot0Int[region])
@@ -164,7 +168,7 @@ for ireg, region in enumerate(totregions):
         rtotXInt['total'] = deepcopy(rtotXInt[region])
         ltotXInt['total'] = deepcopy(ltotXInt[region])
     else:
-        for m in ['oneway', 'unit', 'bdir', 'trad']:
+        for m in ['oneway', 'off', 'unit', 'bdir', 'trad']:
             rtot0Int['total'][m] += rtot0Int[region][m]
             rtotXInt['total'][m] += rtotXInt[region][m]
         for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']:
@@ -343,17 +347,31 @@ def print_results():
     print("")
 
     print("Remote Totals ({})".format(unit))
-    print("#" * 55)
-    print(("{:10s}|" + "{:>11s}" * 4)
-          .format("", 'one-way', 'trad', 'unit', 'bidir'))
-    print("-" * 55)
+    print("#" * 66)
+    print(("{:10s}|" + "{:>11s}" * 5)
+          .format("", 'one-way', 'off', 'trad', 'unit', 'bidir'))
+    print("-" * 66)
     for ireg, region in enumerate(regions):
         rt = rtot0Int[region]
-        print("{:10s}: {oneway: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
+        print("{:10s}: {oneway: 10.4g} {off: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
               .format(region, **rt))
-    print("=" * 55)
-    print("{:10s}: {oneway: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
+    print("=" * 66)
+    print("{:10s}: {oneway: 10.4g} {off: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
           .format('TOTAL', **rtot0Int['total']))
+
+    # print('')
+    # print("Remote ***Potential*** Totals ({})".format(unit))
+    # print("#" * 66)
+    # print(("{:10s}|" + "{:>11s}" * 5)
+    #       .format("", 'one-way', 'off', 'trad', 'unit', 'bidir'))
+    # print("-" * 66)
+    # for ireg, region in enumerate(regions):
+    #     rt = rtotXInt[region]
+    #     print("{:10s}: {oneway: 10.4g} {off: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
+    #           .format(region, **rt))
+    # print("=" * 66)
+    # print("{:10s}: {oneway: 10.4g} {off: 10.4g} {trad: 10.4g} {unit: 10.4g} {bdir: 10.4g}"
+    #       .format('TOTAL', **rtotXInt['total']))
 
     print("")
     print("Local Baseline Totals ({})".format(unit))
@@ -384,3 +402,7 @@ def print_results():
           .format('TOTAL', **ltotXInt['total']))
 
 print_results()
+
+# Write-out the results.
+pd.DataFrame(rtot0Int).T.join(pd.DataFrame(ltot0Int).T).to_csv('results/Total_Baseline_Results.csv')
+pd.DataFrame(rtotXInt).T.join(pd.DataFrame(ltotXInt).T).to_csv('results/Total_Extraction_Results.csv')
