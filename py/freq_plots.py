@@ -19,14 +19,29 @@ colors = {'ak': 'k', 'wc': 'b', 'hi': 'g',
 labels = {'wc': 'West Coast',
           'hi': 'Hawaii',
           'ec': 'East Coast',
-          'ak': 'Alaska'}
+          'ak': 'Alaska',
+          'gm': 'Gulf of Mexico'}
 
-plot_regions = ['wc', 'hi', 'ec']
+tag = '00'
+plot_regions = ['wc', 'hi', 'ec', 'ak', 'gm']
+
+# tag = '01'
+# plot_regions = ['wc', 'hi', 'ec']
+
+# Number of plotted regions
 # [width, spacing, offset]
-bar_plot_coefs = [1.2, 1.6666, 0.8]
+bar_plot_coefs = {3: [1.2, 1.6666, 0.8],
+                  4: [0.8, 1, 0.8],
+                  5: [0.7, 0.8, 0.7]}[len(plot_regions)]
+
+if 'ak' in plot_regions:
+    local_ylim = np.array([-5, 100])
+    remote_ylim = [0, 60]
+else:
+    remote_ylim = [0, 25]
+    local_ylim = [-5, 20]
 # plot_regions = ['wc', 'hi', 'ec', 'ak']
 # # [width, spacing, offset]
-# bar_plot_coefs = [0.8, 1, 0.8]
 
 if flag['show remote']:
 
@@ -72,9 +87,9 @@ if flag['show remote']:
     ax0.set_ylabel('[GW]')
     ax0.set_title("Remote Resource")
     ax0.set_xlabel("Wave Period [s]")
-    ax0.set_ylim([0, 25])
-    fig0.savefig('../fig/RemoteResource_Freq01.pdf')
-    fig0.savefig('../fig/RemoteResource_Freq01.png', dpi=300)
+    ax0.set_ylim(remote_ylim)
+    fig0.savefig('../fig/RemoteResource_Freq{}.pdf'.format(tag))
+    fig0.savefig('../fig/RemoteResource_Freq{}.png'.format(tag), dpi=300)
 
 
 hatch = {'baseline': None, 'extraction': None}
@@ -129,6 +144,6 @@ if flag['show local']:
     ax0.set_ylabel('[GW]')
     ax0.set_xlabel('Wave Period [s]')
     ax0.legend()
-    ax0.set_ylim([-5, 20])
-    fig0.savefig('../fig/LocalResource_Freq01.pdf')
-    fig0.savefig('../fig/LocalResource_Freq01.png', dpi=300)
+    ax0.set_ylim(local_ylim)
+    fig0.savefig('../fig/LocalResource_Freq{}.pdf'.format(tag))
+    fig0.savefig('../fig/LocalResource_Freq{}.png'.format(tag), dpi=300)
