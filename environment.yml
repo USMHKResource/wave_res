@@ -10,6 +10,7 @@ dependencies:
   - matplotlib
   - pandas
   - numpy
+  - xarray
   - netcdf4
   - ipython=4.2
   - tqdm
