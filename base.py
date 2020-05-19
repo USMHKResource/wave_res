@@ -1,5 +1,15 @@
 import pyDictH5 as pdh5
 import numpy as np
+import os
+
+thisdir = os.path.dirname(os.path.realpath(__file__))
+
+figdir = thisdir + '/fig/'
+
+
+def savefig(fig, fname, dpi=200):
+    fig.savefig(figdir + fname + '.pdf', dpi=dpi)
+    fig.savefig(figdir + fname + '.png', dpi=dpi)
 
 
 source_terms = ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']

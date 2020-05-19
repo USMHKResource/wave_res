@@ -74,8 +74,7 @@ ax.set_yticks(np.arange(0.0, 2.5, 0.5))
 ax.set_ylim([0, 2])
 ax.set_title("Annual cycle of total resource")
 
-fig1.savefig('fig/AnnualCycle01.pdf')
-fig1.savefig('fig/AnnualCycle01.png', dpi=200)
+b.savefig(fig1, 'AnnualCycle01')
 
 
 ######
@@ -122,14 +121,13 @@ ax.axvspan(wm.season_edges[1], wm.season_edges[2], facecolor='b', zorder= -6, al
 ax.axvspan(wm.xlim[0], wm.season_edges[0], facecolor='r', zorder= -6, alpha=0.05)
 ax.axvspan(wm.season_edges[-2], wm.xlim[-1], facecolor='r', zorder= -6, alpha=0.05)
 
-fig2.savefig('fig/AnnualCycle02.pdf')
-fig2.savefig('fig/AnnualCycle02.png', dpi=200)
+b.savefig(fig2, 'AnnualCycle02')
 
 
 ######
 # Plot the inter-annual variability
 fig3 = plt.figure(103)
-fig0.clf()
+fig3.clf()
 ax3 = plt.gca()
 
 ax = ax3
@@ -150,3 +148,35 @@ for ky in plot_these:
 
 ax.set_ylim([0, 2])
 
+######
+# Plot variability on-top of a single region
+
+
+######
+# Plot the inter-annual variability
+
+plot_these = ['wc', 'hi', 'ak', 'ec', 'gm', ]
+
+for idx, region in enumerate(plot_these):
+
+    fig = plt.figure(1000 + idx)
+    fig.clf()
+    ax = plt.gca()
+
+    dnow = dat[region]
+    r = (dnow.remote.int_freq()['1way'][:, -1]
+         .reshape((-1, 12)))
+    l = (dnow.local.int_freq()['stot'].sum(1)
+         .reshape((-1, 12)))
+    
+    dtmp = (r + l)[:, wm._index]
+
+    dtmp /= dtmp.mean()
+    ax.plot(np.arange(1, 14), dtmp.mean(0), label=dnow.name, color=dnow.color)
+    ax.boxplot(wm(dtmp), )
+    ax.set_title("Total Resource: {}".format(dnow.name))
+    #ax.set_ylim([0, 5])
+    ax.set_xticks(np.arange(1, 14))
+    ax.set_xticklabels(wm.labels)
+
+    b.savefig(fig, 'AnnualVar01.{}'.format(region))
