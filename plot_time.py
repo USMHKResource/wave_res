@@ -56,9 +56,6 @@ ax.axhline(1, linestyle='--', color='k', linewidth=2, zorder=-3)
 ax.axhline(0.5, linestyle='--', color='0.6', linewidth=1, zorder=-3)
 ax.axhline(1.5, linestyle='--', color='0.6', linewidth=1, zorder=-3)
 
-for val in wm.season_edges:
-    ax.axvline(val, color='0.6', linestyle=':',
-                zorder=-5, linewidth=1)
 ax.axvline(12, color='0.3', linestyle='--', zorder= -5, linewidth=1)
 
 for val, lbl in zip(wm.season_centers, wm.season_labels):
@@ -102,9 +99,6 @@ ax.axhline(1, linestyle='--', color='k', linewidth=2, zorder=-3)
 ax.axhline(0.5, linestyle='--', color='0.6', linewidth=1, zorder=-3)
 ax.axhline(1.5, linestyle='--', color='0.6', linewidth=1, zorder=-3)
 
-for val in wm.season_edges:
-    ax.axvline(val, color='0.6', linestyle=':',
-                zorder=-5, linewidth=1)
 ax.axvline(12, color='0.3', linestyle='--', zorder= -5, linewidth=1)
 
 for val, lbl in zip(wm.season_centers, wm.season_labels):
@@ -172,11 +166,30 @@ for idx, region in enumerate(plot_these):
     dtmp = (r + l)[:, wm._index]
 
     dtmp /= dtmp.mean()
-    ax.plot(np.arange(1, 14), dtmp.mean(0), label=dnow.name, color=dnow.color)
-    ax.boxplot(wm(dtmp), )
+    ax.plot(wm.x, dtmp.mean(0), label=dnow.name, color='k', linewidth=2)
+    ax.boxplot(wm(dtmp), positions=wm.x)
     ax.set_title("Total Resource: {}".format(dnow.name))
-    #ax.set_ylim([0, 5])
-    ax.set_xticks(np.arange(1, 14))
+    ax.set_ylim([0, 4])
+    ax.set_xticks(wm.xticks)
     ax.set_xticklabels(wm.labels)
 
+    for val, lbl in zip(wm.season_centers, wm.season_labels):
+        if lbl == 'summer':
+            val += 0.3
+        ax.text(val, 0.1, lbl, ha='center')
+
+    ax.axvspan(wm.season_edges[1], wm.season_edges[2], facecolor='b', zorder= -6, alpha=0.05)
+    ax.axvspan(wm.xlim[0], wm.season_edges[0], facecolor='r', zorder= -6, alpha=0.05)
+    ax.axvspan(wm.season_edges[-2], wm.xlim[-1], facecolor='r', zorder= -6, alpha=0.05)
+    ax.axvline(12, color='0.3', linestyle='--', zorder= -5, linewidth=1)
+
+    ax.set_yticks(np.arange(0.0, 4.5, 0.5))
+    ax.axhline(1, linestyle='--', color='k', linewidth=2, zorder=-3)
+    for yval in [0.5, 1.5, 2, 2.5, 3, 3.5]:
+        ax.axhline(yval, linestyle='--', color='0.6', linewidth=1, zorder=-3)
+
+    ax.set_ylim([0, 4])
+    ax.set_xlim(wm.xlim)
+
     b.savefig(fig, 'AnnualVar01.{}'.format(region))
+
