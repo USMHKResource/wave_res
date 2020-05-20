@@ -1,6 +1,10 @@
 import pyDictH5 as pdh5
 import numpy as np
 import os
+import matplotlib as mpl
+mpl.use('TkAgg')
+import matplotlib.pyplot as plt
+plt.ion()
 
 thisdir = os.path.dirname(os.path.realpath(__file__))
 
@@ -98,6 +102,7 @@ class Result(_Result):
 
 
     def avg_yearly(self, source='baseline'):
+        """Averages across months to create a yearly timeseries."""
         dat = self.int_freq()
         Nhour = np.tile(self._Nhour.reshape((-1, 12))[:, :, None], (1, 1, 20))
         for ky in self._terms:
@@ -110,6 +115,8 @@ class Result(_Result):
         return dat
 
     def avg_annual(self, source='baseline'):
+        """Returns the annual cycle (average within months across
+        years)."""
         dat = self.int_freq()
         for ky in self._terms:
             d = dat[ky]

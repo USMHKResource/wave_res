@@ -1,9 +1,5 @@
 import base as b
 import numpy as np
-import matplotlib as mpl
-mpl.use('TkAgg')
-import matplotlib.pyplot as plt
-plt.ion()
 
 wm = b.WrapMonths(shift=6)
 
