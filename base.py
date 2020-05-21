@@ -5,6 +5,7 @@ import matplotlib as mpl
 mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 plt.ion()
+import pandas as pd
 
 thisdir = os.path.dirname(os.path.realpath(__file__))
 
@@ -71,7 +72,7 @@ class TotResult(_Result):
         self.remote = RemoteResult(region, data_source=data_source)
         self.local = LocalResult(region, data_source=data_source)
         self.f = self.remote.f
-        self.time = self.remote._data['baseline']['time']
+        self.time = pd.DatetimeIndex(self.remote._data['baseline']['time'])
         self.unit = unit
 
     
@@ -170,7 +171,7 @@ class WrapMonths(object):
         self.shift = shift
         self._index = list(np.arange(shift, shift + n + 1) % n)
         self._index_seasons = (np.arange(shift, shift + n + 1, 3) % n) / 3
-        self.labels = np.array(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'])[self._index]
+        self.labels = np.array(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'])[self._index[:-1]]
         self.x = np.arange(n + 1.) + offset + shift
         self.xticks = np.arange(n + 1.) + shift
 

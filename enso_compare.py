@@ -1,10 +1,10 @@
 import numpy as np
 import base as b
 import matplotlib.pyplot as plt
-import enso_data
-reload(enso_data)
 from enso_data import enso
-
+import colormaps
+reload(colormaps)
+from colormaps import seasons
 
 dnow = b.TotResult('wc')
 
@@ -55,6 +55,9 @@ if True:
 
     # Smooth them a bit
     window = np.hanning(9)
+    window = np.ones(5)
+    # Normalize the window
+    window /= window.sum()
     dplt = np.convolve(annom.flatten(), window, mode='same')
 
     t = dnow.time
@@ -96,15 +99,33 @@ if True:
     eplt = enso['oni']
 
     if nlag > 0:
-        ax.plot(eplt[:-nlag], dplt[nlag:], '.')
+        eslc, dslc, = slice(None, -nlag), slice(nlag, None)
     elif nlag == 0:
-        ax.plot(eplt, dplt, '.')
+        eslc, dslc = slice(None), slice(None)
     else:
-        ax.plot(eplt[-nlag:], dplt[:nlag], '.')
+        eslc, dslc = slice(-nlag, None), slice(None, nlag)
 
+    cmap = seasons
+    coff = 11
+    
+    
+    sc = ax.scatter(eplt[eslc], dplt[dslc],
+                    c=(dnow.time.month[dslc] - coff) % 12,
+                    s=10,
+                    cmap=cmap, vmin=0.5, vmax=12.5, )
+    cbar = plt.colorbar(sc)
+    cbar.set_ticks(np.arange(1, 13))
+    wm = b.WrapMonths(coff)
+    cbar.set_ticklabels(wm.labels)
+
+    ax.axhline(0, color='0.6', lw=1, zorder=-10, ls='--')
+    ax.axvline(0, color='0.6', lw=1, zorder=-10, ls='--')
+    
+        
     if nlag > 0:
         fit_func = np.array([eplt[:-nlag],
-                             eplt[:-nlag] ** 2,
+                             #eplt[:-nlag] ** 2,
+                             np.exp(eplt[:-nlag]),
                              np.ones_like(eplt[:-nlag])]).T
         fit_vals = dplt[nlag:]
         
@@ -112,14 +133,18 @@ if True:
     bval, res, rank, s = np.linalg.lstsq(fit_func, fit_vals, rcond=None)
 
     x = np.arange(eplt.min(), eplt.max(), 0.1)
-    xfit = np.array([x, x ** 2, np.ones_like(x)]).T
+    #xfit = np.array([x, x ** 2, np.ones_like(x)]).T
+    xfit = np.array([x, np.exp(x), np.ones_like(x)]).T
     y = (xfit * bval[None, :]).sum(1)
     
-    ax.plot(x, y, 'r-')
-    R2 = (1-res/(dplt.var()*len(dplt)))[0]
-    ax.text(0.1, 0.9, '$R^2={:.3f}$'.format(R2), transform=ax.transAxes, color='r')
+    ax.plot(x, y, 'k-', lw=3, zorder=-2)
+    R2 = (1-res/(fit_vals.var()*len(fit_vals)))[0]
+    ax.text(0.1, 0.9, '$R^2={:.2f}$'.format(R2),
+            transform=ax.transAxes,
+            color='k', size='x-large')
+    
 
-    ax.set_ylabel('West Coast Wave Energy Flux Anomaly (kW/m)')
+    ax.set_ylabel('Wave Energy Flux Anomaly (kW/m)')
     ax.set_xlabel(u'Oceanic Ni\xf1o Index')
 
     b.savefig(fig, 'ENSO-Comparison.{}'.format(dnow.region))
@@ -145,13 +170,14 @@ if True:
     if nlag > 0:
         fit_func = np.array([enso['oni'][:-nlag],
                              #pdo[nlag:],
-                             enso['oni'][:-nlag] ** 2,
+                             np.exp(enso['oni'][:-nlag]),
+                             #enso['oni'][:-nlag] ** 2,
+                             #np.exp(1j * np.pi / 6 * np.array(dnow.time.month[:-nlag])), 
                              np.ones_like(pdo[nlag:])]).T
         fit_vals = dplt[nlag:]
         
 
     bval, res, rank, s = np.linalg.lstsq(fit_func, fit_vals, rcond=None)
-
     
     fig = plt.figure(113)
     fig.clf()
@@ -160,5 +186,5 @@ if True:
     fit = (fit_func*bval[None,:]).sum(1)
 
     ax.plot(fit, fit_vals, '.')
-    R2 = (1-res/(dplt.var()*len(dplt)))[0]
+    R2 = (1-res/(fit_vals.var()*len(dplt)))[0]
     ax.text(0.1, 0.9, '$R^2={:.3f}$'.format(R2), transform=ax.transAxes)
