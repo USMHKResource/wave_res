@@ -54,6 +54,7 @@ if unit != 'TWh/yr':
         epri[ky] *= factor / _factordict['TWh/yr']        
 
 irange = 20;range_tag = 'Total'
+irange = 1;range_tag = 'Nearshore'
 
 
 def zero_pad(arr, n):
