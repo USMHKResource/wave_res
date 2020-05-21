@@ -53,7 +53,7 @@ if unit != 'TWh/yr':
     for ky in epri:
         epri[ky] *= factor / _factordict['TWh/yr']        
 
-iranges = range(20)
+irange = 19
 
 
 def zero_pad(arr, n):
@@ -91,79 +91,78 @@ def freq_bin2(dat, terms):
 
 if __name__ == '__main__':
 
-    for irange in iranges:
-        for ireg, region in enumerate(regions):
+    for ireg, region in enumerate(regions):
 
-            rd0 = remote0[region] = pdh5.load('results/freq.fcut/{}/{}.remote-totals.h5'
-                                            .format('baseline', region))
-            ld0 = local0[region] = pdh5.load('results/freq.fcut/{}/{}.local-totals.h5'
-                                            .format('baseline', region))
-            rdX = remoteX[region] = pdh5.load('results/freq.fcut/{}/{}.remote-totals.h5'
-                                            .format('extraction', region))
-            ldX = localX[region] = pdh5.load('results/freq.fcut/{}/{}.local-totals.h5'
-                                            .format('extraction', region))
-            if region == 'hi':
-                rd0['1way'] = rd0['bdir'] - rd0['1way']
-                rdX['1way'] = rdX['bdir'] - rdX['1way']
-                rd0['trad'] *= -1
-                rdX['trad'] *= -1
+        rd0 = remote0[region] = pdh5.load('results/freq.fcut/{}/{}.remote-totals.h5'
+                                        .format('baseline', region))
+        ld0 = local0[region] = pdh5.load('results/freq.fcut/{}/{}.local-totals.h5'
+                                        .format('baseline', region))
+        rdX = remoteX[region] = pdh5.load('results/freq.fcut/{}/{}.remote-totals.h5'
+                                        .format('extraction', region))
+        ldX = localX[region] = pdh5.load('results/freq.fcut/{}/{}.local-totals.h5'
+                                        .format('extraction', region))
+        if region == 'hi':
+            rd0['1way'] = rd0['bdir'] - rd0['1way']
+            rdX['1way'] = rdX['bdir'] - rdX['1way']
+            rd0['trad'] *= -1
+            rdX['trad'] *= -1
 
-            rd0['oneway'] = rd0['1way']
-            rdX['oneway'] = rdX['1way']
+        rd0['oneway'] = rd0['1way']
+        rdX['oneway'] = rdX['1way']
 
-            rd0Int = int_freq(rd0, remote_terms)
-            rdXInt = int_freq(rdX, remote_terms)
+        rd0Int = int_freq(rd0, remote_terms)
+        rdXInt = int_freq(rdX, remote_terms)
 
 
-            rd0Bin = freq_bin(rd0, remote_terms)
-            rdXBin = freq_bin(rdX, remote_terms)
+        rd0Bin = freq_bin(rd0, remote_terms)
+        rdXBin = freq_bin(rdX, remote_terms)
 
-            ld0Int = int_freq2(ld0, source_terms)
-            ldXInt = int_freq2(ldX, source_terms)
+        ld0Int = int_freq2(ld0, source_terms)
+        ldXInt = int_freq2(ldX, source_terms)
 
-            ld0Bin = freq_bin2(ld0, source_terms)
-            ldXBin = freq_bin2(ldX, source_terms)
+        ld0Bin = freq_bin2(ld0, source_terms)
+        ldXBin = freq_bin2(ldX, source_terms)
 
-            # Integral Averages
-            rtot0Int[region] = {m: (np.average(rd0Int[m][:, irange],
-                                            weights=rd0Int['Nhour']) * factor)
-                            for m in remote_terms}
-            ltot0Int[region] = {m: (np.average(ld0Int[m][:, :irange].sum(-1),
-                                            weights=ld0Int['Nhour']) * factor)
-                            for m in source_terms}
-            rtotXInt[region] = {m: (np.average(rdXInt[m][:, irange],
-                                            weights=rdXInt['Nhour']) * factor)
-                            for m in remote_terms}
-            ltotXInt[region] = {m: (np.average(ldXInt[m][:, :irange].sum(-1),
-                                            weights=ldXInt['Nhour']) * factor)
-                            for m in source_terms}
+        # Integral Averages
+        rtot0Int[region] = {m: (np.average(rd0Int[m][:, irange],
+                                        weights=rd0Int['Nhour']) * factor)
+                        for m in remote_terms}
+        ltot0Int[region] = {m: (np.average(ld0Int[m][:, :irange].sum(-1),
+                                        weights=ld0Int['Nhour']) * factor)
+                        for m in source_terms}
+        rtotXInt[region] = {m: (np.average(rdXInt[m][:, irange],
+                                        weights=rdXInt['Nhour']) * factor)
+                        for m in remote_terms}
+        ltotXInt[region] = {m: (np.average(ldXInt[m][:, :irange].sum(-1),
+                                        weights=ldXInt['Nhour']) * factor)
+                        for m in source_terms}
 
-            # Binned Averages
-            rtot0Bin[region] = {m: (np.average(rd0Bin[m][:,:, irange],
-                                            weights=rd0Bin['Nhour'],axis=0) * factor)
-                            for m in remote_terms}
-            ltot0Bin[region] = {m: (np.average(ld0Bin[m][:,:, :irange].sum(-1),
-                                            weights=ld0Bin['Nhour'],axis=0) * factor)
-                            for m in source_terms}
-            rtotXBin[region] = {m: (np.average(rdXBin[m][:,:, irange],
-                                            weights=rdXBin['Nhour'],axis=0) * factor)
-                            for m in remote_terms}
-            ltotXBin[region] = {m: (np.average(ldXBin[m][:,:, :irange].sum(-1),
-                                            weights=ldXBin['Nhour'],axis=0) * factor)
-                            for m in source_terms}
+        # Binned Averages
+        rtot0Bin[region] = {m: (np.average(rd0Bin[m][:,:, irange],
+                                        weights=rd0Bin['Nhour'],axis=0) * factor)
+                        for m in remote_terms}
+        ltot0Bin[region] = {m: (np.average(ld0Bin[m][:,:, :irange].sum(-1),
+                                        weights=ld0Bin['Nhour'],axis=0) * factor)
+                        for m in source_terms}
+        rtotXBin[region] = {m: (np.average(rdXBin[m][:,:, irange],
+                                        weights=rdXBin['Nhour'],axis=0) * factor)
+                        for m in remote_terms}
+        ltotXBin[region] = {m: (np.average(ldXBin[m][:,:, :irange].sum(-1),
+                                        weights=ldXBin['Nhour'],axis=0) * factor)
+                        for m in source_terms}
 
-            if False:
-                region = 'wc'
-                binnedData,total = rtot0Bin, rtot0Int
-                terms = [remote_terms,source_terms]
-                fig = plt.figure()
-                ax = plt.axes()
-                mf = [np.mean([freq[i],freq[i+1]]) for i in range(len(freq)-1)]
-                #for term in terms[0]:
-                Norm = binnedData[region]['bdir']-binnedData[region]['oneway']#/total[region][term]
-                ax.plot(mf,Norm,label='diff')
-                plt.title(str(irange))
-                plt.legend()
+        if False:
+            region = 'wc'
+            binnedData,total = rtot0Bin, rtot0Int
+            terms = [remote_terms,source_terms]
+            fig = plt.figure()
+            ax = plt.axes()
+            mf = [np.mean([freq[i],freq[i+1]]) for i in range(len(freq)-1)]
+            #for term in terms[0]:
+            Norm = binnedData[region]['bdir']-binnedData[region]['oneway']#/total[region][term]
+            ax.plot(mf,Norm,label='diff')
+            plt.title(str(irange))
+            plt.legend()
 
     for ireg, region in enumerate(totregions):
         # Calculate the offshore flux.
