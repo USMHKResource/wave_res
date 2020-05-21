@@ -54,7 +54,7 @@ if unit != 'TWh/yr':
         epri[ky] *= factor / _factordict['TWh/yr']        
 
 irange = 20;range_tag = 'Total'
-irange = 1;range_tag = 'Nearshore'
+#irange = 1;range_tag = 'Nearshore'
 
 
 def zero_pad(arr, n):
@@ -180,10 +180,10 @@ if __name__ == '__main__':
             rtotXInt['total'] = deepcopy(rtotXInt[region])
             ltotXInt['total'] = deepcopy(ltotXInt[region])
         else:
-            for m in ['oneway', 'off', 'unit', 'bdir', 'trad']:
+            for m in ['oneway', 'off', 'unit', 'bdir', 'trad', 'length']:
                 rtot0Int['total'][m] += rtot0Int[region][m]
                 rtotXInt['total'][m] += rtotXInt[region][m]
-            for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice']:
+            for m in ['sbt', 'sds', 'snl', 'stot', 'sin', 'sice', 'area']:
                 ltot0Int['total'][m] += ltot0Int[region][m]
                 ltotXInt['total'][m] += ltotXInt[region][m]
 
