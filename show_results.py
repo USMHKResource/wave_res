@@ -53,7 +53,7 @@ if unit != 'TWh/yr':
     for ky in epri:
         epri[ky] *= factor / _factordict['TWh/yr']        
 
-irange = 20
+irange = 20;range_tag = 'Total'
 
 
 def zero_pad(arr, n):
@@ -136,7 +136,11 @@ if __name__ == '__main__':
         ltotXInt[region] = {m: (np.average(ldXInt[m][:, :irange].sum(-1),
                                         weights=ldXInt['Nhour']) * factor)
                         for m in source_terms}
-
+        rtot0Int[region]['length'] = rd0['length'][irange - 1]
+        rtotXInt[region]['length'] = rdX['length'][irange - 1]
+        ltot0Int[region]['area'] = ld0['area'][:irange].sum()
+        ltotXInt[region]['area'] = ldX['area'][:irange].sum()
+        
         # Binned Averages
         rtot0Bin[region] = {m: (np.average(rd0Bin[m][:,:, irange - 1],
                                         weights=rd0Bin['Nhour'],axis=0) * factor)
@@ -417,11 +421,12 @@ if __name__ == '__main__':
     df0 = df0.reindex(['wc', 'ec', 'hi', 'ak', 'gm', 'prusvi', 'total'])
     dfX = dfX.reindex(['wc', 'ec', 'hi', 'ak', 'gm', 'prusvi', 'total'])
 
+    col_order = ['length', 'oneway', 'off', 'bdir', 'trad', 'unit',
+                 'area', 'sbt', 'sds', 'sice', 'sin', 'snl', 'stot']
+    
     df0.to_csv(
-        'results/Total_Baseline_Results.csv',
-        columns=['oneway', 'off', 'bdir', 'trad', 'unit', 'sbt', 'sds', 'sice', 'sin', 'snl', 'stot'])
+        'results/{}_Baseline_Results.csv'.format(range_tag),
+        columns=col_order)
     dfX.to_csv(
-        'results/Total_Extraction_Results.csv',
-        columns=['oneway', 'off', 'bdir', 'trad', 'unit', 'sbt', 'sds', 'sice', 'sin', 'snl', 'stot']
-        )
-
+        'results/{}_Extraction_Results.csv'.format(range_tag),
+        columns=col_order)
