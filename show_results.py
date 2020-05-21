@@ -53,7 +53,7 @@ if unit != 'TWh/yr':
     for ky in epri:
         epri[ky] *= factor / _factordict['TWh/yr']        
 
-irange = 19
+irange = 20
 
 
 def zero_pad(arr, n):
@@ -124,13 +124,13 @@ if __name__ == '__main__':
         ldXBin = freq_bin2(ldX, source_terms)
 
         # Integral Averages
-        rtot0Int[region] = {m: (np.average(rd0Int[m][:, irange],
+        rtot0Int[region] = {m: (np.average(rd0Int[m][:, irange - 1],
                                         weights=rd0Int['Nhour']) * factor)
                         for m in remote_terms}
         ltot0Int[region] = {m: (np.average(ld0Int[m][:, :irange].sum(-1),
                                         weights=ld0Int['Nhour']) * factor)
                         for m in source_terms}
-        rtotXInt[region] = {m: (np.average(rdXInt[m][:, irange],
+        rtotXInt[region] = {m: (np.average(rdXInt[m][:, irange - 1],
                                         weights=rdXInt['Nhour']) * factor)
                         for m in remote_terms}
         ltotXInt[region] = {m: (np.average(ldXInt[m][:, :irange].sum(-1),
@@ -138,13 +138,13 @@ if __name__ == '__main__':
                         for m in source_terms}
 
         # Binned Averages
-        rtot0Bin[region] = {m: (np.average(rd0Bin[m][:,:, irange],
+        rtot0Bin[region] = {m: (np.average(rd0Bin[m][:,:, irange - 1],
                                         weights=rd0Bin['Nhour'],axis=0) * factor)
                         for m in remote_terms}
         ltot0Bin[region] = {m: (np.average(ld0Bin[m][:,:, :irange].sum(-1),
                                         weights=ld0Bin['Nhour'],axis=0) * factor)
                         for m in source_terms}
-        rtotXBin[region] = {m: (np.average(rdXBin[m][:,:, irange],
+        rtotXBin[region] = {m: (np.average(rdXBin[m][:,:, irange - 1],
                                         weights=rdXBin['Nhour'],axis=0) * factor)
                         for m in remote_terms}
         ltotXBin[region] = {m: (np.average(ldXBin[m][:,:, :irange].sum(-1),
