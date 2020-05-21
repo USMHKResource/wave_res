@@ -51,10 +51,10 @@ factor = _factordict[unit]
 if unit != 'TWh/yr':
     # The EPRI data is in TWh/yr, so we adjust units here
     for ky in epri:
-        epri[ky] *= factor / _factordict['TWh/yr']        
+        epri[ky] *= factor / _factordict['TWh/yr']
 
 irange = 20;range_tag = 'Total'
-#irange = 1;range_tag = 'Nearshore'
+irange = 1;range_tag = 'Nearshore'
 
 
 def zero_pad(arr, n):
@@ -102,7 +102,9 @@ if __name__ == '__main__':
                                         .format('extraction', region))
         ldX = localX[region] = pdh5.load('results/freq.fcut/{}/{}.local-totals.h5'
                                         .format('extraction', region))
-        if region == 'hi':
+        if region == 'hi' and irange == 20:
+            # The nearshore flux doesn't need this, but the EEZ does.
+            # What about other ranges?
             rd0['1way'] = rd0['bdir'] - rd0['1way']
             rdX['1way'] = rdX['bdir'] - rdX['1way']
             rd0['trad'] *= -1
