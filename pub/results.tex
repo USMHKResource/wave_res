@@ -8,107 +8,48 @@ Hawaii has a large resource due largely to waves that arrive from the North Paci
 
 \begin{table}[ht]
   \centering
-  \begin{tabular}{|c|c|c|c|c|c|}
-    \cline{2-6}
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    \cline{2-7}
     %\multirow{1}{*}{Region}
-    \multicolumn{1}{c|}{} & {\it EPRI 2011} & \multicolumn{4}{c|}{New} \\
+    \multicolumn{1}{c|}{} & {\it EPRI 2011} & \multicolumn{5}{c|}{New} \\
     \hline
-    Region & Remote  & Remote & \multicolumn{2}{c|}{Local} & Total \\
-    & & & Natural & Potential & \\
+    Region & Remote  & Remote & \multicolumn{2}{c|}{Local} & Total & Inner-Shelf\\
+    & & & Natural & Potential & & \\
     \hline
-    Alaska & 1570 & 1040 & 990 & 1510 & 2030 - 2550 \\
-    West Coast & 590 & 420 & 90 & 210 & 510 - 630 \\
-    Hawaii & 130 & 370 & 10 & 100 & 380 - 470 \\
-    East Coast & 240 & 110 & 180 & 230 & 290 - 340 \\
-    Gulf of Mexico & 80 & 13 & 56 & 57 & 69-70 \\
-    P.R. \& U.S.V.I. & 30 & 6 & 11 & 27 & 17 - 33 \\
+    Alaska & 1570 & 1040 & 990 & 1510 & 2030 - 2550 & 1200 \\
+    West Coast & 590 & 420 & 90 & 210 & 510 - 630 & 410 \\
+    Hawaii & 130 & 370 & 10 & 100 & 380 - 470 & 120 \\
+    East Coast & 240 & 110 & 180 & 230 & 290 - 340 & 90 \\
+    Gulf of Mexico & 80 & 13 & 56 & 57 & 69-70 & 20 \\
+    P.R. \& U.S.V.I. & 30 & 6 & 11 & 27 & 17 - 33 & 20 \\
     \hline \hline
-U.S. TOTAL & 2640 & 1960 & 1340 & 2130 & 3300 - 4090 \\
+U.S. TOTAL & 2640 & 1960 & 1340 & 2130 & 3300 - 4090 & 1800 \\
 \hline
   \end{tabular}
   \caption{Wave resource assessment results by region and totaled for the entire U.S. (all values in TWh/yr). The range in the total column indicates the sum of Remote+Local (lower value) and Remote+Potential (higher value). \note{Do we need to be more careful w/ significant digits here?}}
   \label{table:totals}
 \end{table}
 
-\subsection{Comparison to previous results}
-\note{Argh! I'm struggling with how to organize this section! What is the point of all this?}
-
-% This is nearly double the total U.S. wave resource estimated in EPRI 2011. This result is due primarily to two mutually supportive changes to the methodology: 1) the extension of the assessment to the edge of the EEZ, and 2) the inclusion of the local resource in the total. 
-% The third fundamental change in the methodology -- utilizing a one-way dot-product -- actually reduces the resource estimates compared to EPRI 2011, but that change is overwhelmed by the increases due to the other changes.
+\subsection{Comparing to EPRI 2011}
 
 Our estimate of the total wave energy resource is 25-50\% larger than the EPRI 2011 assessment. This result, however, should not be interpreted too strongly because the majority of this increase is due to including the ``local resource'' over the vast U.S. EEZ, and it is unclear whether this is a technically viable resource. That is, while the energy is theoretically available and contained within U.S. maritime boundaries it is likely to be especially technically challenging to harness.
+%In other words, this work has not ``discovered new wave energy'', so much as modified the methodology to account for the wave energy potential over the entirety of the U.S.'s EEZ.
 
-A more pragmatic comparison is to compare the EPRI 2011 results to the inner-shelf results presented in table \ref{tab:nearshore-total}. Here the ``inner-shelf'' results are computed following the same methodology as described in section \ref{sec:method}, but we use the 10-nm boundary as the integration contour for all regions. This is a closer comparison to the EPRI 2011 results because it is comparable to the location of the 200-m depth contour in most regions. \note{Should we use the 30-nm boundary, or the 50-nm boundary for this? If so, should we not include the local resource in this comparison? What is the point of comparing the results?!} 
+A more realistic near-term assessment of the resource for (i.e., for the next decade or so) is provided in the ``inner shelf'' column, which applies the methodology described in the previous section at 10 nautical-miles from shore, rather than 200. In this case, the remote resource makes up is small for all regions (5\% in Alaska, <2\% for all other regions), so we have only presented the total here. These results are interesting because even though they are composed primarily of the remote resource, several regions (Alaska and Caribbean) actually have a larger inner-shelf than remote resource. This is primarily because the integration contour is longer in these regions than it is at the edge of the EEZ because the contour is not 'clipped' by borders with other nation's EEZs nearly as much as in the full EEZ case.
 
-Rather,  is due primarily to the inclusion of the local resource term, which was not included in EPRI 2011, and to the fact that this analysis has been extended to include the entire EEZ. 
-There are three important pieces of the EPRI 2011 methodology that are different from what is used here:
-\begin{enumerate}
-\item It includes only the remote resource, because the local resource was not typically considered in wave energy resource assessment at that time
-\item It used an integration contour that was much closer to shore (i.e., the 200-m water-depth contour, or 50 nautical-miles from shore, whichever is closer to shore)
-\item It did not account for wave directionality, which led to some ``double-counting'' \cite{nationalresearchcouncilEvaluationDepartmentEnergy2013}
-\end{enumerate}
+It is also interesting that the west coast inner-shelf resource (95.5\% remote) is nearly the same magnitude as the resource at the edge of the EEZ. 
+\note{GGM: Does this indicate that the resource is fully developed? Or simply  that the way the local resource adds energy doesn't really add much to the resource?} The Hawaiian resource decreases significantly because the 10 nautical-mile boundary is much shorter than the full EEZ boundary (the 10 nautical mile boundary is actually four separate boundaries around island groups). The east coast inner-shelf resource is somewhat smaller than the EEZ remote resource because some of that energy has been removed by whitecapping caused by the westerly winds that create the large local resource in this region (i.e., the westerly winds reduce the energy in westward-propagating waves).
 
-did not include any estimate of the `pointing out that the new ``remote'' results are lower than the EPRI 2011 results (which estimated the remote resource only) for all regions except Hawaii (Table~\ref{table:totals}). The Hawaii resource is the exception because we utilize the EEZ surrounding the State's islands rather than the 200-m isobath used in the EPRI 2011 results (i.e., we are casting a much wider net). Alaska and the West Coast are reduced by approximately 30\%, which can be attributed primarily to accounting for wave directionality. The east coast, Gulf of Mexico, and caribbean island territories are reduced by 55-80\% for two reasons: 1) accounting for directionality, and 2) the integration contour used for these regions is significantly shorter than that used in EPRI 2011, primarily because large portions of the U.S. EEZ boundary in this region is a ``border'' with another country's EEZ. All together, the total remote resource estimated here is 25\% smaller than the EPRI 2011 estimate.
+It is also useful to compare the remote results derived here to what was done in EPRI 2011 for two reasons: 1) only the remote resource was computed in that work, and 2) it has been the standard for the U.S. DOE Wave Resource assessment for several years. 
+Most regions, except Hawaii, have a lower remote resource compared to EPRI 2011. The reasons for these changes are due to the methodological changes described in section \ref{sec:method:changes}, and all of the changes described there play some role in the final result. However, each region has a {primary \em} reason for the change, and these are discussed in the following paragraph.
 
-Adding the local resource to the total changes the story completely. The magnitude of the local resource for most regions is comparable to the remote resource. The potential resource (local resource without remote waves) is larger than the remote resource for all regions except Hawaii and the West Coast.
+The Hawaii resource is the exception to the rule because the EEZ boundary surrounding the State's islands (used here) is much longer than than the 200-m isobath used in the EPRI 2011 results.
+Alaska and the West Coast are reduced by approximately 30\%, primarily due to accounting for wave directionality.
+The Gulf of Mexico and Caribbean island territories are reduced by large fractions primarily because the integration contour used here is much shorter than was utilized in EPRI 2011. This small integration contour is due to the fact that the majority of the EEZ boundary in these regions is a {\it border} with a neighboring nation's EEZ, and therefore is not considered as described in section \ref{sec:method:calc:remote}.
+The East Coast is reduced primarily because this method does not include wave energy that fluxes offshore, which makes up a sizable portion of this region's local resource (i.e., it is counted there, not as part of the remote resource).
 
-%The inclusion of the local resource is especially important because without it, we would be comparing the new remote results with the EPRI 2011 results, (be left to compare the  methodological change (relative to EPRI 2011): accounting for wave directionality, delivers a significant reduction in the total resource across all regions
+Adding the local resource to the total changes the story completely. The magnitude of the local resource for most regions is comparable to the remote resource so that when it is included in the total, it more than makes up for the reduction in the remote resource, which is why the total U.S. resource goes up by 25-50\% compared to EPRI 2011.
 
-In order to understand the source of these changes, we begin by noting that -- except for Hawaii -- the new remote results are much {\em lower} than the EPRI 2011 results. This is due to accounting for wave-directionality (using a one-way dot-product). Hawaii is the exception because by extending the analysis to the edge of the EEZ, we have cast a much wider net than was used in EPRI 2011 (which utilized the 200-m isobath as the integration contour) and this overwhelms the reduction of resource due to directionality. The other regions, however, do not enjoy a longer integration contour and therefore accounting for directionality reduces the resource total by more than 30\%. The regions that see the largest reductions in remote resource (e.g., the Gulf of Mexico) were further reduced by the fact that the majority of the EEZ boundary in these regions are `borders' with other nations, and therefore the integration contour in these regions is much shorter than was utilized in EPRI 2011.
-
-So, we now have a solid methodology for estimating the remote resource that is in broad agreement with several previous works, even if the results are somewhat dissappointing compared with the now debunked EPRI 2011 results. Furthermore, it should be noted that the `new remote' values are in good agreement with EPRI 2004 results, which utilized essentially an identical methodology as used here to estimate the remote resource (see EPRI 2011 for EPRI 2004 results).
-% I can't find the EPRI 2004 paper online anymore!? Ask Hagerman for this (it isn't cited in 2011 report either)!
-
-
-EPRI 2011, the 200-m depth contour that was used was much shorter the extension of theThis is primarily due to a comHere we see that the new results are more than 30\% lower than the EPRI 2011 results.
-% These two quantities are similar in that they both do not include the local resource, but they are still based on fundamentally different methods: 1) the new remote results are based on a one-way vector line-integral, rather than the now debunked ``unit-circle method'', and 2) the new results use the edge of the EEZ as the integration contour, while the EPRI 2011 results utilized the 200-m depth contour (or 50 nautical miles from shore, whichever is closer to shore). These methodological differences cause distinct regional changes in the resource magnitude.
-
-On the U.S. West and East Coasts, and in Alaska, the new remote resource is 30-55\% lower than the EPRI estimate primarily due to accounting for wave directionality. This drop is particularly pronounced on the East Coast for two reasons:
-\begin{enumerate}
-\item because more of the wave energy there is propagating offshore, which is not included in the one-way dot-product (note, however, that the energy which originates from within the U.S. EEZ and propagates offshore {\em is counted} as part of the local resource). 
-\item The length of the contour decreases (i.e., most of the FL coastline isn't counted) because it borders other EEZs? \note{Need to check this?}
-\end{enumerate}
-The Gulf of Mexico, Puerto Rico, and U.S. Virgin Islands 
-
-\note{Do we also need to mention minor differences in method: different model and duration?} The first of these changes leads to a reduction in total resource, while the second changes the result in proportion to the change in the length of the contour.
-
-The EPRI 2011 assessment had three distinct differences from the current approach: 1) it computed only the remote resource, 2) it did so along the 100-m isobath, and 3) it utilized a 'unit-circle' line-integral method that was critiqued for `double-counting'. 
-the revised methodology proposed herein, which is focused primarily on establishing a consistent and comprehensive methodology, rather than a fundamentally new understanding of wave physics. In other words, this work has not ``discovered new wave energy'', so much as modified the methodology to account for the wave energy potential over the entirety of the U.S.'s EEZ.
-
-This increase is a result of changes to the methodology we've proposed. On one hand, 
-but most of this increase is due to adding the local resource over the U.S. EEZ to the total, which was not included in the EPRI 2011 assessment. 
-
-
-The EPRI 2011 resource assessment was different from this work in three important ways:
-\begin{itemize}
-\item It did not account for wave directionality.
-\item It computed the wave resource along the 100m isobath, rather than the full EEZ.
-\item It did not account for the local resource.
-\end{itemize}
-
-
-\note{Need to work on this...}
-The large increase in resource in Hawaii is due in large part due to the exteneded area of integration. In the EPRI 2011 report the integration was performed at the 200 m isobath, which in the case of Hawaii is very close to shore due to the lack of continental shelf. In the present case, integration contour is extented to the EEZ which lies at 200 nmi in the Northern, Eastern, and Southern boundaries.
-
-\begin{table}[ht]
-  \centering
-  \begin{tabular}{|c|c|c|}
-    \hline
-    Region & EPRI 2011 &Inner-Shelf Resource \\
-    \hline
-    Alaska & 1570 &1100 \\
-    West Coast & 590 & 410 \\
-    Hawaii & 130 & 120 \\
-    East Coast & 240 & 90 \\
-    Gulf of Mexico & 80 & 20 \\
-    P.R. \& U.S.V.I. & 30 & 20 \\
-    \hline \hline
-    U.S. TOTAL & 2640 & 1800 \\
-    \hline
-  \end{tabular}
-  \caption{Inner-shelf resource. \note{Do we want/need to include this? It probably belongs in a different table? Or does it make sense on it's own like this?}}
-  \label{tab:nearshore-total}
-\end{table}
 
 \subsection{Wave energy distribution within each region}
 
@@ -130,7 +71,7 @@ Do we want these plots?
 
 \subsection{Annual cycle of wave energy resource}
 
-The annual cycle of the wave energy resource has a remarkably consistent pattern across all U.S. regions (Figure \ref{fig:annual-cycle}). Wave energy is a late-fall and winter dominated resource. The resource peaks in December or January across all regions, and is at a minimum in summer months. The inter-annual variability of the monthly-averaged West Coast resource is small during summer months when the resource is small (Figure \ref{fig:wc-variability}). During energetic winter months, the monthly-averaged resource can vary by more than 50\%, but in general the interannual variability is less than 30\% of the month's mean. This suggests that during energetic winter months wave energy projects should be expected to deliver at least their annual mean, with the potential of providing up to three-times that value. \note{Is that last sentence a stretch? Am I glossing over too many details about site-specific variability and device performance characteristics?} However, more detailed analysis is required to demonstrate these characteristics at individual sites and for individual technologies. Other regions have similar variability characteristics (not shown for simplicity).
+The annual cycle of the wave energy resource has a remarkably consistent pattern across all U.S. regions (Figure \ref{fig:annual-cycle}). Wave energy is a late-fall and winter dominated resource. The resource peaks in December or January across all regions, and is at a minimum in summer months. The inter-annual variability of the monthly-averaged West Coast resource is small during summer months when the resource is small (Figure \ref{fig:wc-variability}). During energetic winter months, the monthly-averaged resource can vary by more than 50\%, but in general the inter-annual variability is less than 30\% of the month's mean. This suggests that during energetic winter months wave energy projects should be expected to deliver at least their annual mean, with the potential of providing up to three-times that value. \note{Is that last sentence a stretch? Am I glossing over too many details about site-specific variability and device performance characteristics?} However, more detailed analysis is required to demonstrate these characteristics at individual sites and for individual technologies. Other regions have similar variability characteristics (not shown for simplicity).
 
 \begin{figure}[ht]
   \centering
@@ -155,6 +96,7 @@ The annual cycle of the wave energy resource has a remarkably consistent pattern
   \caption{Remote resource contained in each wave period band (0-5 seconds, 5-10 seconds, etc.) for the west coast, Hawaii, and the east coast.}
   \label{fig:remote-freq}
 \end{figure}
+\note{Does resource look different on N. vs. S. coasts of HI?}
 
 \begin{figure}[ht]
   \centering

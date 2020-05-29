@@ -1,25 +1,27 @@
 \section{Method} \label{sec:method}
-The overarching goal of this study is to define the wave energy resources and to develop a consistent and accurate methodology to estimate the total theoretically available wave resource for a given region. The methodology has been guided by two basic principals:
+The overarching goal of this study is to define the wave energy resources and to develop a consistent and accurate methodology to estimate the total theoretically available wave resource for a given region. The methodology has been guided by two basic principles:
 \begin{itemize}
 \item It should be comprehensive and accurate (include all available wave energy in a region, without double counting) \note{better words than `comp + accurate'?}
-\item It should utilize well-defined boundaries to define resource areas
+\item It should utilize well-defined boundaries to define resource areas \note{Levi: this will also make the method is transferable and scalable. Should we say that?}
 \end{itemize}
 
-Based on these principals, we propose three fundamental pieces of wave resource assessment that -- taken together -- resolve many of the outstanding questions surrounding wave resource assessment:
+Based on these principles, we propose three fundamental pieces of wave resource assessment that -- taken together -- resolve many of the outstanding questions surrounding wave resource assessment:
 \begin{itemize}
 \item {\bf Utilize a one-way dot-product:} this approach has been used in several previous wave resource assessments, but it was not used in the EPRI 2011 assessment \note{Add cites when Zotero integration in overleaf exists.}. This is an fundamental component of wave resource assessment because it avoids the {\em double} counting inherent in the `unit-circle' method used in EPRI 2011, and also avoids {\em under} counting that can occur when using a traditional dot-product. A detailed investigation of the importance of this approach can be found in Appendix \ref{appendix:one-way-method}. 
 \cite{EPRIwaveresource2011}).
-\item Extend the assessment to the edge of the U.S. EEZ. This has been done previously by some, but we believe that it should be done consistently for regional/national RA. ... in order to get consistent/comparable results. ... But don't count fluxes across {\it borders}
-\item Include `local' winds within a nation's EEZ (this is new!)
+\item {\bf Extend the assessment to the edge of the U.S. EEZ:} this has been done previously by some, but we believe that it should be done consistently for regional/national Resource Assessments. It is important to be consistent with the treatment of the resource across international boundaries. The sum of the resource computed for two regions independently must be the same as if the resource is computed for both regions combined. This sounds rather obvious but should not be overlooked, having a consistent treatment of energy fluxes across borders will result in double counting the total energy.
+% ... in order to get consistent/comparable results. The borders must ... But don't count fluxes across {\it borders}
+\item {\bf Include the local wave generation:} this consists of quantifying the wave resource generated landward of the boundaries (the EEZ in this study). Considering this part will provide a complete quantification of the resource. Estimates of the resource generated locally has implications to estimating the wave recovery potential, should a significant amount of wave energy is harvested. To the authors' knowledge this has not been considered in previous resource assessments.
+% Include `local' winds within a nation's EEZ (this is new!)
 \end{itemize}
 
 
 \subsection{Numerical Model} \label{sec:method:model}
 
-Wave resource assessments typically rely on the use of wave model `hindcasts' to estimate the history of the wave field over the region(s) of interest, and then to compute estimates of the theoretical resource from the model output. The reason for this is that in-situ or remote measurements do not cover the oceans with enough resolution to characterize the spatial variations of waves that occur at short scales. 
-In this work all wave climate hindcasts are simulated using WAVEWATCH III\textregistered v5.16 \citep{tolmanDistributedmemoryConceptsWave2002}.
+Wave resource assessments typically rely on the use of wave model `hindcasts' to estimate the history of the wave field over the region(s) of interest, and then to compute estimates of the theoretical resource from the model output. The reason for this is that in-situ or remote measurements do not cover the oceans with enough resolution, spatially and temporally, to characterize the spatial variations of waves that occur at short scales. 
+In this work all wave climate hindcasts are simulated using WAVEWATCH III\textregistered v5.16 \citep{tolmanDistributedmemoryConceptsWave2002,tolmanwavewatch}.
 
-WAVEWATCH III® (hereafter WW3) is a skillful and well established numerical model that has been implemented successfully in many previous wave resource assessments \citep[e.g.,][]{garcia-medinaWaveResourceAssessment2014,yangWaveModelTest2017}.
+WAVEWATCH III\textregistered (hereafter WW3) is a  well established numerical model that has been implemented successfully in many previous wave resource assessments \citep[e.g.,][]{garcia-medinaWaveResourceAssessment2014,hemerRevisedAssessmentAustralia2017,yangWaveModelTest2017}.
 WW3 solves the five-dimensional action balance equation:
 
 \begin{align}
@@ -30,19 +32,13 @@ The wave action is conserved in the absence of sinks and sources of energy, thei
 The models do not include currents so that $\sigma$ (intrinstic frequency) is spatially constant, and therefore wave energy (i.e., variance, $D$) is a conserved quantity (i.e., energy is only gained or lost by the source terms above).
 
 In this study we implement the ``ST4'' physics package option in WW3 to simulate wind energy input ($\Src{in}$) and dissipation due to whitecapping ($\Src{ds}$) \citep{ardhuinObservationSwellDissipation2009}.
-The wind forcing (for both the global and regional domains) is taken from NOAA's Climate Forecast System Reanalysis \citep{sahaNCEPClimateForecast2010}, and the implementation is based on NOAA's operational forecasting system.
-The non-linear quadruplet interactions ($\Src{nl}$) are modeled with the Hasselmann and Hasselmann (\citeyear{hasselmannComputationsParameterizationsNonlinear1985}) formulation.
-Bottom friction ($\Src{bot}$) and depth induced wave breaking ($\Src{brk}$) are modeled with the JONSWAP Hasselmann etal. \citeyear{hasselmannMeasurementsWindwaveGrowth1973} and Battjes and Janssen \citeyear{battjesEnergyLossSetup1978} models, respectively.
-Default parameters are used for all formulations. 
+The wind forcing (for both the global and regional domains) is taken from NOAA's Climate Forecast System Reanalysis \citep{sahaNCEPClimateForecast2010}. The non-linear quadruplet interactions ($\Src{nl}$) are modeled with the Hasselmann and Hasselmann (\citeyear{hasselmannComputationsParameterizationsNonlinear1985}) formulation. Bottom friction ($\Src{bot}$) and depth induced wave breaking ($\Src{brk}$) are modeled with the JONSWAP Hasselmann etal. \citeyear{hasselmannMeasurementsWindwaveGrowth1973} and Battjes and Janssen \citeyear{battjesEnergyLossSetup1978} models, respectively. Default parameters are used for all formulations.
 
-The WW3 simulations span a 32-year period from January 1, 1979 to December 31, 2010. The first year (1979) is treated as a 'spin-up' year, and is not included in any calculations of resource totals. Variability in the wave climate on timescales longer than the 31-year period included in the average are not considered (i.e., changes in the wave resource due to climate change are not included). The wave spectrum is discretized with 24 equally spaced bins in $\theta$ space and 29 logarithmically spaced frequency bins from 0.035Hz to 0.5Hz. The NOAA NCEP hindcast Phase 1 mosaic-model \note{GGM Citation: https://polar.ncep.noaa.gov/mmab/papers/tn291/MMAB\_291.pdf,  https://polar.ncep.noaa.gov/mmab/papers/tn302/MMAB\_302.pdf} where a global (0.5$^{\circ}$ resolution) drives regional models (10" - 4" resolution) was implemented in this study with enhanced output. This modeling system provides complete covereage over the U.S. EEZ with higher resolution focused on shallower waters.
+The WW3 simulations span a 32-year period from January 1, 1979 to December 31, 2010. The first year (1979) is treated as a 'spin-up' year, and is not included in any calculations of resource totals. Variability in the wave climate on timescales longer than the 31-year period included in the average are not considered (i.e., changes in the wave resource due to climate change are not included). The wave spectrum is discretized with 24 equally spaced bins in $\theta$ space and 29 logarithmically spaced frequency bins from 0.035Hz to 0.5Hz with an increment factor of 1.1. 
+
+Model grids and bathymetry come from the NOAA NCEP hindcast Phase 1 mosaic-model \citep{chawla2011wavewatch,chawla201230}. In this system a global model (0.5$^{\circ}$ resolution) drives regional models (10" - 4" resolution) providing complete coverage over the U.S. EEZ with higher resolution focused on shallower waters. This model was reimplemented to store wave spectra and source terms at a high resolution.
 
 Model output is collected at the U.S. EEZ around Alaska (excluding the Arctic Coast), Atlantic Coast, Caribbean Coast (Puerto Rico and U.S. Virgin Islands), Gulf Coast, Hawaii (excluding the Papah$\bar{\text{a}}$naumoku$\bar{\text{a}}$kea Marine National Monument), and the West Coast. Full variance spectra are stored at the U.S. EEZ boundary (at 200 nmi from shore, and along EEZ `borders' with other nation's). Inside the EEZ, directionally integrated source term output is collected at lines of equal distance from shore from 18.5 km (10 nmi) to 351.9 km (190 nmi) every 18.5 kms. Both output types are collected at hourly intervals every 1/6$^{\circ}$ along the defined lines.
-
-\note{GGM: Still need more details on:}
-\begin{itemize}
-\item Bathymetry data? \textcolor{green}{References to NOAA}
-\end{itemize}
 
 
 \subsection{Calculate Resource Totals} \label{sec:method:calc}
@@ -55,7 +51,7 @@ The remote resource, $R_R$, is the piece of the wave energy resource that has pr
 
 \subsubsection{Remote Resource} \label{sec:method:calc:remote}
 
-The remote resource is computed as a line-integral of the wave energy that fluxes toward the coastline across the EEZ boundary. 
+The remote resource is computed as a line-integral of the wave energy that fluxes toward the coastline across the EEZ boundary when it is bordered by international waters. 
 
 \begin{align}
   R_R = \rho g \int_{\leez}\iint \delta \, c_g(f) \, \bar{D}(f,\theta) \d f \d \theta \d l
@@ -83,11 +79,11 @@ However, because the source terms in \eqref{eqn:RL} depend on the sea-state and 
 In all cases we examined, $R_{L_*}$ was found to be greater than $R_{L_\circ}$, which suggests that $R_L$ should be defined as being equal to $R_{L_*}$. However, the scenario of extracting all wave energy at the edge of the EEZ is so hypothetical that it seems unrealistic to use this value to define $R_L$. Therefore, we treat these two estimates of $R_L$ as an uncertainty range for it.
 
 \begin{itemize}
-\item source terms are larger when starting with no-waves \note{Is this always true?}
+\item source terms are larger when starting with no-waves \note{Is this always true?} \textcolor{green}{I found that sometimes the source terms are larger when extracting 90\% but not by much.}
 \item Or is it because sometimes the winds blow {\em against} the waves?
 \item Is there an argument here relating to uncertainty in source terms, or is that a {\em different} source of uncertainty?
 \item Also, $R_{L_*}$ is {\em so hypothetical} that it is rather unrealistic, so it serves as an upper-bound.
-\item There is also some discussion here somewhere about the use of all source-terms, not just $S_{in}$. I think this also relates to the discussion above about whether $R_L = R_{L_*}$ or $R_{L_\circ} < R_L < R_{L_*}$ in the sense that we are making {\em some} assumptions/decisions about what does/does-not count in the `theoretical resource'. \note{Does a discussion of these assumptions/decisions belong here, or in the {\em methods} section?}
+\item There is also some discussion here somewhere about the use of all source-terms, not just $S_{in}$. I think this also relates to the discussion above about whether $R_L = R_{L_*}$ or $R_{L_\circ} < R_L < R_{L_*}$ in the sense that we are making {\em some} assumptions/decisions about what does/does-not count in the `theoretical resource'. \note{Does a discussion of these assumptions/decisions belong here, or in the {\em methods} section?} \textcolor{green}{Yes, stating why bottom friction is not being considered is important.}
 \end{itemize}
 
 It is worth noting that -- though directionality is critically important to estimating $R_R$ correctly in \eqref{eqn:RR} -- directionality is not important to estimating $R_L$ correctly (in \eqref{eqn:RL} all directions are weighted equally), only the total energy is. This is because this energy is being added to the wave-field per unit-area (it is not a wave-energy flux), and could theoretically be absorbed by a WEC or array of WECs within the domain before it ever reached a boundary where a line-integral would be appropriate (i.e., when directionality is important).
@@ -100,7 +96,7 @@ In WW3, as it is customary in third-generation spectral wave models, the waves a
 where $T_{m01}$ is the mean spectral period. The source term integrals are performed for the range where the wave spectrum is actively simulated.
 
 \begin{enumerate}
-\item ST4 package (improvement in power density and Hs, but overpredicts energy-period<-- is there a citation for this)
+\item ST4 package (improvement in power density and Hs, but overpredicts energy-period<-- is there a citation for this)\textcolor{green}{I did some searching and didnt find a good discussion about this.}
 \item We add all source terms together (except bottom friction), because:
   \begin{itemize}
   \item Questions about accuracy of individual terms \citep{garcia-medinaWaveResourceAssessment2014}
@@ -109,6 +105,21 @@ where $T_{m01}$ is the mean spectral period. The source term integrals are perfo
   \end{itemize}
 \item ‘Control volume’ is EEZ surrounding a continent/island. We break this into pieces for each country. I.e.: we don’t include line-integral at boundary between countries.
 \end{enumerate}
+
+\subsection{Methodological differences with key previous works}
+\label{sec:method:changes}
+
+\note{Also include here some discussion of other RA's? In particular, \citep{gunnQuantifyingGlobalWave2012}, others? Or does this discussion belong in the intro?!}
+
+There are three important pieces of the EPRI 2011 methodology that are different from what is used here:
+\begin{enumerate}
+\item It includes only the remote resource, because the local resource was not typically considered in wave energy resource assessment at that time
+\item It used an integration contour that was much closer to shore (i.e., the 200-m water-depth contour, or 50 nautical-miles from shore, whichever is closer to shore)
+\item It did not account for wave directionality, which led to some ``double-counting'' \cite{nationalresearchcouncilEvaluationDepartmentEnergy2013}
+\item EPRI 2011 used 52-months, we use 31-years. This is important as pointed out by \cite{yangCharacteristicsVariabilityNearshore2020}.
+\end{enumerate}
+\note{Do we also need to mention minor differences in method: different model/physics packages? Other?}
+
 
 %%% Local Variables:
 %%% TeX-master: "wave_res"
