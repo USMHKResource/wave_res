@@ -18,8 +18,10 @@ if this_machine.startswith('lkilcher-26339s') or \
     #srcdir = Path(os.path.expanduser('~/tmp/wave_ra/pnnl/'))
 
 # Gabriel's Paths
-if this_machine.startswith('constance') or this_machine.startswith('node'):
+if this_machine.startswith('constance') or this_machine.startswith('node'):    
     rootFld = Path('/pic/projects/fvwetland/')
+    # For interactive work
+    pkgdir = rootFld / 'gabriel/waveEnergyResource/assessment/hindcast/resource/python/wave_res/wave_res/'
     srcdir = rootFld / 'gabriel/waveEnergyResource/assessment/hindcast/'
     tmpdir = srcdir / 'resource/tmpFreq/'
 

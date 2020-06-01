@@ -4,7 +4,7 @@ import paths as p
 import area_integral as aint
 from wavespeed.wave_dispersion import rho, gravity
 import pyDictH5
-import base
+import base2 as base # My path was getting confused with two base.py
 
 # Wave Flux Units
 # ########
@@ -70,7 +70,7 @@ def get_mask(region, dt):
 
 
 def calc_local(scenario, region, dates,
-               terms=source_terms, fc=True):
+               terms=source_terms, fc=True, storeSpatial=False):
     """Calculate the local resource for `scenario` in `region` for
     `months`.
     
@@ -89,6 +89,8 @@ def calc_local(scenario, region, dates,
          value of fFM = 2.5 is hardcoded, it corresponds to the default value
          used by the ST4 physics.
          fc = fFM/Tm01 = 2.5/Tm01
+    storeSpatial: If true stores source terms without spatially integrating but
+                  they will be frequency integrated to save space.
 
     Returns
     =======
@@ -130,20 +132,34 @@ def calc_local(scenario, region, dates,
     out = LocalResults()
     out['time'] = dates
     out['Nhour'] = np.zeros(len(out['time']), dtype=np.uint16)
-    out['fbins'] = rinf.freqbins
-    for ky in terms:
-        out[ky] = np.zeros((len(dates), n_f, 20),
-                           dtype=np.float32)
+    if storeSpatial:
+        out['xy'] = xy
+        for ky in terms:
+            out[ky] = np.zeros((len(dates), xy.shape[0]),
+                               dtype=np.float32)
+    else:
+        out['fbins'] = rinf.freqbins
+        for ky in terms:
+            out[ky] = np.zeros((len(dates), n_f, 20),
+                            dtype=np.float32)
 
-    out['range'] = np.arange(10, 201, 10)
+    if storeSpatial:
+        # I need to get the triangulation
+        out['verts'] = [rinf.tri_inds[rky] for rky in list(rinf.tri_inds)]
+        # Flatten this
+        # http://stackoverflow.com/questions/952914/making-a-flat-list-out-of-list-of-lists-in-python
+        out['verts'] = np.array([item for sublist in out['verts'] for item in sublist])
 
-    out['area'] = np.zeros(len(out['range']), dtype=np.float32)
-    for irng, rng in enumerate(range(10, 201, 10)):
-        rky = '{:03d}'.format(rng)
-        verts = rinf.tri_inds[rky]
-        # Now integrate
-        _, area = aint.sumtriangles(xy, np.zeros_like(xy), verts)
-        out['area'][irng] = area
+    else:
+        out['range'] = np.arange(10, 201, 10)
+
+        out['area'] = np.zeros(len(out['range']), dtype=np.float32)
+        for irng, rng in enumerate(range(10, 201, 10)):
+            rky = '{:03d}'.format(rng)
+            verts = rinf.tri_inds[rky]
+            # Now integrate
+            _, area = aint.sumtriangles(xy, np.zeros_like(xy), verts)
+            out['area'][irng] = area
 
     # Load data and perform integral
     for idt, dt in enumerate(dates):
@@ -157,8 +173,9 @@ def calc_local(scenario, region, dates,
             m1 = np.trapz(dat['ef'][:].data * ff[None, None, :], ff, axis=-1)
             fcut = 2.5 * m1 / m0 # 2.5/Tm01, v5.16 manual Sec 2.3.18,
                                  # Line 1506,  2362 ww3_grid.ftn
-
+        
         for ky in terms:
+            print('        ' + ky)
             dnow = dat.variables[ky][:]
             # Ice mask
             if region.lower() == 'ak':
@@ -169,14 +186,21 @@ def calc_local(scenario, region, dates,
                 dnow[ff[None, None, :] > fcut[:, :, None]] = 0
             # average in time
             src[:n_grid] = dnow.mean(0)
-            for irng, rng in enumerate(range(10, 201, 10)):
-                rky = '{:03d}'.format(rng)
-                verts = rinf.tri_inds[rky]
-                # Now integrate
-                zsum, _ = aint.sumtriangles(xy, src, verts)
-                out[ky][idt, :, irng] = zsum
+
+            # Integration
+            if storeSpatial:
+                # Integrate over frequency 
+                out[ky][idt,:] = (src * np.diff(rinf.freqbins)[None, :]).sum(1) 
+            else:
+                # Integrate each contour independently
+                for irng, rng in enumerate(range(10, 201, 10)):
+                    rky = '{:03d}'.format(rng)
+                    verts = rinf.tri_inds[rky]
+                    # Now integrate
+                    zsum, _ = aint.sumtriangles(xy, src, verts)
+                    out[ky][idt, :, irng] = zsum
         dat.close()
-    # Return units of Watts/Hz
+    # Return units of Watts/Hz or Watts/m2 depending on the flags chosen
     for ky in terms:
         out[ky] *= rho * gravity
     return out

@@ -8,12 +8,16 @@ months = np.arange(np.datetime64('1979-01'),
 
 all_regions = ['wc', 'at', 'prusvi', 'ak', 'hi']
 
+# If True: Stores results that are not area integrated
+storeSpatial = True
+
 # In this dictionary, the keys are the scenarios, and the values are
 # lists of regions that should be run for each scenario.
 run_these = {
-    'baseline': ['ak'],
-    'extraction': ['ak'],
-    # 'extraction':all_regions
+    'baseline': ['wc','at'],
+    'extraction': ['wc','at']
+    # 'extraction':all_regions,
+    # 'baseline':all_regions
 }
 
 
@@ -21,7 +25,7 @@ for scenario, REGIONS in run_these.items():
 
     mkdir('results/{scenario}'.format(scenario=scenario))
     for region in REGIONS:
-
+        
         rinf = wr.RegionInfo(region)
 
         print("#### Calculating LOCAL totals for '{}' scenario, '{}' region..."
@@ -29,7 +33,8 @@ for scenario, REGIONS in run_these.items():
 
         print("   Calculating local resource...")
 
-        local = wr.calc_local(scenario, region, months)
+        local = wr.calc_local(scenario, region, months, 
+                              storeSpatial=storeSpatial)
         # This returns a dictionary-like object (based on pyDictH5.data)
         # containing:
         #  'time': (n_months) the month
@@ -53,6 +58,11 @@ for scenario, REGIONS in run_these.items():
         # inshore of it. So, to get the source term for the entire
         # EEZ, you need to sum them, e.g.:
         #    sin_total = local['sin'].sum(-1)
+
+        if storeSpatial:
+            local.to_hdf5('results/{scenario}/{region}.local-area.h5'
+                          .format(scenario=scenario, region=region))
+            continue
 
         ltot = local.hourly_average()
 
