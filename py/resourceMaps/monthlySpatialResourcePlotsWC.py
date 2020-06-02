@@ -5,6 +5,7 @@ Monthly Averaged Data
 from __future__ import division,print_function
 
 import os,glob
+import sys
 from os.path import abspath as asbp
 import numpy as np
 import pylab as pl
@@ -16,7 +17,11 @@ import scipy.interpolate
 import datetime
 import h5py
 
-import cmocean
+# Wave_res
+# import grid_data as gdat
+sys.path.append('/pic/projects/fvwetland/gabriel/waveEnergyResource/' + 
+                'assessment/hindcast/resource/python/wave_res/wave_res/')
+import proj as pp
 
 import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter,LatitudeFormatter
@@ -28,19 +33,19 @@ import pynmd.data.angles as gangles
 import pynmd.data.signal as gsignal
 import pynmd.tools.gtime as gtime
 import pynmd.plotting as gplot
+import pynmd.models.tools.unstructured as gunst
 
 # ==============================================================================
 # Load WW3 Output
 # ==============================================================================
 
-region = 'wc'
+region = 'at'
 
 # Load Wind --------------------------------------------------------------------
 wndFld = ('/pic/projects/fvwetland/gabriel/waveEnergyResource/' + 
           'assessment/hindcast/resource/' +
           'python/wave_res/ww3Averages/')
-if region == 'wc':
-    wndFile = wndFld + 'ww3.bulk.wc_10m.monthly_avg_wnd.nc'
+wndFile = wndFld + 'ww3.bulk.' + region + '_10m.monthly_avg_wnd.nc'
 
 nc = netCDF4.Dataset(wndFile,'r')
 utime = netcdftime.utime(nc.variables['time'].units)
@@ -54,6 +59,7 @@ mes = np.array([aa.month for aa in otWnd])
 [lon,lat] = np.meshgrid(lon,lat)
 
 # Load local and potential resource --------------------------------------------
+
 srcFld = ('/pic/projects/fvwetland/gabriel/waveEnergyResource/assessment/' + 
           'hindcast/resource/python/wave_res/results/')
 
@@ -73,6 +79,33 @@ locPot = {'mes':np.array([np.int(aa[-2:]) for aa in ff['time'][:]]),
           'xy':ff['xy'][:]}
 ff.close()
 
+# The projections Levi used are under wave_res/wave_res/proj.py ----------------
+dataProj = ccrs.PlateCarree()
+prjLevi = pp.proj[region]
+
+tmp = dataProj.transform_points(prjLevi,locPot['xy'][:,0],locPot['xy'][:,1])
+locNat['lon'] = tmp[:,0]
+locNat['lat'] = tmp[:,1]
+locPot['lon'] = tmp[:,0]
+locPot['lat'] = tmp[:,1]
+
+# Conversion factor ------------------------------------------------------------
+# Results are given in Watts/m2
+areaInt = False
+factor = 1
+unitLabel = r'$\left[ W / m^{2} \right]$'
+
+# Compute area for integration -------------------------------------------------
+locNat['area'],_ = gunst.areaInt(locNat['xy'],locNat['verts'])
+locPot['area'] = locNat['area']
+
+# Get the resource at each element (will be used below for plotting)
+def resourcePerElement(verts,z):
+    x = np.zeros(verts.shape[0])
+    for aa in range(x.shape[0]):
+        x[aa] = np.mean(z[verts[aa,:]])
+    return x
+
 
 # Load the EEZ poligons --------------------------------------------------------
 eezFld = ('/pic/projects/fvwetland/gabriel/waveEnergyResource/' + 
@@ -85,6 +118,9 @@ if region == 'wc':
     eezPoli = np.r_[eezPoli,np.array([[260,eezPoli[-1,1]]]),
                     np.array([[260,eezPoli[0,1]]])]
     # wcPoliExt[:,0] = gangles.wrapto360(wcPoliExt[:,0])
+elif region == 'at':
+    eezPoli = np.r_[eezPoli,np.array([[eezPoli[:,0].min(),eezPoli[:,1].max()]])]
+
 
 # Mask inside the Polygon
 tmpxy = np.array([lon.flatten(),lat.flatten()]).T
@@ -102,16 +138,17 @@ vwnd[:,flag] = np.NAN
 fs = 8
 pl.rcParams['font.family'] = 'sans-serif'
 pl.rcParams['font.sans-serif'] = 'Helvetica'
-outFld = ('/mnt/fvwetland/gabriel/waveEnergyResource/' + 
-          'assessment/energyExtraction/basin/94-figures/paper/')
+outFld = ('/pic/projects/fvwetland/gabriel/waveEnergyResource/assessment/' + 
+          'hindcast/resource/python/wave_res/py/resourceMaps/')
 prop_cycle = pl.rcParams['axes.prop_cycle']
 colors = prop_cycle.by_key()['color']
 
 # West Coast Domain ------------------------------------------------------------
 
 # Create projection
-plotProj = ccrs.PlateCarree(central_longitude=180)
+# plotProj = ccrs.PlateCarree(central_longitude=180)
 dataProj = ccrs.PlateCarree()
+plotProj = ccrs.PlateCarree()
 
 # States --------------------------------------------------
 borderDataset = ('/pic/projects/birthright/garc525/' + 
@@ -146,6 +183,8 @@ season = {'Winter':[12,1,2],'Spring':[3,4,5],
           'Yearly':np.arange(1,13)}
 if region == 'wc':
     extents = [-130,-117,30.0,50.0]
+elif region == 'at':
+    extents = [-83,-65,23,46]
 
 for ii,aa in enumerate(['Winter','Spring','Summer','Autumn','Yearly']):
     
@@ -162,13 +201,16 @@ for ii,aa in enumerate(['Winter','Spring','Summer','Autumn','Yearly']):
     ax3.set_extent(extents,crs=dataProj)
 
     ax3.add_feature(coast)
-    #ax3.add_feature(states)
-    #ax3.add_feature(countries)    
+    ax3.add_feature(states)
+    ax3.add_feature(countries)    
 
     wndMag = np.mean((uwnd[aveInd,...]**2 + vwnd[aveInd,...]**2)**0.5,axis=0)
-    hcp3 = ax3.pcolormesh(lon,lat,wndMag,
-                          cmap=pl.cm.gist_ncar,transform=dataProj)
-    hcp3.set_clim([0,10])   
+    hcp3 = ax3.pcolormesh(lon,lat,wndMag,transform=dataProj,cmap=pl.cm.Greens)
+    #pl.colorbar(hcp3,ax=ax3)
+    if region == 'wc':
+        hcp3.set_clim([0,10])
+    elif region == 'at':
+        hcp3.set_clim([0,5])
     q3 = ax3.quiver(lon[::10,::10],lat[::10,::10],
                     np.mean(uwnd[aveInd,::10,::10],axis=0)/wndMag[::10,::10],
                     np.mean(vwnd[aveInd,::10,::10],axis=0)/wndMag[::10,::10],
@@ -181,20 +223,29 @@ for ii,aa in enumerate(['Winter','Spring','Summer','Autumn','Yearly']):
                  rotation='vertical', rotation_mode='anchor',
                  transform=ax3.transAxes,fontsize=fs)        
 
-    # Local resource --------------------------------------------
+    # Natural resource --------------------------------------------
     ax0 = pl.subplot2grid((3,5),(1,ii),projection=plotProj)
     ax0.set_extent(extents,crs=dataProj)
 
-    #ax0.add_feature(coast)
-    #ax0.add_feature(states)
-    #ax0.add_feature(countries)
+    ax0.add_feature(coast)
+    ax0.add_feature(states)
+    ax0.add_feature(countries)
+    # Compute the resource 
+    x = np.mean(locNat['resource'][aveInd,...],axis=0)
+    x = resourcePerElement(locNat['verts'],x)
+    if areaInt:
+        x *= locNat['area']
+    # Apply scaling factor
+    x /= factor
 
-    hcp0 = ax0.tripcolor(locNat['lon'],locNat['lat'],locNat['verts'],
-                         np.mean(locNat['resource'][aveInd,...],axis=0),
-                         cmap=pl.cm.gist_ncar,transform=dataProj,
-                         shading='gouraud')
-    #pl.colorbar(hcp0,ax=ax0)
-    hcp0.set_clim([0,0.2])
+    hcp0 = ax0.tripcolor(locNat['lon'],locNat['lat'],locNat['verts'],x,
+                         cmap=pl.cm.PRGn,transform=dataProj)
+    
+    # pl.colorbar(hcp0,ax=ax0)
+    if region == 'wc':
+        hcp0.set_clim([-0.08,0.08])
+    elif region == 'at':
+        hcp0.set_clim([-0.15,0.15])        
     if ii == 0:
         ax0.text(-0.07, 0.55, 'Local Resource', va='bottom', ha='center',
                  rotation='vertical', rotation_mode='anchor',
@@ -205,58 +256,58 @@ for ii,aa in enumerate(['Winter','Spring','Summer','Autumn','Yearly']):
         #ax0.text(-121.5,37,'CA',fontsize=fs,transform=dataProj)
 
     # Potential resource --------------------------------------------
-    ax1 = pl.subplot2grid((4,6),(1,ii),projection=plotProj)
+    ax1 = pl.subplot2grid((3,5),(2,ii),projection=plotProj)
     ax1.set_extent(extents,crs=dataProj)
 
     ax1.add_feature(coast)
     ax1.add_feature(states)
     ax1.add_feature(countries)
 
-    hcp1 = ax1.tripcolor(locPot['lon'],locPot['lat'],locPot['verts'],
-                         np.mean(locPot['resource'][aveInd,...],axis=0),
-                         cmap=pl.cm.gist_ncar,transform=dataProj,
-                         shading='gouraud')
-    #pl.colorbar(hcp1,ax=ax1)
-    hcp1.set_clim([0,0.2])
+    x = np.mean(locPot['resource'][aveInd,...],axis=0)
+    x = resourcePerElement(locPot['verts'],x)
+    if areaInt:
+        x *= locPot['area']
+    # Apply scaling factor
+    x /= factor
+
+    hcp1 = ax1.tripcolor(locPot['lon'],locPot['lat'],locPot['verts'],x,
+                         cmap=pl.cm.PRGn,transform=dataProj)
+    # pl.colorbar(hcp1,ax=ax1)
+    hcp1.set_clim(hcp0.get_clim())
     if ii == 0:
         ax1.text(-0.07, 0.55, 'Potential Resource', va='bottom', ha='center',
                  rotation='vertical', rotation_mode='anchor',
                  transform=ax1.transAxes,fontsize=fs)        
-
+    
 
 
 # Finishing touches
-hf1.subplots_adjust(bottom=0.01,top=0.99,left=0.03,right=0.91,
+hf1.subplots_adjust(bottom=0.01,top=0.99,left=0.04,right=0.89,
                     wspace=0.00,hspace=0.05)
 pl.pause(2)
 
 # Manually Add Colorbars
-ax0Pos = ax0.get_position()
-cax0 = hf1.add_axes([0.92,ax0Pos.y0,0.015,ax0Pos.height])
-hcb0 = pl.colorbar(hcp0,cax=cax0)
-hcb0.ax.tick_params(labelsize=fs)
-hcb0.ax.set_title(r'[W/m$^{2}$]',fontsize=fs)
-
-ax1Pos = ax1.get_position()
-cax1 = hf1.add_axes([0.92,ax1Pos.y0,0.015,ax1Pos.height])
-hcb1 = pl.colorbar(hcp1,cax=cax1)
-hcb1.ax.tick_params(labelsize=fs)
-hcb1.ax.set_title(r'[W/m$^{2}$]',fontsize=fs)
-
-ax2Pos = ax2.get_position()
-cax2 = hf1.add_axes([0.92,ax2Pos.y0,0.02,ax2Pos.height])
-hcb2 = pl.colorbar(hcp2,cax=cax2)
-hcb2.ax.tick_params(labelsize=fs)
-hcb2.ax.set_title('[kW/m]',fontsize=fs)
-
 ax3Pos = ax3.get_position()
-cax3 = hf1.add_axes([0.92,ax3Pos.y0,0.02,ax3Pos.height])
+cax3 = hf1.add_axes([0.91,ax3Pos.y0,0.02,ax3Pos.height])
 hcb3 = pl.colorbar(hcp3,cax=cax3)
 hcb3.ax.tick_params(labelsize=fs)
 hcb3.ax.set_title('[m/s]',fontsize=fs)
 
+ax0Pos = ax0.get_position()
+cax0 = hf1.add_axes([0.91,ax0Pos.y0,0.015,ax0Pos.height])
+hcb0 = pl.colorbar(hcp0,cax=cax0)
+hcb0.ax.tick_params(labelsize=fs)
+hcb0.ax.set_title(unitLabel,fontsize=fs)
+
+ax1Pos = ax1.get_position()
+cax1 = hf1.add_axes([0.91,ax1Pos.y0,0.015,ax1Pos.height])
+hcb1 = pl.colorbar(hcp1,cax=cax1)
+hcb1.ax.tick_params(labelsize=fs)
+hcb1.ax.set_title(unitLabel,fontsize=fs)
+
+
 # Save the figure
-hf1.savefig(outFld + '/westCoast_owp_monthly.png',dpi=500)
+hf1.savefig(outFld + '/' +  region + '_spatial_seasonal.png',dpi=1000)
 
 # ==============================================================================
 # Compute average wind speeds over the domain
