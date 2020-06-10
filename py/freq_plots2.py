@@ -65,95 +65,78 @@ def spec_freq2period(spec, fbins, norm=True):
         specT /= IT
     return specT, T
     
-if flag['show remote']:
 
-    fig0 = plt.figure(102)
-    fig0.clf()
-    fig0, ax0 = plt.subplots(1, 1, num=fig0.number)
+############## Begin Plotting ############
 
-    for idx, region in enumerate(plot_regions):
+# Initialize figures
+figL0 = plt.figure(202)
+figL0.clf()
+figL0, axL0 = plt.subplots(1, 1, num=figL0.number)
 
-        dat = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case='baseline', region=region, type='remote')))
-
-        # Grab the edge of the EEZ, and take a time average
-        dnow = dat['1way'][:, :, -1].mean(0)
-        specT, T_center = spec_freq2period(dnow, dat['fbins'])
-                
-        ax0.plot(T_center, specT,
-                 color=colors[region],
-                 label=labels[region])
-        
-        # ax0.bar(Tbins[1:] - bar_plot_coefs[2] - idx * bar_plot_coefs[1],
-        #         np.diff(Int2),
-        #         color=colors[region],
-        #         width=bar_plot_coefs[0],
-        #         label=labels[region])
-
-    ax0.set_xlim([0, 30])
-    ax0.set_xticks(np.arange(0, 31, 5))
-    #ax0.xaxis.grid(True)
-    ax0.legend()
-    ax0.set_ylabel('Normalized Energy Distribution [1/s]')
-    ax0.set_title("Remote Resource")
-    ax0.set_xlabel("Wave Period [s]")
-    ax0.set_ylim([0, 0.2])
-    fig0.savefig('../fig/RemoteResource_Freq{}.pdf'.format(tag))
-    fig0.savefig('../fig/RemoteResource_Freq{}.png'.format(tag), dpi=300)
-
+figR0 = plt.figure(102)
+figR0.clf()
+figR0, axR0 = plt.subplots(1, 1, num=figR0.number)
 
 ls = {'baseline': '-', 'extraction': ':'}
 # zorder = {'baseline': 1, 'extraction': 0}
 # alpha = {'baseline': 1, 'extraction': 0.5}
 # width_factor = {'baseline': 1, 'extraction': 0.7}
 
-if flag['show local']:
+for idx, region in enumerate(plot_regions):
 
-    fig0 = plt.figure(202)
-    fig0.clf()
-    fig0, ax0 = plt.subplots(1, 1, num=fig0.number)
+    dat = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case='baseline', region=region, type='remote')))
 
-    for idx, region in enumerate(plot_regions):
+    # Grab the edge of the EEZ, and take a time average
+    dnow = dat['1way'][:, :, -1].mean(0)
+    specT, T_center = spec_freq2period(dnow, dat['fbins'])
 
-        for case in ['baseline', 'extraction']:
-            dat = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case=case, region=region, type='local')))
+    axR0.plot(T_center, specT,
+             color=colors[region],
+             label=labels[region])
+
+    # axR0.bar(Tbins[1:] - bar_plot_coefs[2] - idx * bar_plot_coefs[1],
+    #         np.diff(Int2),
+    #         color=colors[region],
+    #         width=bar_plot_coefs[0],
+    #         label=labels[region])
+
+    for case in ['baseline', 'extraction']:
+        dat = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case=case, region=region, type='local')))
 
 
-            # Sum over the EEZ, average in time
-            dnow = dat['stot'][:, :, :].sum(-1).mean(0)
+        # Sum over the EEZ, average in time
+        dnow = dat['stot'][:, :, :].sum(-1).mean(0)
 
-            specT, T_center = spec_freq2period(dnow, dat['fbins'])
-            
-            if case == 'baseline':
-                label = labels[region]
-            else:
-                label = None
+        specT, T_center = spec_freq2period(dnow, dat['fbins'])
 
-            ax0.plot(Tbins_center, specT,
-                     color=colors[region],
-                     label=label,
-                     linestyle=ls[case]
-            )
+        if case == 'baseline':
+            label = labels[region]
+        else:
+            label = None
 
-            # axI.plot(1. / f, Int)
-            # Int2 = np.interp(Fbins, f, Int)
-            # axI.plot(1. / Fbins, Int2, '+')
+        axL0.plot(Tbins_center, specT,
+                 color=colors[region],
+                 label=label,
+                 linestyle=ls[case]
+        )
 
-            # ax0.bar(Tbins[1:] - bar_plot_coefs[2] - idx * bar_plot_coefs[1],
-            #         np.diff(Int2),
-            #         color=colors[region],
-            #         width=bar_plot_coefs[0] * width_factor[case],
-            #         label=label,
-            #         hatch=hatch[case], zorder=zorder[case],
-            #         alpha=alpha[case])
+axR0.set_xlim([0, 30])
+axR0.set_xticks(np.arange(0, 31, 5))
+axR0.legend()
+axR0.set_ylabel('Normalized Energy Distribution [1/s]')
+axR0.set_title("Remote Resource")
+axR0.set_xlabel("Wave Period [s]")
+axR0.set_ylim([0, 0.2])
+figR0.savefig('../fig/RemoteResource_Freq{}.pdf'.format(tag))
+figR0.savefig('../fig/RemoteResource_Freq{}.png'.format(tag), dpi=300)
 
-    ax0.set_xlim([0, 30])
-    ax0.set_xticks(np.arange(0, 31, 5))
-    ax0.xaxis.grid(True)
-    ax0.axhline(0, linestyle=':', color='k')
-    ax0.set_title('Local Resource')
-    ax0.set_ylabel('Normalized Energy Distribution [1/s]')
-    ax0.set_xlabel('Wave Period [s]')
-    ax0.legend()
-    #ax0.set_ylim(local_ylim)
-    fig0.savefig('../fig/LocalResource_Freq{}.pdf'.format(tag))
-    fig0.savefig('../fig/LocalResource_Freq{}.png'.format(tag), dpi=300)
+axL0.set_xlim([0, 30])
+axL0.set_xticks(np.arange(0, 31, 5))
+axL0.xaxis.grid(True)
+axL0.axhline(0, linestyle=':', color='k')
+axL0.set_title('Local Resource')
+axL0.set_ylabel('Normalized Energy Distribution [1/s]')
+axL0.set_xlabel('Wave Period [s]')
+axL0.legend()
+figL0.savefig('../fig/LocalResource_Freq{}.pdf'.format(tag))
+figL0.savefig('../fig/LocalResource_Freq{}.png'.format(tag), dpi=300)
