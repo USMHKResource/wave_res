@@ -72,7 +72,8 @@ figR0, axR0 = plt.subplots(1, 1, num=figR0.number)
 figC0 = plt.figure(300)
 figC0.clf()
 figC0, axC0 = plt.subplots(1, 1, num=figC0.number)
-
+axC0.lg0 = []
+axC0.lg1 = []
 
 ls = {'natural': '-', 'potential': ':'}
 # zorder = {'baseline': 1, 'extraction': 0}
@@ -82,6 +83,10 @@ ls = {'natural': '-', 'potential': ':'}
 alld = {}
 
 for idx, region in enumerate(plot_regions):
+
+    figCR = plt.figure(3000 + idx)
+    figCR.clf()
+    figCR, axCR = plt.subplots(1, 1, num=figCR.number)
 
     alld[region] = dreg = {}
     
@@ -102,8 +107,9 @@ for idx, region in enumerate(plot_regions):
                                              fbins)
 
     axR0.plot(specT['T'], specT['remote'] / int_period(specT['remote'], fbins),
-             color=colors[region],
-             label=labels[region],
+              color=colors[region],
+              label=labels[region],
+              lw=3,
     )
 
     # axC0.plot(specT['T'], specT['remote'] / int_period(specT['remote'], fbins),
@@ -114,29 +120,63 @@ for idx, region in enumerate(plot_regions):
     dpot = specT['remote'] + specT['potential']
     dnat = specT['remote'] + specT['natural']
     norm = int_period(dpot, fbins)
+    drem /= int_period(drem, fbins)
+    dpot /= norm
+    axC0.lg0 += axC0.plot(specT['T'],
+                          drem,
+                          color=colors[region],
+                          label=labels[region],
+                          linestyle='-',
+                          lw=3,
+    )
+    axC0.plot(specT['T'],
+              dpot,
+              color=colors[region],
+              lw=1,
+              #linestyle='--',
+              alpha=0.5,
+    )
+    # axC0.fill_between(specT['T'], y1=dnat, y2=dpot,
+    #                   color=colors[region],
+    #                   alpha=0.2,
+    # )
+    # axC0.fill_between(specT['T'], y1=drem, y2=dnat,
+    #                   color=colors[region],
+    #                   alpha=0.4,
+    # )
+
+    drem = specT['remote']
+    dpot = specT['remote'] + specT['potential']
+    dnat = specT['remote'] + specT['natural']
+    norm = int_period(dpot, fbins)
     drem /= norm # Normalize by TOTAL POTENTIAL (less confusing!)
     dnat /= norm # Normalize by TOTAL POTENTIAL (less confusing!)
     dpot /= norm
-    axC0.plot(specT['T'],
+    axCR.plot(specT['T'],
               drem,
-              color=colors[region],
+              color='k',
               label=labels[region],
               linestyle='-'
     )
-    axC0.plot(specT['T'],
+    axCR.plot(specT['T'],
               dnat,
-              color=colors[region],
+              color='k',
               linestyle='--'
     )
-    axC0.fill_between(specT['T'], y1=dnat, y2=dpot,
-                      color=colors[region],
+    axCR.plot(specT['T'],
+              dpot,
+              color='k',
+              linestyle='-.'
+    )
+    axCR.fill_between(specT['T'], y1=dnat, y2=dpot,
+                      color='k',
                       alpha=0.2,
     )
-    axC0.fill_between(specT['T'], y1=drem, y2=dnat,
-                      color=colors[region],
+    axCR.fill_between(specT['T'], y1=drem, y2=dnat,
+                      color='k',
                       alpha=0.4,
     )
-
+    axCR.set_title("{}: Total resource frequency breakdown".format(labels[region]))
     
     for case in ['natural', 'potential']:
 
@@ -170,8 +210,11 @@ axL0.set_xlabel('Wave Period [s]')
 axL0.legend()
 base.savefig(figL0, 'LocalResource_Freq{}'.format(tag), dpi=300)
 
+axC0.lg1 += axC0.plot(np.NaN, np.NaN, linestyle='-', color='k', lw=3, label='Remote')
+axC0.lg1 += axC0.plot(np.NaN, np.NaN, linestyle='-', color='k', lw=1, alpha=0.5, label='Potential')
 axC0.set_ylim([0, 0.2])
-axC0.set_title('Total Resource')
+axC0.set_title('Frequency Dependence of Wave Energy')
 axC0.set_ylabel('Normalized Energy Distribution [1/s]')
-axC0.legend()
+axC0.legend(axC0.lg0, [h.get_label() for h in axC0.lg0])
+figC0.legend(axC0.lg1, [h.get_label() for h in axC0.lg1], loc='upper center', bbox_to_anchor=[0.5, 0.88])
 base.savefig(figC0, 'TotalResource_FreqAll')
