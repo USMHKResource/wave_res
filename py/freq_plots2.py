@@ -44,7 +44,7 @@ else:
 # # [width, spacing, offset]
 
 
-def spec_freq2period(spec, fbins, norm=True):
+def spec_freq2period(spec, fbins, norm=False):
     """Convert the units of a frequency spectrum (W/Hz) to a
     period-spectrum (W/s).
     """
@@ -64,6 +64,12 @@ def spec_freq2period(spec, fbins, norm=True):
     if norm:
         specT /= IT
     return specT, T
+
+
+def int_period(specT, fbins, axis=0):
+    Tbins = fbins ** -1
+    dT = -np.diff(Tbins)
+    return (specT * dT).sum(axis)
     
 
 ############## Begin Plotting ############
@@ -77,44 +83,55 @@ figR0 = plt.figure(102)
 figR0.clf()
 figR0, axR0 = plt.subplots(1, 1, num=figR0.number)
 
-ls = {'baseline': '-', 'extraction': ':'}
+figC0 = plt.figure(300)
+figC0.clf()
+figC0, axC0 = plt.subplots(1, 1, num=figC0.number)
+
+
+ls = {'natural': '-', 'potential': ':'}
 # zorder = {'baseline': 1, 'extraction': 0}
 # alpha = {'baseline': 1, 'extraction': 0.5}
 # width_factor = {'baseline': 1, 'extraction': 0.7}
 
+alld = {}
+
 for idx, region in enumerate(plot_regions):
+    alld[region] = dreg = {}
+    
+    dreg['remote'] = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case='baseline', region=region, type='remote')))
+    dreg['natural'] = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case='baseline', region=region, type='local')))
+    dreg['potential'] = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case='extraction', region=region, type='local')))
 
-    dat = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case='baseline', region=region, type='remote')))
+    fbins = dreg['remote']['fbins']
+    
+    specT = {}
+    # Grab the edge of the EEZ, and take a time average, then convert to T-spec
+    specT['remote'], specT['T'] = spec_freq2period(dreg['remote']['1way'][:, :, -1].mean(0),
+                                                   fbins)
+    # Sum over the EEZ, average in time, then convert to T-spec
+    specT['natural'], _ = spec_freq2period(dreg['natural']['stot'].sum(-1).mean(0),
+                                           fbins)
+    specT['potential'], _ = spec_freq2period(dreg['potential']['stot'].sum(-1).mean(0),
+                                             fbins)
 
-    # Grab the edge of the EEZ, and take a time average
-    dnow = dat['1way'][:, :, -1].mean(0)
-    specT, T_center = spec_freq2period(dnow, dat['fbins'])
-
-    axR0.plot(T_center, specT,
+    axR0.plot(specT['T'], specT['remote'] / int_period(specT['remote'], fbins),
              color=colors[region],
-             label=labels[region])
+             label=labels[region],
+    )
 
-    # axR0.bar(Tbins[1:] - bar_plot_coefs[2] - idx * bar_plot_coefs[1],
-    #         np.diff(Int2),
-    #         color=colors[region],
-    #         width=bar_plot_coefs[0],
-    #         label=labels[region])
+    axC0.plot(specT['T'], specT['remote'] / int_period(specT['remote'], fbins),
+             color=colors[region],
+             label=labels[region],
+    )
+    
+    for case in ['natural', 'potential']:
 
-    for case in ['baseline', 'extraction']:
-        dat = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case=case, region=region, type='local')))
-
-
-        # Sum over the EEZ, average in time
-        dnow = dat['stot'][:, :, :].sum(-1).mean(0)
-
-        specT, T_center = spec_freq2period(dnow, dat['fbins'])
-
-        if case == 'baseline':
+        if case == 'natural':
             label = labels[region]
         else:
             label = None
 
-        axL0.plot(Tbins_center, specT,
+        axL0.plot(specT['T'], specT[case] / int_period(specT[case], fbins),
                  color=colors[region],
                  label=label,
                  linestyle=ls[case]
