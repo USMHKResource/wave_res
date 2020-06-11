@@ -82,6 +82,7 @@ ls = {'natural': '-', 'potential': ':'}
 alld = {}
 
 for idx, region in enumerate(plot_regions):
+
     alld[region] = dreg = {}
     
     dreg['remote'] = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case='baseline', region=region, type='remote')))
@@ -105,10 +106,37 @@ for idx, region in enumerate(plot_regions):
              label=labels[region],
     )
 
-    axC0.plot(specT['T'], specT['remote'] / int_period(specT['remote'], fbins),
-             color=colors[region],
-             label=labels[region],
+    # axC0.plot(specT['T'], specT['remote'] / int_period(specT['remote'], fbins),
+    #          color=colors[region],
+    #          label=labels[region],
+    # )
+    drem = specT['remote']
+    dpot = specT['remote'] + specT['potential']
+    dnat = specT['remote'] + specT['natural']
+    norm = int_period(dpot, fbins)
+    drem /= norm # Normalize by TOTAL POTENTIAL (less confusing!)
+    dnat /= norm # Normalize by TOTAL POTENTIAL (less confusing!)
+    dpot /= norm
+    axC0.plot(specT['T'],
+              drem,
+              color=colors[region],
+              label=labels[region],
+              linestyle='-'
     )
+    axC0.plot(specT['T'],
+              dnat,
+              color=colors[region],
+              linestyle='--'
+    )
+    axC0.fill_between(specT['T'], y1=dnat, y2=dpot,
+                      color=colors[region],
+                      alpha=0.2,
+    )
+    axC0.fill_between(specT['T'], y1=drem, y2=dnat,
+                      color=colors[region],
+                      alpha=0.4,
+    )
+
     
     for case in ['natural', 'potential']:
 
@@ -141,3 +169,9 @@ axL0.set_ylabel('Normalized Energy Distribution [1/s]')
 axL0.set_xlabel('Wave Period [s]')
 axL0.legend()
 base.savefig(figL0, 'LocalResource_Freq{}'.format(tag), dpi=300)
+
+axC0.set_ylim([0, 0.2])
+axC0.set_title('Total Resource')
+axC0.set_ylabel('Normalized Energy Distribution [1/s]')
+axC0.legend()
+base.savefig(figC0, 'TotalResource_FreqAll')
