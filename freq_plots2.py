@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.integrate import cumtrapz
 from collections import defaultdict
+import base
 plt.ion()
 
 flag = defaultdict(lambda: False)
@@ -11,7 +12,7 @@ flag = defaultdict(lambda: False)
 flag['show remote'] = True
 flag['show local'] = True
 
-srcdir = pl.Path('../results/freq.fcut/').resolve()
+srcdir = pl.Path('./results/freq.fcut/').resolve()
 
 colors = {'ak': 'k', 'wc': 'b', 'hi': 'g',
           'ec': 'r', 'prusvi': 'purple', 'gm': 'm'}
@@ -27,21 +28,6 @@ plot_regions = ['wc', 'hi', 'ec', 'ak', 'gm']
 
 # tag = '03'
 # plot_regions = ['wc', 'hi', 'ec']
-
-# Number of plotted regions
-# [width, spacing, offset]
-bar_plot_coefs = {3: [1.2, 1.6666, 0.8],
-                  4: [0.8, 1, 0.8],
-                  5: [0.7, 0.8, 0.7]}[len(plot_regions)]
-
-if 'ak' in plot_regions:
-    local_ylim = np.array([-5, 100])
-    remote_ylim = [0, 60]
-else:
-    remote_ylim = [0, 25]
-    local_ylim = [-5, 20]
-# plot_regions = ['wc', 'hi', 'ec', 'ak']
-# # [width, spacing, offset]
 
 
 def spec_freq2period(spec, fbins, norm=False):
@@ -144,8 +130,7 @@ axR0.set_ylabel('Normalized Energy Distribution [1/s]')
 axR0.set_title("Remote Resource")
 axR0.set_xlabel("Wave Period [s]")
 axR0.set_ylim([0, 0.2])
-figR0.savefig('../fig/RemoteResource_Freq{}.pdf'.format(tag))
-figR0.savefig('../fig/RemoteResource_Freq{}.png'.format(tag), dpi=300)
+base.savefig(figR0, 'RemoteResource_Freq{}'.format(tag), dpi=300)
 
 axL0.set_xlim([0, 30])
 axL0.set_xticks(np.arange(0, 31, 5))
@@ -155,5 +140,4 @@ axL0.set_title('Local Resource')
 axL0.set_ylabel('Normalized Energy Distribution [1/s]')
 axL0.set_xlabel('Wave Period [s]')
 axL0.legend()
-figL0.savefig('../fig/LocalResource_Freq{}.pdf'.format(tag))
-figL0.savefig('../fig/LocalResource_Freq{}.png'.format(tag), dpi=300)
+base.savefig(figL0, 'LocalResource_Freq{}'.format(tag), dpi=300)
