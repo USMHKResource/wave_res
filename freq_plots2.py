@@ -211,7 +211,7 @@ axL0.legend()
 base.savefig(figL0, 'LocalResource_Freq{}'.format(tag), dpi=300)
 
 axC0.lg1 += axC0.plot(np.NaN, np.NaN, linestyle='-', color='k', lw=3, label='Remote')
-axC0.lg1 += axC0.plot(np.NaN, np.NaN, linestyle='-', color='k', lw=1, alpha=0.5, label='Potential')
+axC0.lg1 += axC0.plot(np.NaN, np.NaN, linestyle='-', color='k', lw=1, alpha=0.5, label='Remote + Potential')
 axC0.set_ylim([0, 0.2])
 axC0.set_title('Frequency Dependence of Wave Energy')
 axC0.set_ylabel('Normalized Energy Distribution [1/s]')
