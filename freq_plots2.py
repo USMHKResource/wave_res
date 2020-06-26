@@ -6,11 +6,13 @@ from scipy.integrate import cumtrapz
 from collections import defaultdict
 import base
 plt.ion()
+import pdb
 
 flag = defaultdict(lambda: False)
 
 flag['show remote'] = True
 flag['show local'] = True
+#flag['show each'] = True
 
 srcdir = pl.Path('./results/freq.fcut/').resolve()
 
@@ -30,17 +32,33 @@ plot_regions = ['wc', 'hi', 'ec', 'ak', 'gm']
 # plot_regions = ['wc', 'hi', 'ec']
 
 
+def _translate_fbins(fbins):
+    Tbins = fbins ** -1
+    df = np.diff(fbins)
+    f = fbins[:-1] + df / 2
+    dT = -np.diff(Tbins)
+    T = f ** -1
+    return Tbins, T, dT, f, df
+
+    
+def calc_cpsd_points(spec, fbins, pvals):
+    pvals = 1 - np.array(pvals)
+    Tbins, T, dT, f, df = _translate_fbins(fbins)
+    cspec = np.cumsum(spec * dT)
+    cspec /= cspec[-1]
+    Tvals = np.interp(pvals, cspec, Tbins[1:])
+    Svals = np.interp(Tvals, T[::-1], spec[::-1])
+    return Tvals, Svals
+    
+
+
 def spec_freq2period(spec, fbins, norm=False):
     """Convert the units of a frequency spectrum (W/Hz) to a
     period-spectrum (W/s).
     """
     
-    Tbins = fbins ** -1
-    df = np.diff(fbins)
-    f = fbins[:-1] + df / 2
+    Tbins, T, dT, f, df = _translate_fbins(fbins)
     specT = spec * (f ** 2)
-    dT = -np.diff(Tbins)
-    T = f ** -1
     
     # Check that the integrals match!
     If = np.sum(spec * df)
@@ -49,12 +67,14 @@ def spec_freq2period(spec, fbins, norm=False):
 
     if norm:
         specT /= IT
+    #specT = np.hstack([[0], specT])
+    #pdb.set_trace()
     return specT, T
 
 
 def int_period(specT, fbins, axis=0):
-    Tbins = fbins ** -1
-    dT = -np.diff(Tbins)
+    _, _, dT, _, _ = _translate_fbins(fbins)
+    #specT = specT[1:]
     return (specT * dT).sum(axis)
     
 
@@ -84,10 +104,6 @@ alld = {}
 
 for idx, region in enumerate(plot_regions):
 
-    figCR = plt.figure(3000 + idx)
-    figCR.clf()
-    figCR, axCR = plt.subplots(1, 1, num=figCR.number)
-
     alld[region] = dreg = {}
     
     dreg['remote'] = pdh5.load(str(srcdir / '{case}/{region}.{type}-totals.h5'.format(case='baseline', region=region, type='remote')))
@@ -111,7 +127,7 @@ for idx, region in enumerate(plot_regions):
               label=labels[region],
               lw=3,
     )
-
+    
     # axC0.plot(specT['T'], specT['remote'] / int_period(specT['remote'], fbins),
     #          color=colors[region],
     #          label=labels[region],
@@ -129,6 +145,14 @@ for idx, region in enumerate(plot_regions):
                           linestyle='-',
                           lw=3,
     )
+
+    pvals = [0.05, 0.95]
+    
+    Tvals, Svals = calc_cpsd_points(drem, fbins, pvals)
+    #pdb.set_trace()
+    axC0.plot(Tvals, Svals, '.', color='w', ms=3, mew=2, zorder=5)
+    axC0.plot(Tvals, Svals, '+', color=colors[region], ms=8, zorder=10, mew=1)
+    
     axC0.plot(specT['T'],
               dpot,
               color=colors[region],
@@ -136,6 +160,11 @@ for idx, region in enumerate(plot_regions):
               #linestyle='--',
               alpha=0.5,
     )
+    Tvals, Svals = calc_cpsd_points(dpot, fbins, pvals)
+    axC0.plot(Tvals, Svals, '.', color='w', ms=2, mew=1, zorder=2)
+    axC0.plot(Tvals, Svals, '+', color=colors[region], ms=5, zorder=3, mew=0.7,
+              alpha=0.5)
+    
     # axC0.fill_between(specT['T'], y1=dnat, y2=dpot,
     #                   color=colors[region],
     #                   alpha=0.2,
@@ -152,32 +181,39 @@ for idx, region in enumerate(plot_regions):
     drem /= norm # Normalize by TOTAL POTENTIAL (less confusing!)
     dnat /= norm # Normalize by TOTAL POTENTIAL (less confusing!)
     dpot /= norm
-    axCR.plot(specT['T'],
-              drem,
-              color='k',
-              label=labels[region],
-              linestyle='-'
-    )
-    axCR.plot(specT['T'],
-              dnat,
-              color='k',
-              linestyle='--'
-    )
-    axCR.plot(specT['T'],
-              dpot,
-              color='k',
-              linestyle='-.'
-    )
-    axCR.fill_between(specT['T'], y1=dnat, y2=dpot,
-                      color='k',
-                      alpha=0.2,
-    )
-    axCR.fill_between(specT['T'], y1=drem, y2=dnat,
-                      color='k',
-                      alpha=0.4,
-    )
-    axCR.set_title("{}: Total resource frequency breakdown".format(labels[region]))
-    
+
+    if flag['show each']:
+
+        figCR = plt.figure(3000 + idx)
+        figCR.clf()
+        figCR, axCR = plt.subplots(1, 1, num=figCR.number)
+
+        axCR.plot(specT['T'],
+                  drem,
+                  color='k',
+                  label=labels[region],
+                  linestyle='-'
+        )
+        axCR.plot(specT['T'],
+                  dnat,
+                  color='k',
+                  linestyle='--'
+        )
+        axCR.plot(specT['T'],
+                  dpot,
+                  color='k',
+                  linestyle='-.'
+        )
+        axCR.fill_between(specT['T'], y1=dnat, y2=dpot,
+                          color='k',
+                          alpha=0.2,
+        )
+        axCR.fill_between(specT['T'], y1=drem, y2=dnat,
+                          color='k',
+                          alpha=0.4,
+        )
+        axCR.set_title("{}: Total resource frequency breakdown".format(labels[region]))
+
     for case in ['natural', 'potential']:
 
         if case == 'natural':
