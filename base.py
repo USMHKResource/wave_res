@@ -171,7 +171,7 @@ class WrapMonths(object):
         self.shift = shift
         self._index = list(np.arange(shift, shift + n + 1) % n)
         self._index_seasons = (np.arange(shift, shift + n + 1, 3) % n) / 3
-        self.labels = np.array(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'])[self._index[:-1]]
+        self.labels = np.array(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'])[self._index]
         self.x = np.arange(n + 1.) + offset + shift
         self.xticks = np.arange(n + 1.) + shift
 
