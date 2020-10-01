@@ -10,33 +10,53 @@ sources. Wave energy is seen as particularly valuable for its predictability and
 reliability on timescales of hours to a few days
 \citep{parkinsonIntegratingOceanWave2015}, and for the fact that the resource is
 concentrated along coastlines where large fractions of the world's populations
-live. Wave energy technology is still at an early-stage of technology
+live. Furthermore, the U.S. Department of Energy has recently initiated a ``Powering the Blue Economy'' initiative designed to support the development of technologies that provide power to unique market applications such as desalination, ocean sensing, aquaculture, and coastal community resiliency \citep{PBE_REPORT}. Wave energy technology is still at an early-stage of technology
 development with a wide-range of device archetypes under active development
 \citep[]{babaritOceanWaveEnergy2017}.
 
 During these early years of wave energy research and development, it has been
-important to quantify the wave energy resource so that decision makers can begin to understand the market opportunity of this new technology. This has led to a
-proliferation of publications on wave resource assessment. However, the
-methods and results in these works are not always consistent, which can lead to confusion and skepticism. In this context the international electrotechnical commissions's technical committee on marine energy (IEC TC114) has been working to clarify the terminology and methods for describing and quantifying marine energy opportunities. This task is complicated by the need to quantify the opportunity at multiple scales (from the scale of a single project or device, all the way up to regional and national assessments), and a need to consider technical and practical constraints on the opportunity. To clarify this space, IEC TC114 has defined three types of resource assessment
+important to quantify the wave energy resource so that decision makers can begin
+to understand the market opportunity of this new technology and so that project developers can identify development sites. In this context the international electrotechnical commissions's technical committee on marine energy (IEC TC114) has been working to clarify the terminology for describing marine energy, and to define the methods for quantifying its potential.
+
+This task is complicated by a need to quantify the opportunity at multiple scales (from the scale of a single project or device, all the way up to regional and national assessments), and a need to consider technical and practical constraints on the opportunity. To clarify this space, IEC TC114 has defined three types of resource assessment
 \citep{internationalelectrotechnicalcommissionPartTerminology2011} \note{These
 definitions are the ED2 defs, but this citation is the original. Need to update
 once Ed-2 is published. Also: how do these definitions compare to what is used
 for RA of wind/solar? Is that important?}:
 
 \begin{itemize}
-  \item the { \it theoretical resource} is the ``energy available in the resource''
+  \item the {\it theoretical resource} is the ``energy available in the resource''
   \item the {\it technical resource} is the ``proportion of the theoretical resource that can be captured using existing technology options without consideration of external constraints''
   \item the {\it practical resource} is the ``proportion of the technical resource that is available after consideration of external constraints''
-\end{itemize}
+  \end{itemize}
 
-In other words, the theoretical resource is the total energy available that
-could be extracted from the wave-field according to surface wave physics. The
+In the case of wave energy, the energy ``available'' is equivalent to the energy contained in the wave field because it is theoretically possible to extract all of the energy from the waves as originally demonstrated by the ``Salter Duck'' \citep{salterRecentProgressDucks1980}. This is in contrast to the ``Betz limit'' of wind energy, which states that a wind turbine cannot extract more than 59.3\% of the kinetic energy in the wind. 
+
+At the same time as defining these three types of RA, the IEC wave resource assessment TS also defines three {\em classes} of resource assessment, which are defined primarily in terms of uncertainty and numerical model resolution \citep{internationalelectrotechnicalcommissionPart101Wave2015}. However, because this document was written for the purposes of characterizing the resource in terms of statistics that are useful to wave energy project developers, it does not provide specific guidance on quantifying the total theoretical resource available on regional scales. 
+IEC TC114 technical specifications were written primarily to serve the needs of  These classes are:
+\begin{enumerate}
+\item ``reconaissance'', high uncertainty, spatial-scale $>300 km$
+\item ``feasibility'', medium uncertainty, spatial-scale $20- 500 km$
+\item ``design'', low uncertainty, spatial-scale $<25 km$
+\end{enumerate}
+All three of these classes deal directly with estimating wave resource parameters at specific sites, and the TS does not directly tackle the problem of quantifying the total wave resource at any of these scales. Instead, each of the 
+
+  \note{
+    So, even though IEC says it is focused on theoretical RA, and even though it defines three 'classes' of RA, it doesn't really deal with the first two!
+    }
+  
 technical resource is the portion of this which could be extracted with
 technology that is available today, and the practical resource is the portion
 of the technical resource that is available when considering the myriad of other social, political, logistical,
 economic, and environmental constraints that exist. Due to the inherent challenges of
 quantifying the technical and practical resource, most works have typically
-focused on 
+focused on the theoretical resource.
+
+
+\note{There is something here about the different goals of Regional resource assessment (basically this starts with a line-integral of the total theoretical resource), and that of project-scale RA (which typically uses a JPD -- and/or directional-spectrum, or other stats: Hs, Tp, mean-wave-direction, etc -- to characterize the resource). ... But this isn't how IEC-101 addresses it, and that doc doesn't provide clear guidance on the line-integral approach. The IEC table is defined primarily in terms of  `accuracy', but is the accuracy of these different `classes' of assessment really that different? What is meant by ``high/medium/low uncertainty''? Should we suggest revising the IEC TS to better reflect table \ref{tab:scale-type}? Rather than lumping it all into the current definitions? Should IEC even deal w/ regional-scale RA, or just focus on ``project-scale technical RA''? Is there value in IEC defining ``regional-scale technical RA''? ... Project-scale theoretical is easy from the method here.
+  Also, 62600-101 says its focus is 'theoretical RA' but it does not provide clear guidance on how to do the line-integral, other than `you should account for array effects'. i.e.,  even though -101 says it is focused on 'theoretical resource', it doesn't actually help you {\em calculate} the total. How does this square with the definition of `theoretical resource' above?
+}
+
 % Could go into the debate between how to define technical vs. theoretical here?
 % - in idealized scenarios existing tech can extract nearly 100% of energy
 %   (i.e., for monochromatic waves), but much less
@@ -68,6 +88,25 @@ assessments provide “a useful contribution to understanding the distribution a
 possible magnitude of marine and hydrokinetic energy sources in the United
 States,” but also had specific technical critiques of each assessment, and of
 the comparability of the results between each of the assessments.
+
+
+
+\begin{table}[t]
+  \begin{tabular}{l|c|cc|cc|cc|}
+    \multicolumn{2}{c}{} & \multicolumn{6}{c}{Type} \\
+    \cline{3-8}
+    \multicolumn{2}{c|}{}  & \multicolumn{2}{c|}{Theoretical} & \multicolumn{2}{c|}{Technical}  & \multicolumn{2}{c|}{Practical}  \\
+    \cline{2-8}
+    \multirow{4}{*}[-1ex]{\rotatebox{90}{Scale}} & Global & &$\square$  &  & & &\\
+    & Regional & &$\blacksquare$  &  & & & \\
+    & \vdots & &$\square$  &  & & & \\
+    & Project & TS & $\square$  & TS &  & TS &  \\
+    \cline{2-8}
+  \end{tabular}
+  \centering
+  \caption{The scale-vs-type conceptual space of resource-assessment. \note{Need to think more about how this fits with Table 1 in IEC wave RA (-101). That table is focused primarily on accuracy/uncertainty of the approach, but it also overlaps with scale (last column). We could either: a) include that table adjacent to this one, or somehow summarize it as a column or two here. But, mostly I think there is something here about how the ``accuracy-focused'' approach there is sorta outdated b/c we can now run fairly high-accuracy/resolution models at large-scale.} }
+  \label{tab:scale-type}
+\end{table}
 
 In the case of wave energy, the National Academy’s review points out that
 because the method used did not account for wave direction, it “has the
@@ -117,25 +156,6 @@ These objectives are accomplished by first discussing the details of regional as
 % Need to define `theoretical resource assessment'
 
 This paper has two primary objectives: 1) to define a new methodology for quantifying theoretical wave resource that addresses critiques of previous approaches that can be applied at any scale, and 2) to apply that method to all U.S. regions to obtain an updated assessment of the nation's wave energy potential (theoretical resource).
-
-% Need to define:
-% - "WEC"
-% - "EPRI2011" (+ EPRI2004?)
-% - Ref PBE here? ... Part of motivation for getting this right?
-
-
-\subsection{Discussion re PBE}
-% Need to review the PBE reports.
-
-\begin{itemize}
-\item Coastal resiliency?
-\item What about mitigating coastal erosion? ... {\it Issue here: WEC devices shut-down during the big events that cause erosion?! ... but what about future tech?!}
-\item What about marine shipping? ... wave-powered boat!? WaveGlider? ... Does this belong elsewhere?
-\end{itemize}
-
-The methodology developed here has been guided by the successes and limitations of previous works. In particular, several previous works have accurately quantified the remote resource, while others have utilized approaches that have been criticized for 'double counting'. Those works have shot back that, "sure, but you're not accounting for local winds".
-\note{How to say this more tactfully?}
-
 
 %%% Local Variables:
 %%% TeX-master: "wave_res"
