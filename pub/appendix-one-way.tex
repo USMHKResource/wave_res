@@ -8,6 +8,7 @@
 
 A detail that confound unifying these two approaches is the fact that wave energy flux is a directional and spatially varying quantity. This means that - in order to avoid double counting when computing the total resource - regional totals must account for the directionality by performing a line-integral. On the other hand, for site assessments involving sparsely positioned omni-directional devices (i.e., devices that absorb energy equally in all directions), wave directionality does not have a significant impact on the project’s technical potential. With this understanding and motivated by a desire to address the needs of the industry where it is now (i.e., most projects involve 10 or less devices), the first edition of the International Electrotechnical Commission’s resource assessment technical specification does not explicitly provide guidance on regional resource estimates or explicitly account for array effects \citep[]{internationalelectrotechnicalcommissionPart101Wave2015}. In other words, an assessment following IEC will report wave energy density but not wave energy potential. The IEC site assessment methodology has been developed through a consensus process that encourages widespread adoption and consistency. The methodology for regional assessments, on the other hand, has not been developed by consensus, which has led to inconsistent approaches and confusion when comparing results.
 
+
 \hline
 
 \note{Add a short intro about the importance of wave directionality here? (OWP is valuable, but `unit circle' method is bunk.)}
@@ -16,8 +17,8 @@ As the National Academy review points out, estimates of $R_r$ must account for w
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.6 \linewidth]{../diagram/Dot-Product_Schematic01.png}
-    \caption{A diagram depicting the importance of accounting for wave directionality. The upper sequence depcits a scenario where wave crests are parallel to the integration contour ($\delta = 1$), and the lower row is a scenario where wave crests are oblique to the contour ($\delta = 1/3$). \note{I need to change the $\alpha$'s in this figure to $\delta$'s.}}
+    \includegraphics[width=0.6 \linewidth]{../diagram/Dot-Product_Schematic01.pdf}
+    \caption{A diagram depicting the importance of accounting for wave directionality. The upper sequence depicts a scenario where wave crests are parallel to the integration contour ($\delta = 1$), and the lower row is a scenario where wave crests are oblique to the contour ($\delta = 1/3$).
     \label{fig:directionality}
 \end{figure}
 
@@ -69,7 +70,7 @@ This means that both of the definitions of $\delta$ in \eqref{eqn:2way-def} and 
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\linewidth]{../diagram/Schematic-Seq01FINAL.png}
+    \includegraphics[width=\linewidth]{../diagram/Schematic03.pdf}
     \caption{A diagram depicting different cases of waves (color arrows) crossing an arbitrary integration contour (black dashed line). Black arrows along the contour indicate the contour-normal direction. The upper-left legend — and the boxes along the arrows' lengths — indicate whether energy is added to, subtracted from, or not included in the total depending on the summation method (pink: traditional, orange: bi-directional, cyan: one-way) and direction of wave crossing relative to contour. Boxes at the tip of each arrow indicate the number of times each wave was counted using each method, and the table at lower-right summarizes the totals. A `blowing cloud' image indicates the generation of `local waves' over the region bounded by the integration contour. \note{Need to add a row $E^\dagger$}}
     \label{fig:one-way-diagram}
 \end{figure}
