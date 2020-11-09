@@ -1,5 +1,17 @@
 \section{Comparing wave flux divergence to source term area integral}\label{appendix:flux-vs-area}
 
+\hline
+
+\note{Copied from methods}
+
+\begin{itemize}
+\item source terms are larger when starting with no-waves \note{Is this always true?} \textcolor{green}{I found that sometimes the source terms are larger when extracting 90\% but not by much.}
+\item Or is it because sometimes the winds blow {\em against} the waves?
+\end{itemize}
+
+\hline
+
+
 To the authors knowledge the source term method for computing the local wave resource is being introduced in this work for the first time. Since the source term method cannot be validated directly, it will be compared against the resoults obtained from the energy flux method under idealized conditions. The local resource using the energy flux method is computed by subtracting the flux exiting the domain from that entering the domain using Equation~\eqref{eq:remoteResource} at both boundaries. This comparison will yield an estimate of the consistency between both methods.
 
 WW3 is implemented over a bathymetry with a constant depth of 4 km covering a region that is 240$^{\circ}$ in the zonal direction and 60$^{\circ}$ in the meridional direction as shown in Figure~\ref{fig:idealizedDomain}a. Deep water was selected to remove the effects of energy convergence or divergence by refraction, and shallow water effects such as depth-induced wave breaking and bottom friction. We consider a hypothetical EEZ as a proxy for a region of interest. Energy flux is computed at 200 nautical miles from the eastern end of the domain, which we approximate in the model as 3$^{\circ}$20’ from the eastern boundary given the model domain has been centered at the Equator. This hypothetical EEZ covers 20$^{\circ}$ in the meridional direction as shown in Figure~\ref{fig:idealizedDomain}a. The area of this region is 818,000 km$^{2}$, which is comparable in size to the US West Coast EEZ (825,550 km$^{2}$). In the meridional direction the model spatial resolution is a constant 1$^{\circ}$ (111.12 km), while in the zonal direction the spatial resolution is reduced from 1$^{\circ}$ (111.12 km at the Equator) to 4’ (7.4 km) close to the EEZ (see Figure~\ref{fig:idealizedDomain}b) to be consistent with the models used in the hindcast.
