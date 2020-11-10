@@ -48,30 +48,6 @@ The primary problem with this definition for the purposes of wave resource asses
 
 The primary draw-back to the one-way condition is that if wave energy criss-crosses back-and-forth across the integration contour, then it is added to the total each time it crosses the contour (rather than being counted, correctly, exactly once). However, since waves do not typically swerve back and forth (i.e., across a straight line), this should only be an issue when the integration contour zig-zags or otherwise has segments that a straight-travelling wave would cross multiple times (e.g., where the contour folds, or when islands are spaced such that there are several independent contours nearby one another).
 
-\subsubsection{Offshore Propagating Wave Energy}
-\note{Does this section do anything for me?}
-
-In order to investigate the extent of double-counting due to the one-way condition, we also keep track of the offshore propagating wave energy using the complimentary definition of the directionality coefficient:
-\begin{align}
-  \label{eqn:1way-off-def}
-    \delta_{off} = 
-    \begin{cases}
-     -\delta_* & \mathrm{for\ }|\Delta \theta|>90^\circ \\
-    0 & \mathrm{otherwise}.
-    \end{cases}
-\end{align}
-Where the minus sign makes the value of $\delta_{off}$ positive.
-
-Accounting for the offshore wave energy flux independently -- $R_{off}$ is calculated by replacing $\delta$ with $\delta_{off}$ in \eqref{eqn:RR} -- gives us the opportunity to compare it to onshore propagating energy and the local resource (i.e., $R_R$ and $R_L$). The offshore propagating energy is a fraction of the local resource ($R_{off} / R_L_\circ$) along the west coast (69\%), east coast (60\%), Alaska (62\%), Puerto Rico (16\%), and in the Gulf of Mexico (27\%). 
-
-Therefore, in these regions, we interpret these fractions as an indication that the offshore propagating energy originates primarily from within that region's EEZ, and is accounted for in $R_L$. 
-The offshore propagating energy in Hawaii, however, is almost 4 times the local resource there. In this case, the offshore propagating energy is clearly the remote resource leaving the domain again ($R_{off} / R_R = 78\%$).
-
-The comparison of $R_{off}$ to $R_L$ and $R_R$ does not, however, definitively address the issue of the degree to which there is potential double counting in using the one-way condition. 
-\note{THEN WHY TALK ABOUT IT!?!!! ... I am here...}
-
-\subsubsection{Wave flux options}
-
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\linewidth]{../diagram/Schematic03.pdf}
@@ -83,10 +59,13 @@ Figure \ref{fig:one-way-diagram} provides a schematic of several cases of wave e
 
 The arrows depict several different cases of wave energy crossing the contour. Arrow `A' indicates the most-common case of a wave crossing into the contour from offshore exactly once. Arrow `B' is a case where a wave propagates into and out-of the integration boundary. Arrow `C' is the case where a wave crosses a zig-zagging countour several times. Arrow `D' is the case of a wave propagating through an island's contour before entering the mainland contour. Arrow E is the case of a wave that is generated within the domain (i.e., locally). Arrows F and G are cases involving waves passing by islands.
 
-The upper-left legend indicates the number of times each wave is counted using the `traditional' and the `one-way' dot-product. The correct answer is that each wave should be counted exactly once for all cases. The first thing to note, then, is that neither method gets it right in all cases. The traditional method ignores several waves, while the one-way method double-counts several. Also note here that we have included the `local resource' for arrow E (indicated by asterisk).
+The upper-left legend indicates the number of times each wave is counted using the `traditional' and the `one-way' dot-product. The correct answer is that each wave should be counted exactly once for all cases. The first thing to note, then, is that neither method gets it right in all cases. The traditional method ignores several waves, while the one-way method double-counts several. Also note here that we have included the `local resource' for arrow E (marked by $\dagger$).
 
 What is interesting is that the one-way method is correct for several cases that would seem to be relatively common such as arrows B, E, and G. While the traditional method neglects them completely. The one-way method is only incorrect when a wave crosses a zig-zagging section of the contour (C), or when it crosses adjacent distinct contours (D, G). Therefore, as long as the integration contours are relatively straight and there are not multiple contours in close proximity, the one-way method should produce reasonably accurate results. 
 The relevant length scale for defining `relatively straight' and `close proximity' is the scale over which wave energy propagates, which obviously spans ocean basins. However, it seems reasonable to assume for the EEZ boundaries we explore here, that zig-zagging is minimal and the individual boundaries are sufficiently far-apart to minimize double-counting. On the other hand, the use of the traditional dot-product is likely to result in significant under-estimation of the resource because cases E and G are very likely to occur in many scenarios. Therefore, it is straightforward to conclude that the exact answer lies somewhere between the one-way and traditional method, but in most cases is probably much closer to the latter.
+
+We did calculate $R_{R*}$ by replacing $\delta$ with $\delta_*$ in \eqref{eqn:RR}. -- gives us the opportunity to compare it to onshore propagating energy and the local resource (i.e., $R_R$ and $R_L$). The offshore propagating energy is a fraction of the local resource ($R_{off} / R_L_\circ$) along the west coast (69\%), east coast (60\%), Alaska (62\%), Puerto Rico (16\%), and in the Gulf of Mexico (27\%). 
+
 
 The only way to avoid this error completely is to extract wave energy in the model simulation at the integration contour of interest -- and account for it according to \eqref{eqn:RR} -- so that it does not propagate to a different point on the contour where it could be mis-counted. This approach, however, is technically challenging and reduces the flexibility of data analysis because a new simulation must be run for each contour of interest.
 
