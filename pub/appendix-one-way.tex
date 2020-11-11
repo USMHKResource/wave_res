@@ -64,8 +64,25 @@ The upper-left legend indicates the number of times each wave is counted using t
 What is interesting is that the one-way method is correct for several cases that would seem to be relatively common such as arrows B, E, and G. While the traditional method neglects them completely. The one-way method is only incorrect when a wave crosses a zig-zagging section of the contour (C), or when it crosses adjacent distinct contours (D, G). Therefore, as long as the integration contours are relatively straight and there are not multiple contours in close proximity, the one-way method should produce reasonably accurate results. 
 The relevant length scale for defining `relatively straight' and `close proximity' is the scale over which wave energy propagates, which obviously spans ocean basins. However, it seems reasonable to assume for the EEZ boundaries we explore here, that zig-zagging is minimal and the individual boundaries are sufficiently far-apart to minimize double-counting. On the other hand, the use of the traditional dot-product is likely to result in significant under-estimation of the resource because cases E and G are very likely to occur in many scenarios. Therefore, it is straightforward to conclude that the exact answer lies somewhere between the one-way and traditional method, but in most cases is probably much closer to the latter.
 
-We did calculate $R_{R*}$ by replacing $\delta$ with $\delta_*$ in \eqref{eqn:RR}. -- gives us the opportunity to compare it to onshore propagating energy and the local resource (i.e., $R_R$ and $R_L$). The offshore propagating energy is a fraction of the local resource ($R_{off} / R_L_\circ$) along the west coast (69\%), east coast (60\%), Alaska (62\%), Puerto Rico (16\%), and in the Gulf of Mexico (27\%). 
+We did calculate the remote resource ($R_{R*}$) using the traditional dot-product by replacing $\delta$ with $\delta_*$ in \eqref{eqn:RR}. These results show that $R_{R*}$ is smaller than $R_R$ by 20 to 100\% (Table \ref{tab:RR*}). This can be explained for most regions by assuming that 40-60\% of the locally generated waves propagate offshore. In Hawaii, where that approach does not work, the answer is clearly that a large fraction of the wave energy simply passes into and back-out-of the domain, and therefore erroneously ignored by the traditional dot-product.
 
+\note{Should we use this analysis to estimate uncertainty in $R_R$?! ... maybe reduce $R_R$ by 10\% with a 10\% uncertainty? ... Or assume that 20\% of difference between $R_R$ and $R_{R*}$ is double-counting in $R_R$? There is also the possibility of computing 'duplication factors (fn of theta)' for the one-way method at every point along the contour, or for each domain?}
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+  Region & $R_R$ & $R_{R*}$ & $R_{L\circ}$ \\
+  \hline
+  Alaska & 1040 & 430 & 990 \\
+  West Coast & 420 & 360 & 90 \\
+  Hawaii & 370 & 80 & 10 \\
+  East Coast & 110 & 0 & 180 \\
+  Gulf of Mexico & 13 & -2 & 56 \\
+  P.R. \& U.S.V.I. & 6 & 4 & 11 \\
+  \end{tabular}
+  \label{tab:RR*}
+  \caption{A comparison of remote resource computed using the one-way method ($R_R$) to a traditional dot-product ($R_{R*}$), and the local resource. All values in TWh/yr.}
+\end{table}
 
 The only way to avoid this error completely is to extract wave energy in the model simulation at the integration contour of interest -- and account for it according to \eqref{eqn:RR} -- so that it does not propagate to a different point on the contour where it could be mis-counted. This approach, however, is technically challenging and reduces the flexibility of data analysis because a new simulation must be run for each contour of interest.
 
