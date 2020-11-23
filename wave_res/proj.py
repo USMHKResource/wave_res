@@ -19,6 +19,8 @@ proj['wc'] = crs.AlbersEqualArea(
 proj['wc'].lonlim = [-130, -116]
 proj['wc'].latlim = [30, 49.5]
 
+proj['wc.wa'] = proj['wc.or'] = proj['wc.ca'] = proj['wc']
+
 proj['at'] = crs.AlbersEqualArea(
     central_longitude=-75.52, central_latitude=35.22,  # ~Cape Hatteras
     standard_parallels=[25, 44]

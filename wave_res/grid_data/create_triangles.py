@@ -177,7 +177,10 @@ def show_grid(region, fignum):
 
 if __name__ == '__main__':
 
-    for idreg, region in enumerate(['hi', 'wc', 'ec', 'gm', 'at', 'ak', 'prusvi']):
+    plot_these = ['hi', 'wc', 'ec', 'gm', 'at', 'ak', 'prusvi']
+    plot_these = ['wc.ca', 'wc.or', 'wc.wa']
+    plot_these = ['wc.or']
+    
+    for idreg, region in enumerate(plot_these):
         fig, ax = show_grid(region, 2000 + idreg)
         fig.savefig('../../fig/RegionDef-{}-01.png'.format(region), dpi=300)
-        break
