@@ -12,8 +12,10 @@ all_regions = ['wc', 'at', 'prusvi', 'ak', 'hi','gm','ec']
 run_these = {
 #    'baseline': all_regions,
 #    'extraction': all_regions,
-    'baseline':['prusvi'],
+#    'baseline':['prusvi'],
 #    'extraction':['gm','ec']
+    'baseline': ['wc.wa', 'wc.or', 'wc.ca', 'ec.ne', 'ec.ma', 'ec.se']
+    'extraction': ['wc.wa', 'wc.or', 'wc.ca', 'ec.ne', 'ec.ma', 'ec.se']
 }
 
 
