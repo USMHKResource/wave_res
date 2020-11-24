@@ -179,7 +179,8 @@ if __name__ == '__main__':
 
     plot_these = ['hi', 'wc', 'ec', 'gm', 'at', 'ak', 'prusvi']
     plot_these = ['wc.ca', 'wc.or', 'wc.wa']
-    plot_these = ['wc.or']
+    plot_these = ['ec.ne', 'ec.ma', 'ec.se']
+    plot_these = ['ec.se']
     
     for idreg, region in enumerate(plot_these):
         fig, ax = show_grid(region, 2000 + idreg)

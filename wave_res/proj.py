@@ -35,6 +35,8 @@ proj['ec'] = crs.AlbersEqualArea(
 proj['ec'].lonlim = [-84, -65]
 proj['ec'].latlim = [23, 45]
 
+proj['ec.ne'] = proj['ec.ma'] = proj['ec.se'] = proj['ec']
+
 proj['gm'] = crs.AlbersEqualArea(
     central_longitude=-97.15, central_latitude=25.96,  # ~Gulf end of US-Mexico border
     standard_parallels=[25, 44]

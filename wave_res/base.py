@@ -3,8 +3,9 @@ import proj
 import grid_data as gdat
 
 regions = {'wc': 'wc',
-           'wc.or': 'wc', 'wc.wa': 'wc', 'wc.ca': 'wc', 
+           'wc.or': 'wc', 'wc.wa': 'wc', 'wc.ca': 'wc',
            'ec': 'at', 'gm': 'at', 'at': 'at',
+           'ec.ne': 'at', 'ec.ma': 'at', 'ec.se': 'at',
            'hi': 'hi',
            'ak': 'ak',
            'prusvi': 'prusvi'}

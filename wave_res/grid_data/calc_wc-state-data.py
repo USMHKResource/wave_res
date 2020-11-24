@@ -163,6 +163,7 @@ with open('Contour_Ranges_wc-states.pkl', 'w') as fl:
 with open('Land_Data_wc-states.pkl', 'w') as fl:
     pkl.dump(LAND_DATA, fl)
 
+# You will need to run the script twice if you change any files above, b/c these are calculated from rinf directly.
 TRI_DEFS = {}
 for ky in ['wc.wa', 'wc.or', 'wc.ca']:
     TRI_DEFS[ky] = tri.calc_triangles(ky)
