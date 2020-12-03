@@ -1,3 +1,8 @@
+raise Exception("Do not run this script again. The data it creates "
+                "should be in tmpdata/baseline_spatial/ (though it's not "
+                "tracked in git.)")
+
+
 import numpy as np
 import wave_res.calc_remote as cr
 from wave_res import paths
@@ -11,7 +16,7 @@ run_these = ['ak', 'hi', 'wc', 'at', 'prusvi']
 #run_these = ['prusvi']
 
 months = np.arange(np.datetime64('1979-01'), np.datetime64('2011-01'))
-###months = np.arange(np.datetime64('2009-01'), np.datetime64('2009-03'))
+#months = np.arange(np.datetime64('2009-01'), np.datetime64('2009-03'))
 
 outdir = paths.tmpdir / 'baseline_spatial'
 

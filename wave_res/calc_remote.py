@@ -201,7 +201,11 @@ def integrate_wef(lon, lat, wef, direction, sum_axes=(0, -1), int_order=1):
     #  - `norm` has length equal to the distance between points
     #  - conjugate subtracts the normal angle
     #  - Take the `.real` component to get contour-normal fluxes
-    flux = (_wef * np.conj(_norm)[:, None, None]) * dang
+    if _wef.ndim == 2:
+        _norm = _norm[:, None]
+    elif _wef.ndim == 3:
+        _norm = _norm[:, None, None]
+    flux = (_wef * np.conj(_norm)) * dang
     # Sum for all of the different methods.
     # Note: this is a 'double sum' (line-integral, direction)
     #       but we don't sum in the frequency direction.
