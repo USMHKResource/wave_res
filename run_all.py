@@ -3,7 +3,7 @@ import numpy as np
 from wave_res.paths import mkdir
 
 # Range to compute the resource
-months = np.arange(np.datetime64('2010-01'),
+months = np.arange(np.datetime64('1980-01'),
                    np.datetime64('2011-01'))
 
 all_regions = ['wc', 'at', 'prusvi', 'ak', 'hi','gm','ec']
@@ -14,7 +14,7 @@ run_these = {
 #    'extraction': all_regions,
 #    'baseline':['prusvi'],
 #    'extraction':['gm','ec']
-    'baseline': ['wc.wa', 'wc.or', 'wc.ca', 'ec.ne', 'ec.ma', 'ec.se']
+    'baseline': ['wc.wa', 'wc.or', 'wc.ca', 'ec.ne', 'ec.ma', 'ec.se'],
     'extraction': ['wc.wa', 'wc.or', 'wc.ca', 'ec.ne', 'ec.ma', 'ec.se']
 }
 

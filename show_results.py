@@ -6,8 +6,7 @@ import json
 import matplotlib.pyplot as plt
 import pandas as pd
 
-regions = {'ak', 'ec', 'gm', 'prusvi', 'wc', 'hi'}
-#regions = {'wc', 'ak'}
+regions = {'ak', 'ec', 'gm', 'prusvi', 'wc', 'hi', 'wc.wa', 'wc.or', 'wc.ca', 'ec.ne', 'ec.ma', 'ec.se'}
 
 # Sum over these regions to get the total.
 totregions = ['ak', 'ec', 'gm', 'prusvi', 'wc', 'hi']
@@ -54,8 +53,8 @@ if unit != 'TWh/yr':
         epri[ky] *= factor / _factordict['TWh/yr']
 
 irange = 20;range_tag = 'Total'
-irange = 1;range_tag = 'Nearshore'
-irange = 2;range_tag = 'Nearshore-2'
+#irange = 1;range_tag = 'Nearshore'
+#irange = 2;range_tag = 'Nearshore-2'
 
 
 def zero_pad(arr, n):
@@ -144,6 +143,8 @@ if __name__ == '__main__':
         rtotXInt[region]['length'] = rdX['length'][irange - 1]
         ltot0Int[region]['area'] = ld0['area'][:irange].sum()
         ltotXInt[region]['area'] = ldX['area'][:irange].sum()
+        rtot0Int[region]['off'] = rtot0Int[region]['bdir'] - rtot0Int[region]['oneway']
+        rtotXInt[region]['off'] = rtotXInt[region]['bdir'] - rtotXInt[region]['oneway']
         
         # Binned Averages
         rtot0Bin[region] = {m: (np.average(rd0Bin[m][:,:, irange - 1],
@@ -173,9 +174,6 @@ if __name__ == '__main__':
             plt.legend()
 
     for ireg, region in enumerate(totregions):
-        # Calculate the offshore flux.
-        rtot0Int[region]['off'] = rtot0Int[region]['bdir'] - rtot0Int[region]['oneway']
-        rtotXInt[region]['off'] = rtotXInt[region]['bdir'] - rtotXInt[region]['oneway']
         # Calculate the total across all regions
         if 'total' not in rtot0Int:
             rtot0Int['total'] = deepcopy(rtot0Int[region])
@@ -422,8 +420,11 @@ if __name__ == '__main__':
     df0 = pd.DataFrame(rtot0Int).T.join(pd.DataFrame(ltot0Int).T)
     dfX = pd.DataFrame(rtotXInt).T.join(pd.DataFrame(ltotXInt).T)
 
-    df0 = df0.reindex(['wc', 'ec', 'hi', 'ak', 'gm', 'prusvi', 'total'])
-    dfX = dfX.reindex(['wc', 'ec', 'hi', 'ak', 'gm', 'prusvi', 'total'])
+    row_order = ['wc', 'wc.wa', 'wc.or', 'wc.ca',
+                 'ec', 'ec.ne', 'ec.ma', 'ec.se', 
+                 'hi', 'ak', 'gm', 'prusvi', 'total']
+    df0 = df0.reindex(row_order)
+    dfX = dfX.reindex(row_order)
 
     col_order = ['length', 'oneway', 'off', 'bdir', 'trad', 'unit',
                  'area', 'sbt', 'sds', 'sice', 'sin', 'snl', 'stot']
