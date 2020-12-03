@@ -32,8 +32,8 @@ if 'maskdir' not in vars():
     maskdir = srcdir / 'iceMask/' / 'akMask'
 
 
-def mkdir(directory):
+def mkdir(directory, verbose=False):
     if not os.path.exists(directory):
         os.makedirs(directory)
-    else:
+    elif verbose:
         print('directory exists: ' + directory)

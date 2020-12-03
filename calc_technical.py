@@ -1,58 +1,40 @@
-import pyDictH5 as pdh5
-from copy import deepcopy
 import numpy as np
-import wave_res as wr
 import wave_res.calc_remote as cr
-from netCDF4 import Dataset
-import wave_res.base as wrb
+from wave_res import paths
+import pyDictH5 as pdh5
 
+run_these = ['ak', 'hi', 'wc', 'at', 'prusvi']
+#run_these = ['wc']
 
+months = np.arange(np.datetime64('1979-01'), np.datetime64('2011-01'))
+#months = np.arange(np.datetime64('2009-01'), np.datetime64('2009-03'))
 
-tmp_ = cr.load_processed('baseline', 'wc', np.datetime64('2009-01'))
+outdir = paths.tmpdir / 'baseline_spatial'
 
-wef = (tmp_['wef']*np.diff(tmp_['fbins'])[None,:,None]).sum(1)
+paths.mkdir(str(outdir))
 
+for region in run_these:
 
-def calc_normal_fluxes(scenario, region, months, ranges=[10], threshold_W_m=0):
-    rinf = base.RegionInfo(region)
-    out = ConNormFluxGroup()
+    _tmp = cr.load_processed('baseline', region, np.datetime64('2009-01'))
+    N_ang = len(_tmp['direction'])
+    N_x = len(_tmp['lon'])
+    N_t = len(months)
+    
+    out = _tmp.copy()
+    out.pop('f')
+    out.pop('fbins')
+    out.pop('wef')
+    out.pop('cg')
+    out['wef'] = np.zeros((N_x, N_t, N_ang), dtype=np.float32)
+    out['Nhour'] = np.zeros(N_t, dtype=np.float32)
     out['time'] = months
-    out['Nhour'] = np.empty((len(months)), dtype=np.uint16)
 
-    for rky in rinf.con_defs.keys():
-        out[rky] = ContourNormalFluxes()
-        N_x = 0
-        for ci in rinf.con_defs[rky]:
-            N_x += len(ci)
-        for int_ky in cr.wef_int_modes:
-            out[rky][int_ky] = np.zeros(len(months), N_x)
+    for imo, month in enumerate(months):
 
-    for imo, mo in enumerate(months):
-        dnow = load_processed(scenario, rinf.source_region, mo)
-        # Integrate in frequency (direction persists)
-        wef = (dnow['wef'] * np.diff(rinf.freqbins)[None, :, None]).sum(1)
-        out['Nhour'][imo] = dnow['Nhour']
-        for rky in rinf.con_defs:
-            dtmp = out[rky]
-            con_inds = rinf.con_defs[rky]
-            for ci in con_inds:
-                (dtmp['trad'], dnow['1way'],
-                 dnow['bidir'], dnow['unit']) += cr.integrate_wef(
-                     dnow['lon'][ci], dnow['lat'][ci],
-                     dnow['wef'][ci], dnow['direction'],
-                     sum_axes=(-1, ) )
-                con_lengt
-                
+        dnow = cr.load_processed('baseline', region, month)
+        out['wef'][:, imo] = (dnow['wef'] * np.diff(dnow['fbins'])[None, :, None]).sum(1)
 
-regions = {'ak', 'ec', 'wc', 'hi', 'gm'}
-remote_terms = ['trad', '1way', 'bdir', 'unit']
+    out.to_hdf5(str(outdir / 'ww3.{}.wef_spatial.h5'.format(region)))
 
-for ireg, region in enumerate(regions):
 
-    tmp = pdh5.load('results/freq.fcut/{}/{}.remote-totals.h5'.format('baseline', region))
-
-    dat = int_freq(tmp, remote_terms)
-
-    # [0] for the 10 nm data
-    flux = dat['1way'][:, 0] / dat['length'][0]
-    break
+#ld = pdh5.load(str(outdir / 'ww3.wc.wef_spatial.h5'))
