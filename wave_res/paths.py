@@ -11,11 +11,11 @@ tmpdir = Path(os.path.abspath('./tmpdata/'))
 
 pkgdir = Path(os.path.abspath(__file__)).parent
 
-if this_machine.startswith('lkilcher-26339s') or \
-   this_machine.startswith('lkilcher-32045s'):
-    srcdir = Path('/Volumes/lkilcher/wave_ra/pnnl/')
+# Levi's paths
+if this_machine[:2] == 'lk':
+    #srcdir = Path('/Volumes/lkilcher/wave_ra/pnnl/')
     maskdir = Path(os.path.expanduser('~/Dropbox/tmp/wave_ra/icemask/'))
-    #srcdir = Path(os.path.expanduser('~/tmp/wave_ra/pnnl/'))
+    srcdir = Path(os.path.expanduser('~/tmp_local/wave_ra/'))
 
 # Gabriel's Paths
 if this_machine.startswith('constance') or this_machine.startswith('node'):

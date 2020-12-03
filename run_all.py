@@ -31,7 +31,7 @@ for scenario, REGIONS in run_these.items():
 
         print("   Calculating remote resource...")
         # Calculate the remote resource
-        remote = wr.calc_remote(scenario, region, months)
+        remote = wr.calc_rmt(scenario, region, months)
         # This returns a dictionary-like object (based on pyDictH5.data)
         # containing:
         #  'time': (n_months) the month
@@ -75,7 +75,7 @@ for scenario, REGIONS in run_these.items():
 
         print("   Calculating local resource...")
 
-        local = wr.calc_local(scenario, region, months,fc=True)
+        local = wr.calc_lcl(scenario, region, months,fc=True)
         # This returns a dictionary-like object (based on pyDictH5.data)
         # containing:
         #  'time': (n_months) the month
