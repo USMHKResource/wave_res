@@ -122,7 +122,7 @@ def calc_wef(indat):
     return data
 
 
-def integrate_wef(lon, lat, wef, direction):
+def integrate_wef(lon, lat, wef, direction, sum_axes=(0, -1), int_order=1):
     """Integrate the wave energy flux along a line.
 
     Parameters
@@ -139,6 +139,15 @@ def integrate_wef(lon, lat, wef, direction):
     direction : len(M) array (degrees True)
         The direction the waves are propagating toward. Note: this is
         'heading direction' (0 degrees is True north)
+
+    sum_axes : tuple of axes to sum-along
+        The default is (0, -1), which for most data is probably
+        position and direction.
+
+    int_order : the integration order (1 or 2)
+        First (1) order integration is done at the midpoints between
+        the gridpoints. Second order integration is done at the
+        gridpoints.
 
     Returns
     =======
@@ -171,27 +180,37 @@ def integrate_wef(lon, lat, wef, direction):
     theta *= np.pi / 180
     d, midp = gis.diffll(np.stack((lon, lat)))
     norm = d * np.exp(1j * -np.pi / 2)
+            
     dang = np.abs(np.median(np.diff(theta)))
     # Average the wave energy flux between two points, and give it a
     # complex direction
     # _wef has shape: N_points, N_freq, N_direction (AB: CHECKTHIS)
-    _wef = (wef[1:] + wef[:-1]) * np.exp(1j * theta) / 2
+    if int_order == 1:
+        _norm = norm
+        _wef = (wef[1:] + wef[:-1]) * np.exp(1j * theta) / 2
+    elif int_order == 2:
+        _norm = np.zeros_like(wef)
+        _norm[0], _norm[-1] = norm[0], norm[-1]
+        _norm[1:-1] = (norm[1:] + norm[:-1]) / 2
+        _wef = wef
+    else:
+        raise ValueError("Invalid value for int_order: this must be 1 or 2")
 
     # Integrate.
     # Notes
     #  - `norm` has length equal to the distance between points
     #  - conjugate subtracts the normal angle
     #  - Take the `.real` component to get contour-normal fluxes
-    flux = (_wef * np.conj(norm)[:, None, None]) * dang
+    flux = (_wef * np.conj(_norm)[:, None, None]) * dang
     # Sum for all of the different methods.
     # Note: this is a 'double sum' (line-integral, direction)
     #       but we don't sum in the frequency direction.
-    trad = flux.real.sum((0, -1))
-    bdir = np.abs(flux.real).sum((0, -1))
-    unit = np.abs(flux).sum((0, -1))
+    trad = flux.real.sum(sum_axes)
+    bdir = np.abs(flux.real).sum(sum_axes)
+    unit = np.abs(flux).sum(sum_axes)
     _flux = flux.real.copy()
     _flux[_flux < 0] = 0
-    oneway = _flux.sum((0, -1))
+    oneway = _flux.sum(sum_axes)
     return trad, oneway, bdir, unit
 
     # offshore_flux = bdir - oneway
@@ -256,7 +275,7 @@ def calc_remote(scenario, region, months):
             rky = '{:03d}'.format(rng)
             con_inds = rinf.con_defs[rky]
             for ci in con_inds:
-                plt.plot(dnow['lon'][ci], dnow['lat'][ci])
+                #plt.plot(dnow['lon'][ci], dnow['lat'][ci])
                 tmp += integrate_wef(
                     dnow['lon'][ci], dnow['lat'][ci],
                     dnow['wef'][ci], dnow['direction'])
