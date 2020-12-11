@@ -30,9 +30,11 @@ def calc_tech(region, contour, trange, threshold=0):
         trad, oneway, bdir, unit = cr.integrate_wef(lon, lat, data['wef'][cid][:, tinds].mean(1), data['direction'], sum_axes=(-1, ))
         if region == 'hi' and rcon == '200':
             oneway = bdir - oneway
-        oneway -= threshold * L
-        oneway[oneway < 0] = 0
-        out += oneway.sum()
+        use_this = bdir
+        #use_this = oneway
+        use_this -= threshold * L
+        use_this[use_this < 0] = 0
+        out += use_this.sum()
     return out
 
 def checkval(region, contour, trange):
@@ -70,4 +72,4 @@ if __name__ == '__main__':
             print("...Running case: {}".format((con, threshold)))
             results.loc[region, (con, threshold)] = calc_tech(region, con, trange, threshold) * _factor
         
-    results.to_csv('results/Technical_Results.csv')
+    results.to_csv('results/Technical_Results-bidir.csv')
