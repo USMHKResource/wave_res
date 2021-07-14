@@ -1,24 +1,20 @@
 \section{Introduction}
 
-Over the last decade global interest in wave energy has grown
-considerably, with the Ocean Energy Systems executive committee
-setting a goal of 300GW of installed ocean energy capacity by 2050
-\citep[]{huckerbyInternationalVisionOcean2017}. This has been driven
-by concerns about greenhouse-gas driven climate change, carbon-based
-energy price volatility, and a growing emphasis on the value of
-diversifying energy sources. Wave energy is seen as particularly
+Though wave energy technology is still at an
+early-stage of technology development, interest in wave energy has grown
+considerably over the last decade
+\citep[]{babaritOceanWaveEnergy2017}. For example, the Ocean Energy Systems executive committee has set a goal of 300GW of installed ocean energy capacity by 2050 \citep[]{huckerbyInternationalVisionOcean2017}. Wave energy is seen as particularly
 valuable for its predictability and reliability on timescales of hours
 to a few days \citep{parkinsonIntegratingOceanWave2015}, and for the
 fact that the resource is concentrated along coastlines where large
 fractions of the world's populations live. Furthermore, the
-U.S. Department of Energy (DOE) has recently launched a ``Powering the Blue
+U.S. Department of Energy (DOE) has launched the ``Powering the Blue
 Economy'' initiative designed to support the development of
 technologies that provide power to unique market applications such as
-desalination, ocean sensing, aquaculture, and coastal community
-resiliency \citep{livecchiPoweringBlueEconomy2019}. Wave energy technology is still at an
-early-stage of technology development with a wide-range of device
-archetypes under active development
-\citep[]{babaritOceanWaveEnergy2017}.
+desalination, ocean sensing, aquaculture, maritime shipping, and coastal community
+resiliency \citep{livecchiPoweringBlueEconomy2019}. 
+
+There have been several notable wave resource assessments over the last two decades that have gradually improved the accuracy and spatial coverage of our understanding of the U.S. wave energy opportunity \citep[]{EPRIwaveresource2011, garcia-medinaWaveResourceAssessment2014, bedardOceanWaveEnergy2005}. Throughout this time, however, there have been ongoing debates about the correct methodology for quantifying the wave energy opportunity. While a clear consensus-based methodology for wave resource site-assessment has been established, regional wave resource assessments have utilized disparate methodologies, which can lead to skepticism and confusion \citep[]{robertsonCharacterizingShoreWave2014, gunnQuantifyingGlobalWave2012, hughesNationalscaleWaveEnergy2010, hemerRevisedAssessmentAustralia2017, nationalresearchcouncilEvaluationDepartmentEnergy2013}.
 
 The 2011 DOE-funded U.S. wave resource assessment provided the first
 comprehensive estimate of the nation’s wave energy resource, and has
@@ -33,58 +29,13 @@ sites that could be suitable for the installation of Wave Energy
 Converters (WECs), together with defining a standardised methodology
 with which this resource can be described.''
 
-It is important to clarify that the EPRI 2011 resource assessment, and the methodology defined in IEC 62600-101 occupy distinct and complimentary branches of resource assessment:
-\begin{enumerate}
-\item {\bf \em Regional resource assessments} seek to quantify the total power available over the region of interest in units of power (e.g., kW, GW, or TWh/yr). 
-They are of value to policy makers who need a direct and clear assessment of the magnitude of resource in their region for comparison to other resource options, or for comparison to other regions. They are typically calculated over relatively large areas (e.g., O(1,000 km$^2$) all the way up to global scales). The EPRI 2011 report is a regional resource assessment for wave energy, \citep[e.g., ][]{EPRIwaveresource2011,gunnQuantifyingGlobalWave2012,regueroGlobalWavePower2015,motaWaveEnergyPotential2014}. 
-\item {\bf \em Site resource assessments} provide the resource statistics that are useful for evaluating a site’s power production potential. They quantify the resource opportunity in terms of resource statistics such as wave height, wave period, wave direction, omni-directional wave power (in kW/m), the joint-probability distribution of wave-height and wave-period, and the directional wave spectrum. They are of value to project developers who use the statistics to quantify the opportunity for developing a project at that specific site. The IEC 62600-101 technical specification provides a detailed methodology for conducting site assessments, computing these statistics, and it also provides a consistent format for presenting the results. By using the 62600-101, developers and other parties can compare sites and projects efficiently and with confidence in the accuracy and consistency of the underlying methods. 
-\end{enumerate}
+In 2013 the National Academy of Sciences (NAS) published a review of the DOE’s regional marine energy resource assessments, which included the EPRI 2011 wave energy resource assessment. NAS found that in general the resource assessments provided “a useful contribution to understanding the distribution and possible magnitude of marine and hydrokinetic energy sources in the United States,” but also detailed specific technical critiques of each assessment. In the case of wave energy, the NAS review stated that because the method used did not account for wave direction, it “has the potential to double-count a portion of the wave energy”. 
 
-The distinction between these two branches of resource assessment is subtle but important. Site resource assessment is motivated by the needs of project developers to understand the opportunity at specific sites, and for specific projects involving specific technologies, and several works follow the IEC 62600-101 methodology \citep[e.g., ][]{zhengAssessingChinaSea2013, neillWavePowerVariability2013, sierraWaveEnergyResource2013, robertsonCharacterizingShoreWave2014, yangCharacteristicsVariabilityNearshore2020, lokuliyana_sri_2020}. 
-That branch of resource assessment is important because the certified project assessments that follow from the IEC TC114 methods are expected to improve investor and financier confidence, and thereby reduce the cost of marine energy.
-This work, however, is focused primarily on the topic of regional resource assessment, because it is also important to ensure that regional resource assessments -- which motivate public investment in the technology -- are based on methodologies that have widespread scientific consensus. The first is motivated by the needs of policy-makers to understand the opportunity across large spatial scales.
+Furthermore, discussions with several leading wave energy experts revealed two additional key criticisms of existing wave resource assessment methods: 1) that the domain of the resource assessments are often arbitrary and are not necessarily consistent with relevant political boundaries, and 2) that the methods only account for wave energy arriving at the edge of the boundary and not for waves generated within the boundary.
 
-It is also worth noting that these two branches of resource assessment are different from the three `classes' of resource assessment defined in IEC 62600-101 (reconaissance, feasibility, and design). Those classes are defined primarily in terms of level-of-accuracy (low, medium, and high, respectively) at successively smaller spatial scales, and they are all essentially site assessments in the sense that they generate the statistics of interest to project developers.
-The IEC 62600-101 standard does not provide definitive guidance on regional resource assessment, but it does include the language ``the effects of [WEC arrays] on wave propagation should be included in the numerical model''. This note provides a basis for incorporating wave directionality into site assessments, which is a critical aspect of regional assessments like this one.
+These lingering critiques have resulted in a “define your own method” approach to regional wave resource assessment. Some works follow the EPRI 2011 methodology, while others do account for directionality, but most assessments at large scales avoid the issue resulting in a reconnaissance-level assessment that does not directly quantify total power available across the region. This makes it difficult to make apples-to-apples comparisons, puts the industry’s credibility at risk, and does not provide policy makers with the kind of information they need. 
 
-Another important distinction within the field of resource assessment is related to the technology considerations in and spatial constraints on resource assessments. In this space IEC TC114 provides clear and informative definitions \citep{internationalelectrotechnicalcommissionPartTerminologyEdition2020}:
-\begin{itemize}
-  \item the {\it theoretical resource} is the ``energy available in the resource''
-  \item the {\it technical resource} is the ``proportion of the theoretical resource that can be captured using existing technology options without consideration of external constraints''
-  \item the {\it practical resource} is the ``proportion of the technical resource that is available after consideration of external constraints''
-\end{itemize}
-
-The theoretical resource is a basis for the other two flavors of resource assessment, as it indicates the total power that could be extracted from the resource according to laws of physics and assuming perfectly efficient technology. In the case of wave energy, the energy {\em available} is equivalent to the energy {\em contained in} the wave field because it is theoretically possible to extract all of the energy from the waves as originally demonstrated by the ``Salter Duck'' \citep{salterRecentProgressDucks1980}. This is in contrast to the ``Betz limit'' of wind energy, which states that a wind turbine cannot extract more than 59.3 \% of the kinetic energy in the wind.
-\noteSelf{We probably need to say something about Budal limits here?!}
-
-Real technologies, of course, are not perfectly efficient. Wave energy converters often reflect some wave energy, and generate some amount of turbulence in the vicinity of the device that is lost to heat. And of course there are losses (to heat) in converting mechanical energy to electricity and transmitting that electricity to the grid. An estimate of the ``technical resource'' accounts for these factors in order to provide decision makers (whether they are project developers, or policy makers) an estimate of the opportunity in terms of real technologies available today. In site resource assessments, this is typically accomplished by combining the joint-probability distribution (e.g., from IEC 62600-101) with a specific technology's power matrix (e.g., from IEC 62600-100) to estimate a project's annual energy production (AEP, in units of power).
-EPRI 2011 provides a regional estimate of the U.S. technical resource based on reasonable assumptions about device conversion efficiency and device spacing.
-
-The practical resource takes another step in considering what is realistic by accounting for `external constraints'. These constraints account for the realistic ocean and land-use factors that cannot be quantified purely in terms of physical or technical constrains, such as: permitting, alternate ocean uses, and other types of restrictions that limit the placement and energy extraction of projects. At regional scales, practical resource assessment typically involves ad-hoc ``fraction of the technical resource'' assumptions. This is because a detailed accounting of external constraints at regional scales is a massive undertaking, and is particularly challenge when wave energy technologies are still in their infancy (i.e., stakeholders want to know the details of what will be installed). At the site-specific scale, a project is often designed to maximize the energy production at a site within the external constraints that exist there, which is a defacto practical resource assessment.
-
-In 2013 the National Academy of
-Sciences published a review of the DOE’s regional marine energy resource
-assessments, including: tidal, ocean current, in-stream river, ocean
-thermal energy, and the EPRI 2011 wave energy resource assessment
-\citep{nationalresearchcouncilEvaluationDepartmentEnergy2013}.  The
-National Academy generally found that the resource assessments provide
-“a useful contribution to understanding the distribution and possible
-magnitude of marine and hydrokinetic energy sources in the United
-States,” but also had specific technical critiques of each assessment,
-and of the comparability of the results between each of the
-assessments.
-
-In the case of wave energy, the National Academy review points out that
-because the method used did not account for wave direction, it ``has the
-potential to double-count a portion of the wave energy''. Furthermore, discussion with several leading wave energy experts reveals two additional key criticisms of existing wave resource assessment methods: 1) that the domain of the resource assessments are often arbitrary in that they are not necessarily consistent with the relevant political boundaries that they are meant to be applicable to, and 2) that the methods only account for wave energy arriving at the edge of the boundary and do not account for waves generated within the boundary itself.
-
-These lingering critiques have resulted in a ``define your own method'' approach to regional wave resource assessment. Some works follow the EPRI 2011 methodology \citep[e.g., ]{kumarWaveEnergyResource2015}, while others account for directionality \citep[e.g., ]{gunnQuantifyingGlobalWave2012, regueroGlobalWavePower2015, hemerRevisedAssessmentAustralia2017}, but most assessments at large scales seem to avoid the issue and instead deliver a reconnaissance-level assessment that does not directly quantify total power available across the region \citep[e.g.,]{robertsonCharacterizingShoreWave2014, sierraWaveEnergyResource2013, zhengAssessingChinaSea2013, neillWavePowerVariability2013, alonsoWaveEnergyResource2015}.
-This makes it difficult to make apples-to-apples comparisons, puts the industry's credibility at risks, and -- perhaps most importantly -- doesn't provide policy makers with the kind of information they need. The primary objective of this work is to address the critiques and questions in the previous paragraph directly, and thereby bring clarity to the topic of region-scale theoretical resource assessment. In time, we hope that this clarity serves as a basis for consensus on the subject so that researchers can deliver assessments that are consistent, and then move on to other important research areas -- including technical and practical resource assessment. The secondary objective of this work is to provide a refined estimate of
-the U.S. wave resource based on this new method, and new model
-results. 
-
-These objectives are accomplished by first discussing the details of regional theoretical resource assessment and presenting our proposed approach (section 2). In section 3, we present the results of this approach applied to each region of the U.S. coastline in comparison to alternate methods that have been used. Section 4 discusses: a) the methodology compared to alternate approaches, b) the regional resource in the context of existing energy markets, and c) the predictability of wave energy. We conclude (section 5) with a summary of results, the proposed methodology, and a view toward how to unify wave energy site and resource assessment.
-
+The primary objective of this work is to address the critiques and questions in the previous paragraph directly, and thereby bring clarity to the topic of region-scale theoretical resource assessment. In time, we hope that this clarity serves as a basis for consensus on the subject so that researchers can deliver assessments that are consistent, and then move on to other important research areas – including technical and practical resource assessment. The secondary objective of this work is to provide a refined estimate of the U.S. wave resource based on this new method and updated model outputs.
 
 %%% Local Variables:
 %%% TeX-master: "wave_res"
