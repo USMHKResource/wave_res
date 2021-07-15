@@ -1,5 +1,7 @@
 import base as b
 import numpy as np
+import matplotlib.pyplot as plt
+plt.ion()
 
 wm = b.WrapMonths(shift=6)
 
@@ -37,11 +39,27 @@ plot_these = ['wc', 'hi', 'ak', 'ec', 'gm', ]
 
 for ky in plot_these:
     dnow = dat[ky]
-    dtmp = (dnow.remote.avg_annual()['1way'][:, -1] +
-           dnow.local.avg_annual()['stot'].sum(1))
 
-    dtmp /= dtmp.mean()
-    ax.plot(wm.x, wm(dtmp), label=dnow.name, color=dnow.color)
+    if False:
+        # This was trying to add boxplots to this graphic. It's a bad idea.
+        r = (dnow.remote.int_freq()['1way'][:, -1]
+             .reshape((-1, 12)))
+        l = (dnow.local.int_freq()['stot'].sum(1)
+             .reshape((-1, 12)))
+        dtmp = (r + l)[:, wm._index]
+        dtmp /= dtmp.mean()
+        if ky == 'wc':
+
+            ax.boxplot(wm(dtmp), positions=wm.x)
+
+        ax.plot(wm.x, dtmp.mean(0), label=dnow.name, color=dnow.color)
+    else:
+        dtmp = (dnow.remote.avg_annual()['1way'][:, -1] +
+                dnow.local.avg_annual()['stot'].sum(1))
+        
+        dtmp /= dtmp.mean()
+        ax.plot(wm.x, wm(dtmp), label=dnow.name, color=dnow.color)
+
 
 ax.set_xticks(wm.xticks)
 ax.set_xticklabels(wm.labels)
@@ -67,7 +85,7 @@ ax.set_yticks(np.arange(0.0, 2.5, 0.5))
 ax.set_ylim([0, 2])
 ax.set_title("Annual cycle of total resource")
 
-b.savefig(fig1, 'AnnualCycle01')
+#b.savefig(fig1, 'AnnualCycle01')
 
 
 ######
@@ -111,7 +129,7 @@ ax.axvspan(wm.season_edges[1], wm.season_edges[2], facecolor='b', zorder= -6, al
 ax.axvspan(wm.xlim[0], wm.season_edges[0], facecolor='r', zorder= -6, alpha=0.05)
 ax.axvspan(wm.season_edges[-2], wm.xlim[-1], facecolor='r', zorder= -6, alpha=0.05)
 
-b.savefig(fig2, 'AnnualCycle02')
+#b.savefig(fig2, 'AnnualCycle02')
 
 
 ######
@@ -137,6 +155,7 @@ for ky in plot_these:
     ax.plot(t, dtmp, label=dnow.name, color=dnow.color)
 
 ax.set_ylim([0, 2])
+
 
 ######
 # Plot variability on-top of a single region
@@ -187,5 +206,5 @@ for idx, region in enumerate(plot_these):
     ax.set_ylim([0, 4])
     ax.set_xlim(wm.xlim)
 
-    b.savefig(fig, 'AnnualVar01.{}'.format(region))
+    #b.savefig(fig, 'AnnualVar01.{}'.format(region))
 

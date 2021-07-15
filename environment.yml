@@ -12,7 +12,7 @@ dependencies:
   - numpy
   - xarray
   - netcdf4
-  - ipython=4.2
+  - ipython=5
   - tqdm
   - pathlib2
   - scipy=1.1

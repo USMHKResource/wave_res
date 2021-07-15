@@ -110,13 +110,14 @@ if True:
     
     
     sc = ax.scatter(eplt[eslc], dplt[dslc],
-                    c=(dnow.time.month[dslc] - coff) % 12,
+#                    c=(dnow.time.month[dslc] - coff) % 12,
+                    c='k',
                     s=10,
                     cmap=cmap, vmin=0.5, vmax=12.5, )
-    cbar = plt.colorbar(sc)
-    cbar.set_ticks(np.arange(1, 13))
+    #cbar = plt.colorbar(sc)
+    #cbar.set_ticks(np.arange(1, 13))
+    #cbar.set_ticklabels(wm.labels)
     wm = b.WrapMonths(coff)
-    cbar.set_ticklabels(wm.labels)
 
     ax.axhline(0, color='0.6', lw=1, zorder=-10, ls='--')
     ax.axvline(0, color='0.6', lw=1, zorder=-10, ls='--')
@@ -137,7 +138,7 @@ if True:
     xfit = np.array([x, np.exp(x), np.ones_like(x)]).T
     y = (xfit * bval[None, :]).sum(1)
     
-    ax.plot(x, y, 'k-', lw=3, zorder=-2)
+    ax.plot(x, y, '-', color='0.3', lw=3, zorder=-2)
     R2 = (1-res/(fit_vals.var()*len(fit_vals)))[0]
     ax.text(0.1, 0.9, '$R^2={:.2f}$'.format(R2),
             transform=ax.transAxes,
@@ -147,7 +148,9 @@ if True:
     ax.set_ylabel('Wave Energy Flux Anomaly (kW/m)')
     ax.set_xlabel(u'Oceanic Ni\xf1o Index')
 
-    b.savefig(fig, 'ENSO-Comparison.{}'.format(dnow.region))
+    b.savefig(fig, 'ENSO-Comparison-b+w.{}'.format(dnow.region))
+
+
     
     fig = plt.figure(112)
     fig.clf()
