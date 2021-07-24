@@ -1,8 +1,7 @@
 \section{Introduction}
 
 Though wave energy technology is still at an
-early-stage of technology development, interest in wave energy has grown
-considerably over the last decade
+early-stage of technology development, interest in wave energy has grown considerably over the last decade
 \citep[]{babaritOceanWaveEnergy2017}. For example, the Ocean Energy Systems executive committee has set a goal of 300GW of installed ocean energy capacity by 2050 \citep[]{huckerbyInternationalVisionOcean2017}. Wave energy is seen as particularly
 valuable for its predictability and reliability on timescales of hours
 to a few days \citep{parkinsonIntegratingOceanWave2015}, and for the
@@ -14,26 +13,33 @@ technologies that provide power to unique market applications such as
 desalination, ocean sensing, aquaculture, maritime shipping, and coastal community
 resiliency \citep{livecchiPoweringBlueEconomy2019}. 
 
-There have been several notable wave resource assessments over the last two decades that have gradually improved the accuracy and spatial coverage of our understanding of the U.S. wave energy opportunity \citep[]{EPRIwaveresource2011, garcia-medinaWaveResourceAssessment2014, bedardOceanWaveEnergy2005}. Throughout this time, however, there have been ongoing debates about the correct methodology for quantifying the wave energy opportunity. While a clear consensus-based methodology for wave resource site-assessment has been established, regional wave resource assessments have utilized disparate methodologies, which can lead to skepticism and confusion \citep[]{robertsonCharacterizingShoreWave2014, gunnQuantifyingGlobalWave2012, hughesNationalscaleWaveEnergy2010, hemerRevisedAssessmentAustralia2017, nationalresearchcouncilEvaluationDepartmentEnergy2013}.
+There have been several notable wave resource assessments over the last two decades that have consistently improved the accuracy and spatial coverage of our understanding of the U.S. wave energy opportunity \citep[]{EPRIwaveresource2011, bedardOceanWaveEnergy2005, allahdadiDevelopmentValidationRegionalscale2019, garciamedinaWaveResourceCharacterization2021, yangCharacteristicsVariabilityNearshore2020, liWaveEnergyResources2021}.
+Throughout this time there have been ongoing discussions about how best to quantify and describe wave energy opportunities (i.e., the physical energy contained in the resource). 
 
-The 2011 DOE-funded U.S. wave resource assessment provided the first
-comprehensive estimate of the nation’s wave energy resource, and has
-been an important reference for motivating private and public
-investment in wave energy research ever since
-\citep[][hereafter `EPRI 2011']{EPRIwaveresource2011}. A few years later, the International Electrotechnical Commission's Technical Committee on
-Marine Energy (TC114) published the first edition of a wave
-resource assessment technical specification \citep[][hereafter, 62600-101]{internationalelectrotechnicalcommissionPart101Wave2015}. The stated objective of 62600-101 is to provide ``a uniform
-methodology that will ensure consistency and accuracy in the
-estimation, measurement, and analysis of the wave energy resource at
-sites that could be suitable for the installation of Wave Energy
-Converters (WECs), together with defining a standardised methodology
-with which this resource can be described.''
+This work has led to important definitions of terms such as ``theoretical resource'', ``technical resource'' and ``practical resource'' \citep[]{internationalelectrotechnicalcommissionPartTerminologyEdition2020}. There is also a distinction between: a) {\em site}-focused resource assessments, which provide the data (time-series of wave energy, wave height, wave period, wave direction, etc.) that project developers need for identifying sites and planning projects \citep[e.g., ][]{internationalelectrotechnicalcommissionPart101Wave2015, robertsonCharacterizingShoreWave2014, kumarWaveEnergyResource2015}, and b) {\em regional} resource assessments, which quantify the total wave energy resource across a large section of coastline (i.e., averaged in time and space to get a single number) that the public, policy makers, and other stakeholders use to quantify the high-level value proposition \citep[e.g., ][]{EPRIwaveresource2011, gunnQuantifyingGlobalWave2012, hemerRevisedAssessmentAustralia2017}.
 
-In 2013 the National Academy of Sciences (NAS) published a review of the DOE’s regional marine energy resource assessments, which included the EPRI 2011 wave energy resource assessment. NAS found that in general the resource assessments provided “a useful contribution to understanding the distribution and possible magnitude of marine and hydrokinetic energy sources in the United States,” but also detailed specific technical critiques of each assessment. In the case of wave energy, the NAS review stated that because the method used did not account for wave direction, it “has the potential to double-count a portion of the wave energy”. 
+The International Electrotechnical Commission's Technical Committee on
+Marine Energy (IEC TC114) has published a robust and consensus-based methodology for wave resource for wave resource {\em site}-assessment \citep[][hereafter, 62600-101]{internationalelectrotechnicalcommissionPart101Wave2015}. That work does not, however, provide definitive guidance on how to aggregate the results into a regional total. Lacking a definitive consensus-based methodology, {\em regional} wave resource assessments have utilized disparate methodologies, which can lead to skepticism and confusion.
+
+Several assessments, including the most recent U.S. benchmark study, have estimated total theoretical resource by integrating omni-directional wave power along the length of a selected contour \citep[]{}. However, as the national academy points out...
+
+
+
+This work seeks to establish a definitive wave resource assessment methodology 
+
+resolve outstanding questions associated with regional theoretical resource assessment by proposing a methodology that 
+
+followed the benchmark U.S. resource assessment study the total U.S. wave resource -- which was published prior to 62600-101 -- has provided the first com-prehensive estimate of the nation’s wave energy resource, and has been an im-portant reference for motivating private and public investment in wave energyresearch ever since (Jacobson et al., 2011, hereafter ‘EPRI 2011’).  A few yearslater, the International Electrotechnical Commission’s Technical Committee onMarine Energy (TC114) published a wave resource assessment technical specifi-cation (International Electrotechnical Commission, 2015, hereafter, 62600-101),that  provides  a  consensus-based  methodology  for  wave  resource  for  wave  resource site-assessment.
+
+Some works follow the EPRI 2011 methodology, while others do account for directionality, but most assessments at large scales avoid the issue resulting in a reconnaissance-level assessment that does not directly quantify total power available across the region. This makes it difficult to make apples-to-apples comparisons, puts the industry’s credibility at risk, and does not provide policy makers with the kind of information they need. 
+
+which can lead to skepticism and confusion \citep[]{internationalelectrotechnicalcommissionPart101Wave2015, robertsonCharacterizingShoreWave2014, gunnQuantifyingGlobalWave2012, hughesNationalscaleWaveEnergy2010, hemerRevisedAssessmentAustralia2017, nationalresearchcouncilEvaluationDepartmentEnergy2013}.
+
+The 2013 National Academy of Sciences (NAS) review of U.S. marine energy resource assessments found that in general the resource assessments provide “a useful contribution to understanding the distribution and possible magnitude of marine and hydrokinetic energy sources in the United States,” but also detailed several specific technical critiques. In the case of wave energy, the NAS review stated that because the method used did not account for wave direction, it “has the potential to double-count a portion of the wave energy”. 
 
 Furthermore, discussions with several leading wave energy experts revealed two additional key criticisms of existing wave resource assessment methods: 1) that the domain of the resource assessments are often arbitrary and are not necessarily consistent with relevant political boundaries, and 2) that the methods only account for wave energy arriving at the edge of the boundary and not for waves generated within the boundary.
 
-These lingering critiques have resulted in a “define your own method” approach to regional wave resource assessment. Some works follow the EPRI 2011 methodology, while others do account for directionality, but most assessments at large scales avoid the issue resulting in a reconnaissance-level assessment that does not directly quantify total power available across the region. This makes it difficult to make apples-to-apples comparisons, puts the industry’s credibility at risk, and does not provide policy makers with the kind of information they need. 
+These lingering critiques have resulted in a “define your own method” approach to regional wave resource assessment. 
 
 The primary objective of this work is to address the critiques and questions in the previous paragraph directly, and thereby bring clarity to the topic of region-scale theoretical resource assessment. In time, we hope that this clarity serves as a basis for consensus on the subject so that researchers can deliver assessments that are consistent, and then move on to other important research areas – including technical and practical resource assessment. The secondary objective of this work is to provide a refined estimate of the U.S. wave resource based on this new method and updated model outputs.
 
