@@ -12,6 +12,9 @@ con_defs.update(_con_defs)
 with open(str(GDDir / 'Contour_Ranges_ec-subregions.pkl'), 'r') as fl:
     _con_defs = _pkl.load(fl)
 con_defs.update(_con_defs)
+with open(str(GDDir / 'Contour_Ranges_ak-boem-planning-areas.pkl'), 'r') as fl:
+    _con_defs = _pkl.load(fl)
+con_defs.update(_con_defs)
 
 with open(str(GDDir / 'Contour_Ranges.pkl'), 'r') as fl:
     con_defs_old = _pkl.load(fl)
@@ -38,12 +41,19 @@ bounds.update(_bounds)
 with open(str(GDDir / 'Boundaries_ec-subregions.pkl'), 'r') as fl:
     _bounds = _pkl.load(fl)
 bounds.update(_bounds)
-    
+
+# Thesea are used in-place of bounds, when they are present for a region.
+with gzip.open(str(GDDir / 'ClippingPaths_ak-boem-planning-areas.pkl.gz'), 'r') as fl:
+    clips = _pkl.load(fl)
+
 with gzip.open(str(GDDir / 'DiffTriangles.pkl.gz'), 'r') as fl:
     tri_defs = _pkl.load(fl)
 with gzip.open(str(GDDir / 'DiffTriangles_wc-states.pkl.gz'), 'r') as fl:
     _tri_defs = _pkl.load(fl)
 tri_defs.update(_tri_defs)
 with gzip.open(str(GDDir / 'DiffTriangles_ec-subregions.pkl.gz'), 'r') as fl:
+    _tri_defs = _pkl.load(fl)
+tri_defs.update(_tri_defs)
+with gzip.open(str(GDDir / 'DiffTriangles_ak-boem-planning-areas.pkl.gz'), 'r') as fl:
     _tri_defs = _pkl.load(fl)
 tri_defs.update(_tri_defs)

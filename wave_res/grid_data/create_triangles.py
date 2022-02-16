@@ -1,9 +1,9 @@
+import setpath
 import matplotlib.pyplot as plt
 from scipy.spatial import Delaunay
 import shapely.geometry as sg
 import numpy as np
 from copy import copy
-import setpath
 from base import RegionInfo
 import proj
 
@@ -101,17 +101,21 @@ def calc_triangles(region):
         print("  {} nm".format(rng))
         # The 'range key'
         rky = '{:03d}'.format(rng)
-        if rng == 200:
-            rky = 'EEZ'
 
         # get the clipping path
-        clip = rinf2clip(rinf, rky)
+        if not hasattr(rinf, 'bounds') and hasattr(rinf, 'clip'):
+            clip = rinf.clip[rky]
+        else:
+            if rng == 200:
+                clip = rinf2clip(rinf, 'EEZ')
+            else:
+                clip = rinf2clip(rinf, rky)
         # clip the triangles
         tri_clip = clip_tri(clip, tri)
         triout[rky] = tri_clip.simplices
         trilast = copy(tri_clip)
     print('Done.')
-    triout['200'] = triout['eez'] = triout['EEZ']
+    triout['eez'] = triout['EEZ'] = triout['200']
     return triout
 
 
@@ -167,6 +171,8 @@ def show_grid(region, fignum):
             rky = 'EEZ'
         tmp = copy(tri)
         inds = rinf.tri_inds[rky]
+        if len(inds) == 0:
+            continue
         tmp.vertices = inds
         tmp.simplices = inds
         plot_tri(tmp,
@@ -181,6 +187,8 @@ if __name__ == '__main__':
     plot_these = ['wc.ca', 'wc.or', 'wc.wa']
     plot_these = ['ec.ne', 'ec.ma', 'ec.se']
     plot_these = ['ec.se']
+    plot_these = ['ak.' + reg for reg in ['GOA', 'KOD', 'SHU', 'ALA',
+                                          'BOW', 'GEO', 'NAL', 'ALB', 'NAV', 'MAT', 'NOR']]
     
     for idreg, region in enumerate(plot_these):
         fig, ax = show_grid(region, 2000 + idreg)

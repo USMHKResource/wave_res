@@ -59,6 +59,10 @@ proj['ak'] = crs.AlbersEqualArea(
 proj['ak'].lonlim = [-190, -135]
 proj['ak'].latlim = [48, 69]
 
+for ky in ['ALA', 'ALB', 'BOW', 'COK', 'GEO', 'GOA', 'KOD', 'MAT', 'NAL', 'NAV', 'NOR', 'SHU']:
+    proj['ak.' + ky] = proj['ak']
+
+
 proj['hi'] = crs.AlbersEqualArea(
     central_longitude=-157.80, central_latitude=21.25,  # Diamond head (Oahu)
     standard_parallels=[20, 22]

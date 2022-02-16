@@ -9,6 +9,9 @@ regions = {'wc': 'wc',
            'hi': 'hi',
            'ak': 'ak',
            'prusvi': 'prusvi'}
+# Add boem subregions
+regions.update({'ak.{}'.format(val): 'ak' for val in
+                ['ALA', 'ALB', 'BOW', 'COK', 'GEO', 'GOA', 'KOD', 'MAT', 'NAL', 'NAV', 'NOR', 'SHU']})
 
 # Use set() to get unique values.
 source_regions = list(set([sr for sr in regions.itervalues()]))
@@ -62,7 +65,7 @@ class RegionInfo(object):
     """
 
     mainland = None
-    islands = None
+    islands = []
 
     _proj_pc = proj.pc
 
@@ -91,7 +94,10 @@ class RegionInfo(object):
             self.bounds = gdat.bounds[region]
         if region in gdat.tri_defs:
             self.tri_inds = gdat.tri_defs[region]
+        if region in gdat.clips:
+            self.clip = gdat.clips[region]
 
+            
     @property
     def allxy(self, ):
         """This is the spatial grid including land (in projection coordinates).
