@@ -16,6 +16,9 @@ if this_machine[:2] == 'lk':
     #srcdir = Path('/Volumes/lkilcher/wave_ra/pnnl/')
     maskdir = Path(os.path.expanduser('~/Dropbox/tmp/wave_ra/icemask/'))
     srcdir = Path(os.path.expanduser('~/tmp_local/wave_ra/'))
+elif this_machine[:5]=='vdi10':
+    maskdir = Path('Y:\Wind\Public\Users\LKilcher\wave_ra\pnnl\icemask/')
+    srcdir = Path('Y:\Wind\Public\Users\LKilcher\wave_ra\pnnl/')
 
 # Gabriel's Paths
 if this_machine.startswith('constance') or this_machine.startswith('node'):
