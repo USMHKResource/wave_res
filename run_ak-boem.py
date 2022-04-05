@@ -5,6 +5,8 @@ from wave_res.paths import mkdir
 # Range to compute the resource
 months = np.arange(np.datetime64('1980-01'),
                    np.datetime64('2011-01'))
+#months = np.arange(np.datetime64('2009-01'),
+#                   np.datetime64('2010-01'))
 
 all_regions = ['ak.' + reg for reg in ['GOA', 'KOD', 'SHU', 'ALA',
                                        'BOW', 'GEO', 'NAL', 'ALB', 'NAV', 'MAT', 'NOR']]
@@ -13,7 +15,7 @@ all_regions = ['ak.' + reg for reg in ['GOA', 'KOD', 'SHU', 'ALA',
 # lists of regions that should be run for each scenario.
 run_these = {
     'baseline': all_regions,
-    'extraction': all_regions,
+    #'extraction': all_regions,
 }
 
 
