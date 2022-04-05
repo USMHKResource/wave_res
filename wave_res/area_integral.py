@@ -23,7 +23,12 @@ http://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.Delaunay.html
 
     # z concave or convex => under or overestimates
     npt, dim = xy.shape
-    ntri, dim1 = triangles.shape
+    _shape = triangles.shape
+    if len(_shape) < 2:
+        # There are no triangles.
+        return (0, 0)
+    ntri, dim1 = _shape
+
     assert npt == len(z), "shape mismatch: xy %s z %s" % (xy.shape, z.shape)
     assert dim1 == dim + 1, "triangles ? %s" % triangles.shape
     zsum = np.zeros(z[0].shape)
