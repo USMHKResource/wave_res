@@ -1,0 +1,95 @@
+\documentclass[authoryear,preprint,review,12pt]{elsarticle}
+
+%\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{defs}
+\usepackage{lineno}
+\usepackage{rotating} % For sideways figure
+
+\journal{Renewable Energy}
+
+\begin{document}
+
+% Front page ----------------------------------------------------------------------
+\begin{frontmatter}
+
+\title{A Scalable Wave Resource Assessment Methodology: Application to U.S. Waters}
+
+\author[a1]{Levi Kilcher\corref{cor1}}
+\ead{levi.kilcher@nrel.gov}
+\cortext[cor1]{Corresponding Author}
+
+\author[a2]{Gabriel Garc\'ia Medina}
+\author[a2,a3]{Zhaoqing Yang}
+
+\affiliation[a1]{organization={National Renewable Energy Laboratory},
+                  addressline={15013 Denver W Pkwy},
+                  city={Golden},
+                  postcode={80401},
+                  state={CO},
+                  country={United States}}
+\affiliation[a2]{organization={Coastal Sciences Division, Pacific Northwest National Laboratory},
+                 addressline={1100 Dexter Ave N, Ste 500},
+                 city={Seattle},
+                 postcode={98109},
+                 state={WA},
+                 country={United States}}
+\affiliation[a3]{organization={Department of Civil and Environmental Engineering, University of Washington},
+                 city={Seattle},
+                 postcode={98195},
+                 state={WA},
+                 country={United States}}
+
+\begin{abstract}
+Waves deliver massive quantities of energy to populated coastlines around the world, and wave energy technology research and development has accelerated over the last two decades. Throughout this time national and regional resource assessments have utilized disparate methodologies, which can cause confusion and skepticism. In this work we describe a theoretical wave resource assessment methodology that addresses many of the major areas of inconsistency and debate. Applying this revised methodology to U.S. waters, we find the U.S. wave energy resource to be 3300 – 4100 TWh/yr, with region totals of: 2000 – 2500 TWh/yr in Alaska, 510 – 630 TWh/yr along the U.S. west coast, 380 – 470 TWh/yr along the east coast, 70 TWh/yr in the Gulf of Mexico, and 18-33 TWh/yr in Puerto Rico and the U.S. Virgin Islands.
+\end{abstract}
+
+%%Graphical abstract
+% \begin{graphicalabstract}
+% \includegraphics{grabs}
+% \end{graphicalabstract}
+
+%%Research highlights
+\begin{highlights}
+\item Novel, scalable methodology for theoretical wave resource assessment
+\item Updated wave resource assessment for U.S. Exclusive Economic Zone
+\item Addresses main shortcomings of previous national wave resource assessments
+\end{highlights}
+
+\begin{keyword}
+    Wave resource assessment \sep wave hindcast \sep scalable methodology
+\end{keyword}
+
+\end{frontmatter}
+
+% Main Text --------------------------------------------------------------
+\begin{linenumbers}
+\include{intro}
+\include{background}
+\include{method}
+\include{results}
+\include{conclusion}
+
+\section*{Acknowledgements}
+This work was authored by the National Renewable Energy Laboratory, operated by Alliance for Sustainable Energy, LLC, and by Pacific Northwest National Laboratory, operated by Battelle for the U.S. Department of Energy (DOE) under Contract Nos. DE-AC36-08GO28308 and DE-AC05-76RL01830 (respectively). Funding was provided by the Office of Energy Efficiency and Renewable Energy Water Power Technologies Office. All model simulations were performed using resources available through Research Computing at Pacific Northwest National Laboratory. The views expressed in the article do not necessarily represent the views of the DOE or the U.S. Government. The U.S. Government retains and the publisher, by accepting the article for publication, acknowledges that the U.S. Government retains a nonexclusive, paid-up, irrevocable, worldwide license to publish or reproduce the published form of this work, or allow others to do so, for U.S. Government purposes. 
+
+The authors are also grateful to many colleagues for innumerable discussions and reviews that helped to improve the method, results, and quality of this manuscript. George Hagerman and George Scott, both provided data and lengthy discussions that helped to improve the accuracy of the results and clarify the method. H. Tuba \"{O}zkan-Haller, Mark Hemer, and Jim Thomson provided their expert perspective that was especially valuable in defining the local resource. We thank Alejandro Moreno, Hoyt Battey, Steve DeWitt, Michael Lawson, and Bob Thresher for supporting the work and encouraging a comprehensive approach. Kathleen Morton, Aidan Bharath, John Frenzl (Figure \ref{fig:diagram:west-eez}), and Billy Roberts (Figure \ref{fig:map-total}) helped to create the graphics; this report wouldn't be the same without them. We also are sincerely grateful to Becki Meadows and Caroline Draxl for multiple insightful reviews and detailed editing of several versions of this manuscript.
+
+\appendix
+\setcounter{figure}{0}
+\include{appendix-one-way}
+\setcounter{figure}{0}
+\include{appendix-flux-vs-area}
+\setcounter{figure}{0}
+\include{appendix-validation}
+\end{linenumbers}
+
+\bibliographystyle{elsarticle-num-names}
+\bibliography{refs}
+
+
+\end{document}
+\endinput
