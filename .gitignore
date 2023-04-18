@@ -4,3 +4,5 @@ present/
 old/
 tmpdata*/
 ~*
+pub/RESI/fig/
+*.zip
