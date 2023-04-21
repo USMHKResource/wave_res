@@ -6,3 +6,5 @@ tmpdata*/
 ~*
 pub/RESI/fig/
 *.zip
+*.spl
+.vscode/
